@@ -5,9 +5,17 @@ import { Robot } from './Robot';
 
 interface HeroSceneProps {
   scrollVal: number;
+  robotProgressRef: React.MutableRefObject<number>;
+  themeProgressRef: React.MutableRefObject<number>;
+  mouseX: number;
 }
 
-export const HeroScene: React.FC<HeroSceneProps> = ({ scrollVal }) => {
+export const HeroScene: React.FC<HeroSceneProps> = ({
+  scrollVal,
+  robotProgressRef,
+  themeProgressRef,
+  mouseX,
+}) => {
   const glowRef = useRef<THREE.Mesh>(null);
 
   const glowTexture = useMemo(() => {
@@ -47,7 +55,12 @@ export const HeroScene: React.FC<HeroSceneProps> = ({ scrollVal }) => {
           blending={THREE.AdditiveBlending}
         />
       </mesh>
-      <Robot scrollVal={scrollVal} />
+      <Robot
+        scrollVal={scrollVal}
+        robotProgressRef={robotProgressRef}
+        themeProgressRef={themeProgressRef}
+        mouseX={mouseX}
+      />
     </>
   );
 };

@@ -89,7 +89,7 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ scrollVal }) => {
     
     // Fade out group beyond 0.2
     if (groupRef.current) {
-      groupRef.current.visible = scrollVal < 0.12;
+      groupRef.current.visible = scrollVal < 0.01;
     }
   });
 
