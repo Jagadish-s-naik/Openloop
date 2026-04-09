@@ -308,6 +308,122 @@ nav a:hover {
   transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
+/* --- HERO SPLIT TYPOGRAPHY --- */
+.hero-split-container {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  z-index: 10;
+  padding: 0 12vw;
+}
+
+.hero-split {
+  font-size: clamp(6rem, 16vw, 20rem);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.05em;
+  line-height: 0.8;
+  text-shadow: 0 0 60px rgba(0, 240, 255, 0.4);
+  opacity: 0;
+  transform: scale(0.85);
+  animation: heroReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero-split.left {
+  animation-delay: 4.2s; /* Trigger after portal transition */
+}
+
+.hero-split.right {
+  animation-delay: 4.4s;
+}
+
+@keyframes heroReveal {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* --- SECTION OVERLAYS --- */
+.section-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10vw;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+
+.section-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#hero {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-bottom-left {
+  position: absolute;
+  bottom: 10vh;
+  left: 0;
+  max-width: 400px;
+  animation: slideUpFade 1s ease 4.8s forwards;
+  opacity: 0;
+}
+
+.hero-bottom-right {
+  position: absolute;
+  bottom: 10vh;
+  right: 0;
+  max-width: 320px;
+  animation: slideUpFade 1s ease 5.0s forwards;
+  opacity: 0;
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- TYPOGRAPHY REFINEMENTS --- */
+.section-heading {
+  font-size: clamp(3rem, 8vw, 6rem);
+  margin-bottom: 2rem;
+  letter-spacing: 0.1em;
+}
+
+.body-text-safe {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+}
+
+/* Ensure typewriter looks natural */
+.typewriter-cursor {
+  border-right: 2px solid #00f0ff;
+  animation: blink 0.8s step-end infinite;
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
 .align-left {
   margin-left: 0;
   margin-right: auto;

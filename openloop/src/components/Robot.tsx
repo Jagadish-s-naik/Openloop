@@ -2,6 +2,7 @@ import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
+import { lerp } from '../utils/math';
 
 interface RobotProps {
   scrollVal: number;
@@ -21,23 +22,27 @@ export const Robot: React.FC<RobotProps> = ({
   const groupRef = useRef<THREE.Group>(null);
   const headLightRef = useRef<THREE.PointLight>(null);
   
+  // Use a simple any cast for now to verify if the syntax error disappears
   const { scene, materials } = useGLTF('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb') as any;
 
-  // Refs for smooth lerp state
   const stateRef = useRef({
     posX: 0,
+    posY: -2,
     rotY: 0,
-    scale: 1.8,
-    opacity: 1,
+    rotX: 0,
+    scale: 0.8,
+    opacity: 0,
     greenIntensity: 0,
   });
 
   useMemo(() => {
-    if (materials['Material_MR']) {
-      materials['Material_MR'].metalness = 1.0;
-      materials['Material_MR'].roughness = 0.15;
-      materials['Material_MR'].emissive = new THREE.Color('#00ffbb'); // Green base
-      materials['Material_MR'].emissiveIntensity = 0;
+    const material = materials['Material_MR'];
+    if (material) {
+      material.metalness = 1.0;
+      material.roughness = 0.15;
+      material.emissive = new THREE.Color('#00ffbb');
+      material.emissiveIntensity = 0;
+      material.transparent = true;
     }
   }, [materials]);
 
@@ -46,83 +51,81 @@ export const Robot: React.FC<RobotProps> = ({
 
     const p = robotProgressRef.current;
     
-    // Target state determination
     let targetX = 0;
+    let targetY = 0.1;
     let targetRotY = 0;
-    let targetScale = 1.8;
-    let targetProgress = 1;
-    let targetGreen = 0;
+    let targetRotX = 0;
+    let targetScale = 1.9;
+    let targetOpacity = 1;
+    let targetGreen = 0.5;
 
     if (p < 0.2) {
-      // 0. Hero Phase
-      targetX = 0;
-      targetRotY = 0;
-      targetGreen = 0.5;
+      const entryP = Math.min(1, p * 5);
+      targetY = lerp(-2, 0.1, entryP);
+      targetScale = lerp(1.2, 1.9, entryP);
+      targetOpacity = entryP;
+      targetGreen = 0.8;
     } else if (p < 0.45) {
-      // 1. Section 1 (About) - Profile Left, Robot Left
-      targetX = -1.8;
-      targetRotY = Math.PI / 2;
+      targetX = -2.0;
+      targetRotY = Math.PI / 2.2;
       targetGreen = 4;
-    } else if (p < 0.7) {
-      // 2. Section 2 (Features) - Profile Right, Robot Right
-      targetX = 1.8;
-      targetRotY = -Math.PI / 2;
+    } else if (p < 0.75) {
+      targetX = 2.0;
+      targetRotY = -Math.PI / 2.2;
       targetGreen = 2.5;
     } else {
-      // 3. Exit Phase (Before Timeline)
-      const exitP = Math.min(1, (p - 0.7) * 5);
-      targetX = 1.8 + exitP * 10;
+      const exitP = Math.min(1, (p - 0.75) * 4);
+      targetX = 2.0 + exitP * 12;
       targetRotY = -Math.PI / 1.5;
-      targetProgress = 1 - exitP;
-      targetScale = 1.8 * (1 - exitP * 0.5);
-      targetGreen = 2 * (1 - exitP);
+      targetOpacity = 1 - exitP;
+      targetScale = 1.9 * (1 - exitP * 0.4);
+      targetGreen = 0;
     }
 
-    // Strict Lerp Implementation (0.08 factor)
-    stateRef.current.posX += (targetX - stateRef.current.posX) * 0.08;
-    stateRef.current.rotY += (targetRotY - stateRef.current.rotY) * 0.08;
-    stateRef.current.scale += (targetScale - stateRef.current.scale) * 0.08;
-    stateRef.current.opacity += (targetProgress - stateRef.current.opacity) * 0.08;
-    stateRef.current.greenIntensity += (targetGreen - stateRef.current.greenIntensity) * 0.08;
+    targetX += mouseX * 0.4;
+    targetRotY += mouseX * 0.2;
+    targetRotX += (state.mouse.y * -0.15);
+
+    const factor = 0.08;
+    stateRef.current.posX += (targetX - stateRef.current.posX) * factor;
+    stateRef.current.posY += (targetY - stateRef.current.posY) * factor;
+    stateRef.current.rotY += (targetRotY - stateRef.current.rotY) * factor;
+    stateRef.current.rotX += (targetRotX - stateRef.current.rotX) * factor;
+    stateRef.current.scale += (targetScale - stateRef.current.scale) * factor;
+    stateRef.current.opacity += (targetOpacity - stateRef.current.opacity) * factor;
+    stateRef.current.greenIntensity += (targetGreen - stateRef.current.greenIntensity) * factor;
 
     groupRef.current.position.x = stateRef.current.posX;
-    groupRef.current.rotation.y = stateRef.current.rotY + mouseX * 0.1;
+    groupRef.current.position.y = stateRef.current.posY + Math.sin(state.clock.elapsedTime * 1.5) * 0.05;
+    groupRef.current.rotation.y = stateRef.current.rotY;
+    groupRef.current.rotation.x = stateRef.current.rotX;
     groupRef.current.scale.setScalar(stateRef.current.scale);
     groupRef.current.visible = stateRef.current.opacity > 0.01;
 
-    // Pulse effect
-    const pulse = Math.sin(state.clock.elapsedTime * 2) * 0.2 + 0.8;
-    
-    if (materials['Material_MR']) {
-      materials['Material_MR'].emissiveIntensity = stateRef.current.greenIntensity * pulse;
-      materials['Material_MR'].opacity = stateRef.current.opacity;
-      materials['Material_MR'].transparent = true;
+    const material = materials['Material_MR'];
+    if (material) {
+      material.emissiveIntensity = stateRef.current.greenIntensity * (1 + Math.sin(state.clock.elapsedTime * 3) * 0.15);
+      material.opacity = stateRef.current.opacity;
     }
 
     if (headLightRef.current) {
-      headLightRef.current.intensity = stateRef.current.greenIntensity * 2 * pulse;
-      // Position light to emit toward the content side
-      headLightRef.current.position.x = p < 0.45 ? 1 : -1;
+      headLightRef.current.intensity = stateRef.current.greenIntensity * 3;
+      headLightRef.current.position.x = p < 0.45 ? 1.5 : -1.5;
     }
-
-    // Gentle float
-    groupRef.current.position.y = -0.6 + Math.sin(state.clock.elapsedTime * 0.5) * 0.05;
   });
 
   return (
-    <group ref={groupRef} scale={[1.8, 1.8, 1.8]} position={[0, -0.6, 0]}>
-      <primitive object={scene} rotation={[0, 0, 0]} />
-      {/* Dynamic Emissive Source */}
+    <group ref={groupRef}>
+      <primitive object={scene} />
       <pointLight 
         ref={headLightRef} 
         color="#00ffbb" 
         intensity={0} 
-        distance={5} 
-        position={[0, 0, 1]} 
+        distance={6} 
+        position={[0, 0, 1.5]} 
       />
     </group>
   );
 };
 
 useGLTF.preload('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb');
-

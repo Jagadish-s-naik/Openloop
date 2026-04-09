@@ -20,15 +20,29 @@ const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 const easeIn = (t: number) => t * t * t;
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-const CameraRig = () => {
+const CameraRig = ({ robotProgressRef }: { robotProgressRef: React.MutableRefObject<number> }) => {
   const mouse = useMousePosition();
   
   useFrame((state) => {
-    // Parallax logic
-    state.camera.position.x = lerp(state.camera.position.x, mouse.x * 0.5, 0.05);
-    state.camera.position.y = lerp(state.camera.position.y, mouse.y * 0.5, 0.05);
-    state.camera.position.z = lerp(state.camera.position.z, 4.0, 0.05); // Smoothly reset to default Z
-    state.camera.lookAt(0, 0, 0); // Strict focal point
+    const p = robotProgressRef.current;
+    
+    // 1. Mouse Parallax (Controlled shift)
+    const targetX = mouse.x * 0.45;
+    const targetY = mouse.y * 0.45;
+    
+    // 2. Camera Push / Inside System Feel
+    // As we move past the robot (p > 0.75), we push into the depth
+    let targetZ = 3.8;
+    if (p > 0.75) {
+      const pushP = Math.min(1, (p - 0.75) * 5);
+      targetZ = lerp(3.8, 2.0, pushP);
+    }
+
+    state.camera.position.x = lerp(state.camera.position.x, targetX, 0.08);
+    state.camera.position.y = lerp(state.camera.position.y, targetY, 0.08);
+    state.camera.position.z = lerp(state.camera.position.z, targetZ, 0.08);
+    
+    state.camera.lookAt(0, 0, 0); 
   });
   return null;
 };
@@ -63,7 +77,7 @@ const SceneContainer = ({
 }) => {
   return (
     <>
-      <CameraRig />
+      <CameraRig robotProgressRef={robotProgressRef} />
       <SceneLights robotProgressRef={robotProgressRef} />
 
       <Background />

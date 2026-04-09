@@ -1,3 +1,5 @@
+import { Typewriter } from './common/Typewriter';
+
 export const HeroOverlay = () => {
   return (
     <>
@@ -14,11 +16,14 @@ export const HeroOverlay = () => {
       <section id="robot-sections">
         <div id="s1-hero" className="section-overlay">
           <section id="hero">
-            <h1 className="heading-primary hero-title">OPENLOOP</h1>
+            <div className="hero-split-container">
+              <h1 className="hero-split left">OPEN</h1>
+              <h1 className="hero-split right">LOOP</h1>
+            </div>
 
             <div className="hero-bottom-left">
               <p className="body-text-safe">
-                Cinematic autonomous intelligence rendered in real time. Scroll to transition through systems, themes, and final state.
+                <Typewriter text="Cinematic autonomous intelligence rendered in real time. Scroll to transition through systems, themes, and final state." />
               </p>
               <button className="cta-button" type="button">Enter Loop</button>
             </div>
@@ -30,7 +35,7 @@ export const HeroOverlay = () => {
               </div>
               <h3>NOVA-7</h3>
               <p>
-                Secondary synthetic entity synchronized with OPENLOOP phase telemetry and motion diagnostics.
+                <Typewriter text="Secondary synthetic entity synchronized with OPENLOOP phase telemetry and motion diagnostics." />
               </p>
             </aside>
           </section>
@@ -41,7 +46,7 @@ export const HeroOverlay = () => {
             <div className="timeline-label text-reveal">// 002 - ABOUT</div>
             <h2 className="section-heading text-reveal">ABOUT CORE</h2>
             <p className="body-text-safe text-reveal">
-              Synthetic profiles transition to profile view, revealing operational metrics and green-spectrum response telemetry.
+              <Typewriter text="Synthetic profiles transition to profile view, revealing operational metrics and green-spectrum response telemetry." />
             </p>
           </div>
         </div>
@@ -51,9 +56,18 @@ export const HeroOverlay = () => {
             <div className="timeline-label text-reveal">// 003 - FEATURES</div>
             <h2 className="section-heading text-reveal">BACK SYSTEMS</h2>
             <div className="feature-grid">
-              <article className="feature-card text-reveal"><h3>SPINE REACTOR</h3><p>Back panel energy system spikes during 180-degree lock.</p></article>
-              <article className="feature-card text-reveal"><h3>FUSED ALLOY</h3><p>Low-roughness armor maintains high-contrast rim highlights.</p></article>
-              <article className="feature-card text-reveal"><h3>TEMPLE ARRAY</h3><p>Profile-side amber seam detail appears in section transitions.</p></article>
+              <article className="feature-card text-reveal">
+                <h3>SPINE REACTOR</h3>
+                <p><Typewriter text="Back panel energy system spikes during 180-degree lock." /></p>
+              </article>
+              <article className="feature-card text-reveal">
+                <h3>FUSED ALLOY</h3>
+                <p><Typewriter text="Low-roughness armor maintains high-contrast rim highlights." /></p>
+              </article>
+              <article className="feature-card text-reveal">
+                <h3>TEMPLE ARRAY</h3>
+                <p><Typewriter text="Profile-side amber seam detail appears in section transitions." /></p>
+              </article>
             </div>
           </div>
         </div>

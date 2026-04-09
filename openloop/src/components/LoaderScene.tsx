@@ -20,13 +20,13 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
 
   const materials = useMemo(() => ({
     casing: new THREE.MeshStandardMaterial({
-      color: '#2a2a2a',
+      color: '#1a1a1a',
       metalness: 1.0,
-      roughness: 0.15,
+      roughness: 0.1,
     }),
     screen: new THREE.MeshStandardMaterial({
       color: '#000000',
-      metalness: 0.4,
+      metalness: 0.5,
       roughness: 0.1,
       emissive: '#00ccff',
       emissiveIntensity: 0,
@@ -44,85 +44,87 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
   }), []);
 
   const geos = useMemo(() => ({
-    // Reduced base and screen dimensions slightly for refined look
-    base: new THREE.BoxGeometry(2.2, 0.08, 1.6),
-    lid: new THREE.BoxGeometry(2.2, 1.5, 0.06),
-    screen: new THREE.PlaneGeometry(2.05, 1.35),
+    // Ultra-thin realistic laptop base and lid
+    base: new THREE.BoxGeometry(2.2, 0.04, 1.6),
+    lid: new THREE.BoxGeometry(2.2, 1.55, 0.04),
+    screen: new THREE.PlaneGeometry(2.1, 1.45),
     portal: new THREE.CircleGeometry(0.2, 64),
     // Progress bar geometry
-    progressBg: new THREE.PlaneGeometry(1.2, 0.05),
-    progressBar: new THREE.PlaneGeometry(1.2, 0.05),
+    progressBg: new THREE.PlaneGeometry(1.2, 0.03),
+    progressBar: new THREE.PlaneGeometry(1.2, 0.03),
   }), []);
 
   useFrame((state) => {
     if (!laptopGroupRef.current || !hingeRef.current) return;
 
-    // --- LOADER PHASE ---
+    // --- 1. LOADER PHASE ---
     if (phase === 'loader') {
-      // Start at 0.5 scale instead of 0 to avoid initial black screen
-      const scaleBase = 0.4;
-      laptopGroupRef.current.scale.setScalar(lerp(scaleBase, 4.2, Math.pow(progress, 1.5)));
-      laptopGroupRef.current.rotation.y = lerp(-Math.PI / 8, 0, progress);
+      const scaleBase = 0.5;
+      laptopGroupRef.current.scale.setScalar(lerp(scaleBase, 4.0, Math.pow(progress, 1.5)));
+      laptopGroupRef.current.rotation.y = lerp(-Math.PI / 10, 0, progress); // Slight angle
       laptopGroupRef.current.position.z = lerp(-3, 0, progress);
-      laptopGroupRef.current.position.y = -1.0;
+      laptopGroupRef.current.position.y = -0.5;
     }
 
-    // --- INTRO PHASE ---
+    // --- 2. INTRO PHASE (Cinematic Sequence) ---
     if (phase === 'intro') {
       if (introTimerRef.current === null) introTimerRef.current = state.clock.elapsedTime;
       const elapsed = state.clock.elapsedTime - introTimerRef.current;
       const introDuration = 4.0; 
-      const introProgress = Math.min(elapsed / introDuration, 1); 
+      const t = Math.min(elapsed / introDuration, 1);
 
-      // 1. Hinge opens
-      hingeRef.current.rotation.x = lerp(0, Math.PI * 0.65, Math.min(introProgress * 1.8, 1));
+      // Sequence: 0-1s (angled) -> 1-2.5s (rotate + open) -> 2.5-3.5s (glow) -> 3.5-4s (portal)
 
-      // 2. Screen emissive
-      if (screenMaterialRef.current) {
-        screenMaterialRef.current.emissiveIntensity = lerp(0.5, 4.5, Math.max(0, (introProgress - 0.2) * 2));
-      }
-      if (textMaterialRef.current) {
-        textMaterialRef.current.emissiveIntensity = lerp(0, 20, Math.max(0, (introProgress - 0.3) * 2));
-      }
-
-      // 3. Portal zoom
-      if (portalRef.current) {
-        const portalP = Math.max(0, (introProgress - 0.6) * 2.5); 
-        portalRef.current.scale.setScalar(lerp(0, 140, Math.pow(portalP, 3.5)));
-        materials.portal.opacity = lerp(0, 1, Math.min(portalP * 2, 1));
+      // Stage 1 & 2: Rotate to front and Open hinge
+      if (t < 0.6) {
+        const p = Math.min(t / 0.6, 1);
+        laptopGroupRef.current.rotation.y = lerp(0, 0, p); 
+        hingeRef.current.rotation.x = lerp(0, Math.PI * 0.62, p);
+      } else {
+        hingeRef.current.rotation.x = Math.PI * 0.62;
       }
 
-      // 4. Camera Zoom
-      if (introProgress > 0.75) {
-        const zoomP = (introProgress - 0.75) * 4;
-        state.camera.position.z = lerp(6.0, -2.5, Math.pow(zoomP, 3));
+      // Stage 3: Glow ramp
+      if (t > 0.4 && t < 0.8) {
+        const p = (t - 0.4) / 0.4;
+        if (screenMaterialRef.current) screenMaterialRef.current.emissiveIntensity = lerp(0.5, 4.0, p);
+        if (textMaterialRef.current) textMaterialRef.current.emissiveIntensity = lerp(0, 25, p);
+      }
+
+      // Stage 4: Portal Focus on second 'O'
+      if (t > 0.75) {
+        const p = Math.min((t - 0.75) / 0.25, 1);
+        if (portalRef.current) {
+          portalRef.current.scale.setScalar(lerp(0, 160, Math.pow(p, 4)));
+          materials.portal.opacity = lerp(0, 1, Math.min(p * 2, 1));
+        }
+        // Camera enters portal
+        state.camera.position.z = lerp(6.0, -2.5, Math.pow(p, 3));
       }
     }
 
-    const bounce = Math.sin(state.clock.elapsedTime * 1.2) * 0.04;
-    laptopGroupRef.current.position.y = -1.0 + bounce;
+    const bounce = Math.sin(state.clock.elapsedTime * 1.5) * 0.03;
+    laptopGroupRef.current.position.y = -0.5 + bounce;
   });
 
   return (
     <group>
       <PerspectiveCamera makeDefault position={[0, 0, 6.0]} />
-      <Environment preset="city" />
+      <Environment preset="night" />
       
       <group ref={laptopGroupRef}>
+        {/* Base Mesh */}
         <mesh geometry={geos.base} material={materials.casing} position={[0, 0, 0]} />
         
-        <group ref={hingeRef} position={[0, 0.04, -0.8]}>
-          <group position={[0, 0.75, 0]}>
+        {/* Hinge Linkage */}
+        <group ref={hingeRef} position={[0, 0.02, -0.8]}>
+          <group position={[0, 0.775, 0]}>
             <mesh geometry={geos.lid} material={materials.casing} />
-            <mesh 
-              geometry={geos.screen} 
-              position={[0, 0, 0.04]} 
-              rotation={[0, 0, 0]}
-            >
+            <mesh geometry={geos.screen} position={[0, 0, 0.021]}>
               <meshStandardMaterial ref={screenMaterialRef} {...materials.screen} />
             </mesh>
             
-            <group position={[0, 0, 0.05]}>
+            <group position={[0, 0, 0.03]}>
               <Text
                 fontSize={0.22}
                 color="#ffffff"
@@ -130,7 +132,6 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
                 anchorY="middle"
                 maxWidth={2}
                 textAlign="center"
-                // Using a more reliable font link or system font fallback if failed
                 font="https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/audiowide/Audiowide-Regular.ttf"
                 letterSpacing={0.15}
               >
@@ -138,10 +139,10 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
                 <meshStandardMaterial ref={textMaterialRef} {...materials.text} />
               </Text>
 
-              {/* Interactive Loading Bar */}
+              {/* Loader HUD */}
               <group position={[0, -0.3, 0.01]}>
                 <mesh geometry={geos.progressBg}>
-                  <meshBasicMaterial color="#111111" />
+                  <meshBasicMaterial color="#111111" transparent opacity={0.5} />
                 </mesh>
                 <mesh 
                   geometry={geos.progressBar} 
@@ -152,7 +153,8 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
                 </mesh>
               </group>
               
-              <group ref={portalRef} position={[0.27, 0, 0.01]} scale={[0, 0, 0]}>
+              {/* Cinematic Portal Focus on second 'O' (approx x=0.25) */}
+              <group ref={portalRef} position={[0.26, 0, 0.01]} scale={[0, 0, 0]}>
                 <mesh geometry={geos.portal} material={materials.portal} />
               </group>
             </group>
@@ -160,10 +162,9 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
         </group>
       </group>
       
-      <ambientLight intensity={2.0} />
-      <pointLight position={[5, 10, 5]} intensity={8} />
-      <pointLight position={[-5, 5, 5]} intensity={5} color="#00f0ff" />
-      <pointLight position={[0, 2, 2]} intensity={4} color="#ffffff" />
+      <ambientLight intensity={1.5} />
+      <pointLight position={[5, 10, 5]} intensity={12} />
+      <pointLight position={[-5, 5, 5]} intensity={8} color="#00f0ff" />
     </group>
   );
 };

@@ -51,29 +51,34 @@ export const Background: React.FC = () => {
 
     // 1. Particle Motion & Glitter
     if (pointsRef.current) {
-      pointsRef.current.rotation.y = t * 0.005;
+      pointsRef.current.rotation.y = t * 0.003;
+      pointsRef.current.rotation.x = Math.sin(t * 0.1) * 0.05;
       
-      // Access pointsMaterial for global flicker
       const mat = pointsRef.current.material as THREE.PointsMaterial;
-      mat.opacity = 0.2 + Math.sin(t * 0.5) * 0.1;
+      // Global subtle breathe
+      mat.opacity = 0.25 + Math.sin(t * 0.4) * 0.05;
     }
 
-    // 2. Grid Movement
+    // 2. Grid Movement (Forward crawl)
     if (gridRef.current) {
-      gridRef.current.position.z = (t * 0.2) % 2; // Subtle forward crawl
-      gridRef.current.position.y = -6 + Math.sin(t * 0.3) * 0.05;
+      gridRef.current.position.z = (t * 0.4) % 4; // Faster crawl
+      gridRef.current.position.y = -6.5;
     }
 
-    // 3. Streaks Movement
+    // 3. Streaks Movement (Diagonal data flow)
     if (streaksRef.current) {
       streaksRef.current.children.forEach((streak, i) => {
         const data = streaks[i];
-        streak.position.y -= data.speed;
-        streak.position.x += data.speed * 0.5;
+        streak.position.y -= data.speed * 1.5;
+        streak.position.x += data.speed * 0.8;
         
-        if (streak.position.y < -20) {
-          streak.position.y = 20;
-          streak.position.x = (Math.random() - 0.5) * 40;
+        // Flicker streaks
+        const streakMat = (streak as THREE.Mesh).material as THREE.MeshBasicMaterial;
+        streakMat.opacity = 0.1 + Math.random() * 0.15;
+
+        if (streak.position.y < -25) {
+          streak.position.y = 25;
+          streak.position.x = (Math.random() - 0.5) * 50;
         }
       });
     }
