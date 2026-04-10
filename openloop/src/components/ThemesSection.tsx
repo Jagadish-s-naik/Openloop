@@ -13,76 +13,79 @@ const CARDS_DATA = [
 
 export const ThemesSection: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
   const p = scrollProgress;
-  // Local Range: 0.30 -> 0.55
-  const isInRange = p >= 0.30 && p <= 0.55;
+  // Local Range: 0.30 -> 0.55 — GSAP controls outer opacity, we only drive card animations
   const lp = clamp((p - 0.30) / (0.55 - 0.30), 0, 1);
-  
-  // Section entrance opacity
-  let sectionOp = 0;
-  const ramp = 0.10;
-  if (lp < ramp) sectionOp = lp / ramp;
-  else if (lp <= (1 - ramp)) sectionOp = 1;
-  else sectionOp = (1 - lp) / ramp;
-
-  const themeP = clamp(lp / 0.25, 0, 1); // Full entry by 25% of the range
+  const themeP = clamp(lp / 0.7, 0, 1); // Card stagger driver
 
   return (
     <div 
       id="theme-section" 
-      className="section-overlay"
+      className="themes-premium-container"
       style={{ 
-        opacity: sectionOp,
-        visibility: sectionOp > 0.001 ? 'visible' : 'hidden',
-        pointerEvents: sectionOp > 0.5 ? 'auto' : 'none',
-        zIndex: sectionOp > 0.05 ? 100 : 10
+        position: 'fixed',
+        inset: 0,
+        width: '100%',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 100,
+        pointerEvents: 'none'
       }}
     >
-      <div className="theme-label">THEMES</div>
-      <div className="themes-relative-wrapper">
-        {CARDS_DATA.map((card, index) => {
-          const staggerP = clamp((themeP - index * 0.1) / 0.7, 0, 1);
-          
-          let x = 0;
-          let scale = 1;
-          const cardZIndex = 110 + index;
-          
-          if (staggerP < 1.0) {
-            // Slide in from further left to their centered positions
-            const targetX = (index - (CARDS_DATA.length - 1) / 2) * 22; // Spread cards across center
-            x = lerp(-100, targetX, easeOut(staggerP));
-            scale = lerp(1.1, 1, staggerP);
-          } else {
-            x = (index - (CARDS_DATA.length - 1) / 2) * 22;
-            scale = 1;
-          }
+      <div className="themes-background-decor">
+        <div className="blob blob-1" />
+        <div className="blob blob-2" />
+        <div className="noise-overlay" />
+      </div>
 
-          return (
-            <div
-              key={card.id}
-              id={`card-${index + 1}`}
-              className="theme-card"
-              style={{
-                top: '50%',
-                left: '50%',
-                transform: `translateX(calc(${x}vw - 50%)) translateY(-50%) scale(${scale})`,
-                opacity: clamp(sectionOp * 2, 0, 1),
-                zIndex: cardZIndex,
-                visibility: sectionOp > 0.1 ? 'visible' : 'hidden'
-              }}
-            >
-              <div className="card-top-accent" />
-              <div className="card-content-wrap">
-                <span className="card-index">0{index + 1}</span>
-                <h3 className="card-title">{card.title}</h3>
-                <div className="card-divider" />
-                <p className="card-description">
-                  Innovation and strategy for {card.title} in a high-intensity hackathon environment.
-                </p>
+      <div className="themes-content-wrapper">
+        <div className="themes-header">
+          <span className="themes-tag">// SYSTEM_CATEGORIES</span>
+          <h2 className="themes-main-title">THEMES</h2>
+          <div className="themes-header-line" />
+        </div>
+
+        <div className="themes-grid">
+          {CARDS_DATA.map((card, index) => {
+            // Calculate staggered entry based on themeP
+            // Delay each card by 0.1
+            const cardP = clamp((themeP - index * 0.1) / 0.6, 0, 1);
+            const translateY = lerp(40, 0, easeOut(cardP));
+            const opacity = cardP;
+
+            return (
+              <div
+                key={card.id}
+                className="theme-card-premium"
+                style={{
+                  transform: `translateY(${translateY}px)`,
+                  opacity: opacity,
+                  transition: 'transform 0.1s ease-out, opacity 0.1s ease-out'
+                }}
+              >
+                <div className="card-glass-glow" />
+                <div className="card-top-indicator">
+                  <span className="card-hex-id">0{index + 1}</span>
+                  <div className="card-status-dot" />
+                </div>
+                
+                <div className="card-main-content">
+                  <h3 className="card-title-premium">{card.title}</h3>
+                  <div className="card-accent-bar" />
+                  <p className="card-desc-premium">
+                    {index === 0 && "Architecting high-fidelity tools for ultra-efficient development cycles and autonomous learning loops."}
+                    {index === 1 && "Leveraging predictive intelligence to redefine patient care and medical response systems."}
+                    {index === 2 && "Synchronizing secure digital assets with near-zero latency for the future of global exchange."}
+                    {index === 3 && "Unlocking cross-system synergy through unrestricted ideation and collaborative fusion."}
+                  </p>
+                </div>
+
+                <div className="card-corner-decor" />
               </div>
-              <div className="card-border-glow" />
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );

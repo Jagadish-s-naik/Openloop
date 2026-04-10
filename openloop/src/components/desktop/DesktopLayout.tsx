@@ -73,9 +73,12 @@ export default function DesktopLayout() {
       sections.forEach((selector, index) => {
         const el = document.querySelector<HTMLElement>(selector);
         if (el) {
-          el.style.opacity = index === 0 ? '1' : '0';
-          el.style.visibility = index === 0 ? 'visible' : 'hidden';
+          // All sections start hidden; GSAP onUpdate will handle them
+          // #theme-section visibility is also driven by GSAP scroll progress
+          el.style.opacity = '0';
+          el.style.visibility = 'hidden';
           el.style.display = 'block';
+          el.style.transition = 'none'; // Prevent CSS transitions fighting GSAP
         }
       });
 
@@ -96,9 +99,9 @@ export default function DesktopLayout() {
               { name: 'ABOUT', start: 0.15, end: 0.30, id: '#s2-about' },
               { name: 'THEMES', start: 0.30, end: 0.55, id: '#theme-section' },
               { name: 'TIMELINE', start: 0.55, end: 0.75, id: '#s4-timeline' },
-              { name: 'SPONSORS', start: 0.75, end: 0.88, id: '#sponsors-section' },
-              { name: 'CONTACT', start: 0.88, end: 0.96, id: '#contact-section' },
-              { name: 'FOOTER', start: 0.96, end: 1.00, id: '#footer-section' },
+              { name: 'SPONSORS', start: 0.75, end: 0.80, id: '#sponsors-section' },
+              { name: 'CONTACT', start: 0.80, end: 0.94, id: '#contact-section' },
+              { name: 'FOOTER', start: 0.94, end: 1.00, id: '#footer-section' },
             ];
 
             // No manual cutoff - handled by Robot component internally
@@ -142,9 +145,9 @@ export default function DesktopLayout() {
               }
 
               // Specific sub-animations
-              if (range.name === 'THEMES' && op > 0) {
-                const themeP = clamp(lp / 0.25, 0, 1);
-                themeProgressRef.current = themeP;
+              if (range.name === 'THEMES') {
+                // Always update themeProgressRef so ThemesSection receives live scroll data
+                themeProgressRef.current = lp;
               }
 
               if (range.name === 'FOOTER' && op > 0) {

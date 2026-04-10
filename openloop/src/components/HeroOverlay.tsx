@@ -14,8 +14,8 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   const isAboutActive = p >= 0.15 && p < 0.30;
   const isThemesActive = p >= 0.30 && p < 0.55;
   const isTimelineActive = p >= 0.55 && p < 0.75;
-  const isSponsorsActive = p >= 0.75 && p < 0.88;
-  const isContactActive = p >= 0.88 && p < 0.96;
+  const isSponsorsActive = p >= 0.75 && p < 0.80;
+  const isContactActive = p >= 0.80 && p < 0.94;
 
   return (
     <>
@@ -99,24 +99,55 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
           {/* 2D Content removed - 3D Timeline takes over the viewport */}
         </section>
 
-        {/* PHASE 6: CONTACT (ROBOT LEFT / TEXT RIGHT) */}
-        <div id="contact-section" className="section-overlay">
-          <div className="composition-grid">
-            <div className="content-right">
-              <div className="timeline-label">// 006 - CONTACT</div>
-              <h2 className="section-heading">GET IN TOUCH</h2>
-              <div className="body-text-safe">
+        {/* PHASE 6: CONTACT */}
+        <div id="contact-section" className="section-overlay contact-fullscreen">
+          <div className="contact-inner">
+            <div className="contact-header">
+              <span className="timeline-label">// 006 — CONTACT</span>
+              <h2 className="section-heading contact-title">GET IN TOUCH</h2>
+              <p className="contact-subtitle">
                 {isContactActive && (
-                  <div className="reveal-text-fast">
-                    System link established. Our team is ready to assist with high-fidelity integration queries and partnership details.
-                  </div>
+                  <span className="reveal-text-fast">
+                    System link established. Reach any of our team leads directly.
+                  </span>
                 )}
-              </div>
-              <div className="contact-details" style={{ marginTop: '3rem' }}>
-                <div className="hud-line" />
-                <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '1rem' }}>CONTACT@OPENLOOP.IO</h3>
-                <div className="hud-label">AVAILABILITY: 24/7_SYNC</div>
-              </div>
+              </p>
+            </div>
+
+            <div className="contact-cards-grid">
+              {[
+                { name: 'Radhesh Pai',     role: 'Lead Organizer',       email: 'radhesh@openloop.dev',   phone: '+91 98765 43210', initials: 'RP' },
+                { name: 'Mohammed',         role: 'Secretary',             email: 'mohammed@openloop.dev',  phone: '+91 87654 32109', initials: 'MO' },
+                { name: 'Jagadhish Naik',  role: 'Web Development Head',  email: 'jagadhish@openloop.dev', phone: '+91 76543 21098', initials: 'JN' },
+              ].map((person, i) => (
+                <div key={i} className="contact-card" style={{ animationDelay: `${i * 0.12}s` }}>
+                  <div className="contact-card-glow" />
+                  <div className="contact-avatar">
+                    <span className="contact-initials">{person.initials}</span>
+                    <div className="contact-avatar-ring" />
+                  </div>
+                  <div className="contact-card-info">
+                    <h3 className="contact-name">{person.name}</h3>
+                    <span className="contact-role">{person.role}</span>
+                    <div className="contact-divider" />
+                    <a href={`mailto:${person.email}`} className="contact-link">
+                      <span className="contact-link-icon">@</span>
+                      {person.email}
+                    </a>
+                    <div className="contact-link">
+                      <span className="contact-link-icon">#</span>
+                      {person.phone}
+                    </div>
+                  </div>
+                  <div className="contact-card-corner" />
+                </div>
+              ))}
+            </div>
+
+            <div className="contact-footer-row">
+              <div className="hud-line" style={{ width: '60px' }} />
+              <span className="hud-label">AVAILABILITY: 24/7_SYNC</span>
+              <div className="hud-line" style={{ width: '60px' }} />
             </div>
           </div>
         </div>

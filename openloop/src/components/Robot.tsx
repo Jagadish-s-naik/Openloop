@@ -122,8 +122,8 @@ export const Robot: React.FC<RobotProps> = ({
       targetScale = 1.7;
       targetGreen = 2;
     }
-    // CONTACT (0.80 -> 0.92): Stable Left
-    else if (p < 0.92) {
+    // CONTACT (0.80 -> 0.94): Stable Left
+    else if (p < 0.94) {
       targetOpacity = 1;
       targetX = -3.5;
       targetRotY = Math.PI / 2;
@@ -131,9 +131,9 @@ export const Robot: React.FC<RobotProps> = ({
       targetScale = 1.7;
       targetGreen = 2;
     }
-    // FOOTER (0.92 -> 1.00): Exit & Push Back (HIDDEN)
+    // FOOTER (0.94 -> 1.00): Exit & Push Back (HIDDEN)
     else {
-      const fp = clamp((p - 0.92) / 0.08, 0, 1);
+      const fp = clamp((p - 0.94) / 0.06, 0, 1);
       targetOpacity = 1 - fp;
       targetZ = lerp(0, -10, fp);
       targetX = -3.5;

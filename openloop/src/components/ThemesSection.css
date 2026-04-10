@@ -1,108 +1,213 @@
-#theme-section {
-  position: absolute;
-  inset: 0;
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Audiowide&display=swap');
+
+.themes-premium-container {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
   width: 100%;
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 100;
   overflow: hidden;
-  pointer-events: none;
-  z-index: 10;
 }
 
-.themes-relative-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.theme-card {
+.themes-background-decor {
   position: absolute;
-  width: 350px;
-  height: 500px;
-  background: rgba(10, 10, 10, 0.98);
-  border: 1px solid rgba(198, 255, 0, 0.2);
-  box-shadow: 0 0 80px rgba(0, 0, 0, 0.95), inset 0 0 30px rgba(198, 255, 0, 0.05);
-  border-radius: 8px;
-  overflow: hidden;
-  transition: opacity 0.5s ease;
-  pointer-events: auto;
-  padding: 3.5rem;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+}
+
+.blob-1 {
+  background: radial-gradient(circle, #C6FF00 0%, transparent 70%);
+  top: -10%;
+  left: -10%;
+}
+
+.blob-2 {
+  background: radial-gradient(circle, #00f0ff 0%, transparent 70%);
+  bottom: -10%;
+  right: -10%;
+}
+
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+  filter: contrast(120%) brightness(100%);
+  opacity: 0.05;
+}
+
+.themes-content-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 40px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
-.theme-card:hover {
-  border-color: #C6FF00;
-  box-shadow: 0 0 100px rgba(198, 255, 0, 0.3);
+.themes-header {
+  text-align: center;
+  margin-bottom: 60px;
+  position: relative;
 }
 
-.card-top-accent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 40px;
-  height: 4px;
-  background: #C6FF00;
-}
-
-.card-index {
+.themes-tag {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 1rem;
+  font-size: 11px;
   color: #C6FF00;
-  opacity: 0.8;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.4em;
+  opacity: 0.7;
   display: block;
-  margin-bottom: 1rem;
+  margin-bottom: 12px;
 }
 
-.card-title {
+.themes-main-title {
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
-  font-size: 2.5rem;
+  font-size: clamp(48px, 6vw, 84px);
+  letter-spacing: 0.2em;
   color: #ffffff;
-  margin-bottom: 1.5rem;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  text-shadow: 0 0 30px rgba(198, 255, 0, 0.3);
+}
+
+.themes-header-line {
+  width: 80px;
+  height: 2px;
+  background: #C6FF00;
+  margin: 0 auto;
+  box-shadow: 0 0 10px #C6FF00;
+}
+
+.themes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 32px;
+  width: 100%;
+}
+
+.theme-card-premium {
+  position: relative;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 40px;
+  backdrop-filter: blur(20px);
+  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.theme-card-premium:hover {
+  transform: translateY(-8px) scale(1.02) !important;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(198, 255, 0, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+              0 0 20px rgba(198, 255, 0, 0.1);
+}
+
+.card-glass-glow {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle at top right, rgba(198, 255, 0, 0.1), transparent 70%);
+  pointer-events: none;
+}
+
+.card-top-indicator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.card-hex-id {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  color: #C6FF00;
+  letter-spacing: 0.1em;
+}
+
+.card-status-dot {
+  width: 6px;
+  height: 6px;
+  background: #C6FF00;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #C6FF00;
+}
+
+.card-title-premium {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  color: #ffffff;
+  margin-bottom: 16px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
-.card-divider {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(90deg, #C6FF00, transparent);
-  margin-bottom: 2rem;
-  opacity: 0.3;
+.card-accent-bar {
+  width: 32px;
+  height: 2px;
+  background: #C6FF00;
+  margin-bottom: 20px;
+  transition: width 0.3s ease;
 }
 
-.card-description {
+.theme-card-premium:hover .card-accent-bar {
+  width: 64px;
+}
+
+.card-desc-premium {
   font-family: 'Inter', sans-serif;
   font-weight: 300;
-  font-size: 1.1rem;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.6;
 }
 
-.card-border-glow {
+.card-corner-decor {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(circle at top right, rgba(198, 255, 0, 0.1), transparent 70%);
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border-right: 1px solid rgba(198, 255, 0, 0.2);
+  border-bottom: 1px solid rgba(198, 255, 0, 0.2);
+  border-bottom-right-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.theme-label {
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: 'Rajdhani', sans-serif;
-  font-weight: 700;
-  font-size: 8rem;
-  color: rgba(255, 255, 255, 0.03);
-  pointer-events: none;
-  z-index: -1;
-  letter-spacing: 0.5em;
+.theme-card-premium:hover .card-corner-decor {
+  opacity: 1;
+}
+
+@media (max-width: 1000px) {
+  .themes-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .themes-main-title {
+    font-size: 40px;
+  }
 }
