@@ -4,18 +4,20 @@ import './ThemesSection.css';
 const CARDS_DATA = [
   { id: 1, title: 'SYNTHESIS' },
   { id: 2, title: 'INTEGRATION' },
-  { id: 3, title: 'EXPANSION' }
+  { id: 3, title: 'EXPANSION' },
+  { id: 4, title: 'AUTONOMY' }
 ];
 
 export const ThemesSection: React.FC<{ scrollProgress: number }> = () => {
   return (
     <div id="theme-section" className="section-overlay">
+      <div className="theme-label">THEMES</div>
       <div className="themes-relative-wrapper">
         {CARDS_DATA.map((card, index) => (
           <div
             key={card.id}
             id={`card-${index + 1}`}
-            className="theme-card-premium"
+            className="theme-card"
           >
             <div className="card-top-accent" />
             <div className="card-content-wrap">

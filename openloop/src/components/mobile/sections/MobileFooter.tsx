@@ -37,8 +37,7 @@ export const MobileFooter: React.FC = () => {
       <div ref={brandRef} className="footer-brand">
         <div className="footer-title-wrap">
           <span className="footer-title">
-            <span style={{ color: '#ffffff' }}>OPEN</span>
-            <span style={{ color: '#C6FF00' }}>LOOP</span>
+           <span style={{ backgroundImage: "linear-gradient(to bottom, #d9ed91ff, #8cef56ff)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>OPEN LOOP</span>
           </span>
         </div>
         <div className="footer-year-wrap">

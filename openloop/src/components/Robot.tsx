@@ -73,7 +73,7 @@ export const Robot: React.FC<RobotProps> = ({
     // 1. HERO (0.00 -> 0.15) - Entrance
     if (p < 0.15) {
       const lp = p / 0.15;
-      targetOpacity = lp < 0.2 ? lp / 0.2 : 1;
+      targetOpacity = 1;
       targetX = 0;
       targetY = lerp(-1, 0, lp);
       targetRotY = 0;
@@ -82,7 +82,8 @@ export const Robot: React.FC<RobotProps> = ({
     else if (p < 0.30) {
       const lp = (p - 0.15) / 0.15;
       targetOpacity = 1;
-      targetX = lerp(0, -2.4, easeInOut(lp));
+      targetX = lerp(0, -3.5, easeInOut(lp));
+      targetScale = lerp(2.0, 1.7, easeInOut(lp));
       targetRotY = lerp(0, Math.PI / 2, easeInOut(lp));
       targetBeam = lp > 0.5 ? (lp - 0.5) * 2 : 0;
       targetGreen = 2 + targetBeam * 3;

@@ -22,75 +22,7 @@ import '../../App.css';
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-const CameraRig = ({ robotProgressRef }: { robotProgressRef: React.MutableRefObject<number> }) => {
-  const mouse = useMousePosition();
-  
-  useFrame((state) => {
-    const p = robotProgressRef.current;
-    
-    // 1. Mouse Parallax (Controlled shift)
-    const targetX = mouse.x * 0.45;
-    const targetY = mouse.y * 0.45;
-    
-    // 2. Camera Push / Inside System Feel
-    let targetZ = 3.8;
-    if (p > 0.75) {
-      const pushP = Math.min(1, (p - 0.75) * 5);
-      targetZ = lerp(3.8, 2.0, pushP);
-    }
 
-    state.camera.position.x = lerp(state.camera.position.x, targetX, 0.08);
-    state.camera.position.y = lerp(state.camera.position.y, targetY, 0.08);
-    state.camera.position.z = lerp(state.camera.position.z, targetZ, 0.08);
-    
-    state.camera.lookAt(0, 0, 0); 
-  });
-  return null;
-};
-
-const SceneLights = ({ robotProgressRef: _robotProgressRef }: { robotProgressRef: React.MutableRefObject<number> }) => {
-  return (
-    <>
-      <directionalLight color="#ffffff" intensity={2.0} position={[0, 2, -4]} />
-      <directionalLight color="#C6FF00" intensity={0.5} position={[-5, 1, -2]} />
-      <directionalLight color="#AFFF00" intensity={0.5} position={[5, 0, -1]} />
-      <directionalLight color="#0a1200" intensity={0.4} position={[0, 0, 5]} />
-      <ambientLight color="#000000" intensity={0.2} />
-      <pointLight color="#C6FF00" intensity={1.2} distance={8} position={[0, -3, 0]} />
-    </>
-  );
-};
-
-const SceneContainer = ({
-  scrollVal,
-  robotProgressRef,
-  themeProgressRef,
-  mouseX,
-  phase,
-}: {
-  scrollVal: number;
-  robotProgressRef: React.MutableRefObject<number>;
-  themeProgressRef: React.MutableRefObject<number>;
-  mouseX: number;
-  phase: string;
-}) => {
-  return (
-    <>
-      <CameraRig robotProgressRef={robotProgressRef} />
-      <SceneLights robotProgressRef={robotProgressRef} />
-
-      <Background scrollVal={scrollVal} />
-      <Timeline3D scrollProgress={robotProgressRef.current} />
-      <HeroScene
-        scrollVal={scrollVal}
-        robotProgressRef={robotProgressRef}
-        themeProgressRef={themeProgressRef}
-        mouseX={mouseX}
-        phase={phase}
-      />
-    </>
-  );
-};
 
 export default function DesktopLayout() {
   const rawScroll = useScrollProgress();
@@ -183,7 +115,7 @@ export default function DesktopLayout() {
             // 2. Debug HUD Update
             const hud = document.querySelector<HTMLElement>('#debug-hud');
             if (hud) {
-              const active = ranges.find(r => p >= r.start && p < r.end) || ranges[0];
+              const active = ranges.find(r => p >= r.start && p <= r.end) || ranges[ranges.length - 1];
               hud.innerText = `P: ${p.toFixed(3)} | ${active.name}`;
             }
 
@@ -205,29 +137,39 @@ export default function DesktopLayout() {
 
               el.style.opacity = String(op);
               el.style.visibility = op > 0.001 ? 'visible' : 'hidden';
-              el.style.pointerEvents = op > 0.9 ? 'auto' : 'none';
+              el.style.pointerEvents = op > 0.5 ? 'auto' : 'none';
 
               // Specific sub-animations
               if (range.name === 'THEMES' && op > 0) {
                 const themeP = clamp((lp - 0.2) / 0.6, 0, 1); // use middle 60% for cards
                 themeProgressRef.current = themeP;
                 
-                cards.forEach((card, i) => {
+                // Re-gather cards if they were missed during initial setup
+                const activeCards = (cards.length > 0 && cards.length === 4) ? cards : (['#card-1', '#card-2', '#card-3', '#card-4']
+                  .map((id) => document.querySelector<HTMLElement>(id))
+                  .filter((el): el is HTMLElement => Boolean(el)));
+
+                activeCards.forEach((card, i) => {
                   const perCard = 0.2;
-                  const cardStart = i * perCard * 0.5;
-                  const cardP = clamp((themeP - cardStart) / 0.4, 0, 1);
+                  const cardStart = i * perCard * 0.4; // Slightly tighter overlap
+                  const cardP = clamp((themeP - cardStart) / 0.35, 0, 1);
                   
                   let x = 0;
                   let scale = 1;
                   let zIndex = 10 + i;
                   
-                  if (themeP < 0.6) {
-                    x = lerp(-120, -5 * (cards.length - 1 - i), easeOut(cardP));
+                  if (themeP < 0.5) {
+                    // Entry from side
+                    x = lerp(-140, -12 * (activeCards.length - 1 - i), easeOut(cardP));
                     scale = lerp(1.1, 1 - i * 0.04, cardP);
                   } else {
-                    const assembleP = clamp((themeP - 0.6) / 0.4, 0, 1);
-                    const gridPositions = [-35, 0, 35];
-                    x = lerp(-5 * (cards.length - 1 - i), gridPositions[i], easeInOut(assembleP));
+                    // Grid assembly
+                    const assembleP = clamp((themeP - 0.5) / 0.5, 0, 1);
+                    // Adjusted grid positions for 4 wider 500px cards
+                    // From left to right: -60, -20, 20, 60? 
+                    // Let's use 38vw spacing
+                    const gridPositions = [-60, -20, 20, 60];
+                    x = lerp(-12 * (activeCards.length - 1 - i), gridPositions[i], easeInOut(assembleP));
                   }
                   
                   card.style.top = '50%';
@@ -235,6 +177,7 @@ export default function DesktopLayout() {
                   card.style.transform = `translateX(calc(${x}vw - 50%)) translateY(-50%) scale(${scale})`;
                   card.style.opacity = String(clamp(op * 2, 0, 1));
                   card.style.zIndex = String(zIndex);
+                  card.style.visibility = op > 0.1 ? 'visible' : 'hidden'; // Force visibility
                 });
               }
 
@@ -287,22 +230,19 @@ export default function DesktopLayout() {
             gl.domElement.style.pointerEvents = 'none';
           }}
         >
-          <Suspense fallback={
-            showRobot ? (
-              <mesh>
-                <sphereGeometry args={[1, 32, 32]} />
-                <meshBasicMaterial color="#0a1a00" wireframe />
-              </mesh>
-            ) : null
-          }>
-            <SceneContainer
-              scrollVal={rawScroll}
-              robotProgressRef={robotProgressRef}
-              themeProgressRef={themeProgressRef}
-              mouseX={mouse.x}
-              phase={phase}
-              isVisible={showRobot}
-            />
+          <Suspense fallback={null}>
+            {(phase === 'loader' || phase === 'intro') ? (
+              <LoaderScene progress={loaderProgress} phase={phase} />
+            ) : (
+              <SceneContainer
+                scrollVal={rawScroll}
+                robotProgressRef={robotProgressRef}
+                themeProgressRef={themeProgressRef}
+                mouseX={mouse.x}
+                phase={phase}
+                isVisible={showRobot}
+              />
+            ) }
           </Suspense>
         </Canvas>
       </div>
