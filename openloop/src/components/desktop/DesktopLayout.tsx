@@ -29,7 +29,6 @@ export default function DesktopLayout() {
   const robotProgressRef = useRef(0);
   const themeProgressRef = useRef(0);
   const [scrollEnabled, setScrollEnabled] = useState(false);
-  const [showRobot, setShowRobot] = useState(true);
 
   useEffect(() => {
     if (phase === 'loader' || phase === 'intro') {
@@ -102,10 +101,7 @@ export default function DesktopLayout() {
               { name: 'FOOTER', start: 0.96, end: 1.00, id: '#footer-section' },
             ];
 
-            // Reactive cutoff for 3D visibility (Show/Hide/Show/Hide)
-            const isRobotVisibleRange = (p < 0.36) || (p >= 0.75 && p < 1.00);
-            if (isRobotVisibleRange && !showRobot) setShowRobot(true);
-            if (!isRobotVisibleRange && showRobot) setShowRobot(false);
+            // No manual cutoff - handled by Robot component internally
 
             // 2. Debug HUD Update
             const hud = document.querySelector<HTMLElement>('#debug-hud');
@@ -210,7 +206,7 @@ export default function DesktopLayout() {
                 themeProgressRef={themeProgressRef}
                 mouseX={mouse.x}
                 phase={phase}
-                isVisible={showRobot}
+                isVisible={true}
               />
             ) }
           </Suspense>

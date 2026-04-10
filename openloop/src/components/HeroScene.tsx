@@ -56,7 +56,6 @@ interface SceneContainerProps {
   themeProgressRef: React.MutableRefObject<number>;
   mouseX: number;
   phase: string;
-  isVisible: boolean;
 }
 
 export const SceneContainer: React.FC<SceneContainerProps> = ({
@@ -65,7 +64,6 @@ export const SceneContainer: React.FC<SceneContainerProps> = ({
   themeProgressRef,
   mouseX,
   phase,
-  isVisible,
 }) => {
   return (
     <>
@@ -80,7 +78,6 @@ export const SceneContainer: React.FC<SceneContainerProps> = ({
         themeProgressRef={themeProgressRef}
         mouseX={mouseX}
         phase={phase}
-        isVisible={isVisible}
       />
       <Timeline3D scrollProgress={scrollVal} />
     </>

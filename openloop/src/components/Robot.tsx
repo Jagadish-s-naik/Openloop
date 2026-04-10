@@ -70,41 +70,62 @@ export const Robot: React.FC<RobotProps> = ({
     let targetGreen = 0;
     let targetBeam = 0;
 
-    // 1. HERO (0.00 -> 0.18) - Entrance
+    // --- Deterministic State Machine (Scroll Controlled ONLY) ---
+    // HERO (0.00 -> 0.18): Rise from Bottom
     if (p < 0.18) {
-      const lp = p / 0.18;
-      targetOpacity = 1;
+      const hp = clamp(p / 0.18, 0, 1);
+      targetOpacity = hp; // Fade in as we rise
+      targetY = lerp(-3, 0, easeOut(hp)); // Rise from -3
       targetX = 0;
-      targetY = lerp(-1, 0, lp);
       targetRotY = 0;
+      targetScale = 2.0;
     }
-    // 2. ABOUT (0.18 -> 0.36) - Profile + Beam
+    // ABOUT (0.18 -> 0.36): Shift Left + Profile
     else if (p < 0.36) {
-      const lp = (p - 0.18) / 0.18;
+      const ap = (p - 0.18) / 0.18;
       targetOpacity = 1;
-      targetX = lerp(0, -3.5, easeInOut(lp));
-      targetScale = lerp(2.0, 1.7, easeInOut(lp));
-      targetRotY = lerp(0, Math.PI / 2, easeInOut(lp));
-      targetBeam = lp > 0.5 ? (lp - 0.5) * 2 : 0;
+      targetX = lerp(0, -3.5, easeInOut(ap));
+      targetY = 0;
+      targetRotY = lerp(0, Math.PI / 2, easeInOut(ap));
+      targetScale = lerp(2.0, 1.7, easeInOut(ap));
+      targetBeam = ap > 0.5 ? (ap - 0.5) * 2 : 0;
       targetGreen = 2 + targetBeam * 3;
     }
-    // 3. THEMES & 4. TIMELINE (0.36 -> 0.75) - HIDDEN
-    else if (p < 0.75) {
-      const lp = (p - 0.36) / 0.10; // Rapid exit
-      targetOpacity = clamp(1 - lp, 0, 1);
-      targetZ = -4; // Sink into depth
-      targetX = -2.4;
+    // THEMES & TIMELINE (0.36 -> 0.65): Fade Out & Push Back
+    else if (p < 0.65) {
+      const tp = clamp((p - 0.36) / 0.10, 0, 1);
+      targetOpacity = 1 - tp;
+      targetZ = lerp(0, -6, tp);
+      targetX = -3.5;
       targetRotY = Math.PI / 2;
     }
-    // 5. SPONSORS, 6. CONTACT, 7. FOOTER (0.75 -> 1.00) - RE-ENTRY
-    else {
-      const entryP = clamp((p - 0.75) / 0.03, 0, 1); // Much faster entry
-      const exitP = clamp((1.00 - p) / 0.08, 0, 1);
-      targetOpacity = Math.min(entryP, exitP);
-      targetX = -2.4;
+    // SPONSORS RE-ENTRY (0.65 -> 0.80): Slide from Left
+    else if (p < 0.80) {
+      const sp = clamp((p - 0.65) / 0.15, 0, 1);
+      targetOpacity = sp;
+      targetX = lerp(-10, -3.5, easeOut(sp)); // Slide from far left
+      targetY = 0;
       targetZ = 0;
       targetRotY = Math.PI / 2;
-      targetGreen = 1.5;
+      targetScale = 1.7;
+      targetGreen = 2;
+    }
+    // CONTACT (0.80 -> 0.92): Stable Left
+    else if (p < 0.92) {
+      targetOpacity = 1;
+      targetX = -3.5;
+      targetRotY = Math.PI / 2;
+      targetZ = 0;
+      targetScale = 1.7;
+      targetGreen = 2;
+    }
+    // FOOTER (0.92 -> 1.00): Exit & Push Back
+    else {
+      const fp = clamp((p - 0.92) / 0.08, 0, 1);
+      targetOpacity = 1 - fp;
+      targetZ = lerp(0, -10, fp);
+      targetX = -3.5;
+      targetRotY = Math.PI / 2;
     }
 
     // Add mouse parallax
