@@ -64,15 +64,15 @@ export const Robot: React.FC<RobotProps> = ({
     let targetOpacity = 1;
     let targetGreen = 0.5;
 
-    // Phase 1: Entry (0.0 -> 0.2)
-    if (p < 0.2) {
-      const entryP = clamp(p / 0.2, 0, 1);
+    // Phase 1: Entry (0.0 -> 0.08) - Rapid stabilization
+    if (p < 0.08) {
+      const entryP = clamp(p / 0.08, 0, 1);
       targetY = lerp(-2.5, 0, easeOut(entryP));
       targetScale = lerp(1.2, 2.2, easeOut(entryP));
       targetOpacity = entryP;
       targetGreen = lerp(0, 0.8, entryP);
     } 
-    // Phase 2: System Analytics (0.2 -> 0.45)
+    // Phase 2: Static Stay / Start of system movement (0.08 -> 0.45)
     else if (p < 0.45) {
       const p2 = clamp((p - 0.2) / 0.25, 0, 1);
       targetX = lerp(0, -2.2, easeInOut(p2));

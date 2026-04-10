@@ -1,16 +1,38 @@
 import React from 'react';
 import { Typewriter } from './common/Typewriter';
-import { lerp } from '../utils/math';
+import { lerp, clamp } from '../utils/math';
 
 interface HeroOverlayProps {
   scrollProgress: number;
 }
 
 export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
-  // Normalize p for hero settling
-  // Adjusted threshold: Reveal starts earlier and more linearly
-  const heroRevealP = Math.min(Math.max((scrollProgress - 0.02) / 0.1, 0), 1);
-  const heroVisibility = heroRevealP;
+  const p = scrollProgress;
+  
+  // High-precision visibility ranges
+  let opacity = 0;
+  let scale = 0.95;
+  let translateY = 0;
+
+  if (p <= 0.1) {
+    // Fade IN: 0 -> 0.1
+    const t = clamp(p / 0.1, 0, 1);
+    opacity = t;
+    scale = lerp(0.95, 1.0, t);
+  } else if (p <= 0.18) {
+    // FULL: 0.1 -> 0.18
+    opacity = 1;
+    scale = 1.0;
+  } else if (p <= 0.25) {
+    // Fade OUT: 0.18 -> 0.25
+    const t = clamp((p - 0.18) / 0.07, 0, 1);
+    opacity = 1 - t;
+    scale = 1.0;
+    translateY = t * -40; // Slight upward movement
+  }
+
+  const isVisible = opacity > 0;
+
   return (
     <>
       <nav>
@@ -32,10 +54,10 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
             <div 
               className="hero-centered-container"
               style={{ 
-                opacity: heroVisibility,
-                transform: `scale(${0.95 + heroVisibility * 0.05})`,
-                filter: `blur(${(1 - heroVisibility) * 10}px)`,
-                pointerEvents: heroVisibility > 0.5 ? 'auto' : 'none'
+                opacity: opacity,
+                transform: `translate(-50%, calc(-50% + ${translateY}px)) scale(${scale})`,
+                visibility: isVisible ? 'visible' : 'hidden',
+                pointerEvents: opacity > 0.5 ? 'auto' : 'none'
               }}
             >
               <h1 className="hero-main-title">
@@ -46,6 +68,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
                   textShadow: '0 0 20px rgba(198, 255, 0, 0.4)'
                 }}>LOOP</span>
               </h1>
+              <div className="hero-sub-title">2026</div>
             </div>
 
             <div className="hero-bottom-left">
@@ -56,13 +79,13 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
             </div>
 
             <aside className="hero-bottom-right secondary-card">
-              <span className="card-tag">UNIT PROFILE</span>
+              <span className="card-tag">National Level Hackathon</span>
               <div className="card-image">
-                <span className="hud-label">NOVA-7</span>
+                <span className="hud-label">Hackathon</span>
               </div>
-              <h3>NOVA-7</h3>
+              <h3>OPENLOOP</h3>
               <p>
-                <Typewriter text="Secondary synthetic entity synchronized with OPENLOOP phase telemetry and motion diagnostics." />
+                <Typewriter text="  A National Level Hackathon organized by the Computer Science and Engineering Association (CSEA) of NIT Trichy, where teams from across the country come together to innovate and compete." />
               </p>
             </aside>
           </section>

@@ -150,37 +150,37 @@ export default function DesktopLayout() {
       });
 
       context = gsap.context(() => {
-        // Main Robot Sections (Pinned for longer to ensure full separation)
+        // Main Robot Sections (Pinned for longer to ensure full separation from Themes)
         ScrollTrigger.create({
           trigger: '#robot-sections',
           pin: true,
           start: 'top top',
-          end: '+=500%', // Increased from 400%
+          end: '+=600%', // Increased for more "air" between phases
           scrub: 1,
           onUpdate: (self) => {
             const p = self.progress;
             robotProgressRef.current = p;
             
-            // Smoother section reveal logic
+            // Smoother section reveal logic with wider gaps
             sections.forEach((selector, i) => {
               const el = document.querySelector<HTMLElement>(selector);
               if (!el) return;
               
-              const sectionRange = 1 / 4;
+              const sectionRange = 1 / sections.length;
               const sectionStart = i * sectionRange;
               const sectionEnd = (i + 1) * sectionRange;
               
-              // Direct proportional opacity for continuous feel
               let opacity = 0;
               if (p >= sectionStart && p <= sectionEnd) {
-                // Fade in early, stay solid, fade out late
-                const margin = 0.05;
+                // Sharper transitions to avoid cross-phase ghosting
+                const margin = 0.08; 
                 if (p < sectionStart + margin) opacity = (p - sectionStart) / margin;
                 else if (p > sectionEnd - margin) opacity = (sectionEnd - p) / margin;
                 else opacity = 1;
               }
               
-              const active = opacity > 0.1;
+              // Hard toggle visibility for performance and overlap prevention
+              const active = opacity > 0.05;
               el.style.opacity = String(opacity);
               el.style.display = active ? 'block' : 'none';
               el.style.visibility = active ? 'visible' : 'hidden';
@@ -198,13 +198,13 @@ export default function DesktopLayout() {
         // Specific Timeline Animation (Sync with Scroll)
         document.querySelectorAll<HTMLElement>('.t-event').forEach((el) => {
           gsap.fromTo(el, 
-            { opacity: 0, y: 50, scale: 0.9 },
+            { opacity: 0, x: -30, scale: 0.95 },
             { 
-              opacity: 1, y: 0, scale: 1, duration: 1, ease: 'power2.out',
+              opacity: 1, x: 0, scale: 1, duration: 1, ease: 'power2.out',
               scrollTrigger: {
                 trigger: el,
-                start: 'top 90%',
-                end: 'top 30%',
+                start: 'top 85%',
+                end: 'top 35%',
                 scrub: 1,
                 toggleActions: 'play none none reverse'
               }
@@ -217,19 +217,19 @@ export default function DesktopLayout() {
             height: '100%', ease: 'none',
             scrollTrigger: { 
               trigger: '#s4-timeline', 
-              start: 'top 60%', 
+              start: 'top 40%', 
               end: 'bottom bottom', 
               scrub: true 
             },
           });
         }
 
-        // Theme Section (Pinned separate from robot sections)
+        // Theme Section (Pinned separate with clear start delay)
         ScrollTrigger.create({
           trigger: '#theme-section',
           pin: true,
           start: 'top top',
-          end: '+=600%', // Increased from 500%
+          end: '+=700%', 
           scrub: 0.5,
           onUpdate: (self) => {
             const p = self.progress;
