@@ -8,9 +8,14 @@ interface HeroOverlayProps {
 
 export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   const p = scrollProgress;
-  
-export const HeroOverlay: React.FC<HeroOverlayProps> = () => {
-  // Visibility and opacity are now strictly controlled by the parent orchestrator (DesktopLayout)
+
+  // Active state helpers
+  const isHeroActive = p >= 0.00 && p < 0.15;
+  const isAboutActive = p >= 0.15 && p < 0.30;
+  const isThemesActive = p >= 0.30 && p < 0.45;
+  const isTimelineActive = p >= 0.45 && p < 0.65;
+  const isSponsorsActive = p >= 0.65 && p < 0.80;
+  const isContactActive = p >= 0.80 && p < 0.92;
 
   return (
     <>
@@ -20,7 +25,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = () => {
           <span style={{ color: '#C6FF00' }}>LOOP</span>
         </div>
         <div className="nav-links">
-          <a href="#robot-sections">Core</a>
+          <a href="#s1-hero">Core</a>
           <a href="#s4-timeline">Timeline</a>
           <a href="#theme-section">Themes</a>
         </div>
@@ -28,6 +33,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = () => {
       </nav>
 
       <section id="robot-sections">
+        {/* PHASE 1: HERO */}
         <div id="s1-hero" className="section-overlay">
           <section id="hero">
             <div className="hero-centered-container">
@@ -44,7 +50,10 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = () => {
 
             <div className="hero-bottom-left">
               <p className="body-text-safe">
-                <Typewriter text="Cinematic autonomous intelligence rendered in real time. Scroll to transition through systems, themes, and final state." />
+                <Typewriter 
+                  active={isHeroActive} 
+                  text="Cinematic autonomous intelligence rendered in real time. Scroll to transition through systems, themes, and final state." 
+                />
               </p>
               <button className="cta-button" type="button">Enter Loop</button>
             </div>
@@ -56,43 +65,33 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = () => {
               </div>
               <h3>OPENLOOP</h3>
               <p>
-                <Typewriter text="  A National Level Hackathon organized by the Computer Science and Engineering Association (CSEA) of NIT Trichy, where teams from across the country come together to innovate and compete." />
+                <Typewriter 
+                  active={isHeroActive} 
+                  text="A National Level Hackathon organized by the Computer Science and Engineering Association (CSEA) of NIT Trichy." 
+                />
               </p>
             </aside>
           </section>
         </div>
 
+        {/* PHASE 2: ABOUT (ROBOT LEFT / TEXT RIGHT) */}
         <div id="s2-about" className="section-overlay">
-          <div className="overlay-content panel-block align-right">
-            <div className="timeline-label text-reveal">// 002 - ABOUT</div>
-            <h2 className="section-heading text-reveal">ABOUT CORE</h2>
-            <p className="body-text-safe text-reveal">
-              <Typewriter text="Synthetic profiles transition to profile view, revealing operational metrics and green-spectrum response telemetry." />
-            </p>
-          </div>
-        </div>
-
-        <div id="s3-features" className="section-overlay">
-          <div className="overlay-content panel-block align-left">
-            <div className="timeline-label text-reveal">// 003 - FEATURES</div>
-            <h2 className="section-heading text-reveal">BACK SYSTEMS</h2>
-            <div className="feature-grid">
-              <article className="feature-card text-reveal">
-                <h3>SPINE REACTOR</h3>
-                <p><Typewriter text="Back panel energy system spikes during 180-degree lock." /></p>
-              </article>
-              <article className="feature-card text-reveal">
-                <h3>FUSED ALLOY</h3>
-                <p><Typewriter text="Low-roughness armor maintains high-contrast rim highlights." /></p>
-              </article>
-              <article className="feature-card text-reveal">
-                <h3>TEMPLE ARRAY</h3>
-                <p><Typewriter text="Profile-side amber seam detail appears in section transitions." /></p>
-              </article>
+          <div className="composition-grid">
+            <div className="content-right">
+              <div className="timeline-label">// 002 - ABOUT</div>
+              <h2 className="section-heading">SYSTEM CORE</h2>
+              <p className="body-text-safe">
+                <Typewriter 
+                  active={isAboutActive}
+                  text="Autonomous profiling initiates at 90-degree profile lock. Green-spectrum telemetry emitted via focal response array." 
+                />
+              </p>
+              <div className="hud-label" style={{ marginTop: '2rem', color: '#C6FF00' }}>STATUS: PROFILE_LOCK_ACTIVE</div>
             </div>
           </div>
         </div>
 
+        {/* PHASE 4: TIMELINE (Immersive) */}
         <section id="s4-timeline" className="section-overlay">
           <div className="overlay-content">
             <div className="timeline-label">// 004 - TIMELINE</div>
@@ -101,26 +100,14 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = () => {
               <div className="timeline-line" />
               <div className="timeline-events">
                 {[
-                  { date: '2023', title: 'Core Prototype', desc: 'Initial face rig and lighting studies established the visual baseline.', type: 't-left', range: [0.65, 0.72] },
-                  { date: '2024', title: 'Reactive Scroll Engine', desc: 'Deterministic progress mapping introduced section-coupled motion control.', type: 't-right', range: [0.72, 0.79] },
-                  { date: '2025', title: 'Rim-Lit Identity', desc: 'High contrast silhouette and cinematic halos defined the final direction.', type: 't-left', range: [0.79, 0.86] },
-                  { date: '2026', title: 'OPENLOOP Launch', desc: 'Unified timeline, theme sequence, and footer handoff in one continuous flow.', type: 't-right', range: [0.86, 0.93] },
+                  { date: '2023', title: 'Core Prototype', desc: 'Initial face rig and lighting studies.', range: [0.45, 0.50] },
+                  { date: '2024', title: 'Deterministic Sync', desc: 'Scroll-coupled phase orchestration.', range: [0.50, 0.55] },
+                  { date: '2025', title: 'Cinematic Flow', desc: 'Normalized range mapping refined.', range: [0.55, 0.60] },
+                  { date: '2026', title: 'FINAL LAUNCH', desc: 'One continuous, immersive loop.', range: [0.60, 0.65] },
                 ].map((event, i) => {
-                  const eventP = Math.min(Math.max((scrollProgress - event.range[0]) / (event.range[1] - event.range[0]), 0), 1);
-                  const isVisible = eventP > 0;
-                  
+                  const eventP = Math.min(Math.max((p - event.range[0]) / (event.range[1] - event.range[0]), 0), 1);
                   return (
-                    <div 
-                      key={i} 
-                      className={`t-event ${event.type}`}
-                      style={{
-                        opacity: eventP,
-                        transform: `translateY(${lerp(30, 0, eventP)}px) translateZ(${lerp(-100, 0, eventP)}px) scale(${lerp(0.9, 1, eventP)})`,
-                        visibility: isVisible ? 'visible' : 'hidden',
-                        transition: 'none' // GSAP/Logic controlled
-                      }}
-                    >
-                      <div className="t-dot" style={{ boxShadow: `0 0 ${lerp(0, 20, eventP)}px #C6FF00` }} />
+                    <div key={i} className="t-event" style={{ opacity: eventP, transform: `translateY(${lerp(20, 0, eventP)}px)` }}>
                       <div className="t-card">
                         <span className="t-date">{event.date}</span>
                         <h3>{event.title}</h3>
@@ -133,39 +120,38 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = () => {
             </div>
           </div>
         </section>
+
+        {/* PHASE 6: CONTACT (ROBOT LEFT / TEXT RIGHT) */}
+        <div id="contact-section" className="section-overlay">
+          <div className="composition-grid">
+            <div className="content-right">
+              <div className="timeline-label">// 006 - CONTACT</div>
+              <h2 className="section-heading">GET IN TOUCH</h2>
+              <p className="body-text-safe">
+                <Typewriter 
+                  active={isContactActive}
+                  text="System link established. Our team is ready to assist with high-fidelity integration queries and partnership details." 
+                />
+              </p>
+              <div className="contact-details" style={{ marginTop: '3rem' }}>
+                <div className="hud-line" />
+                <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '1rem' }}>CONTACT@OPENLOOP.IO</h3>
+                <div className="hud-label">AVAILABILITY: 24/7_SYNC</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* PHASE 7: FOOTER */}
+        <footer id="footer-section" className="section-overlay">
+          <div style={{ textAlign: 'center' }}>
+            <h2 className="section-heading">OPENLOOP 2026</h2>
+            <p className="hud-label">TERMINAL_HANDOFF_COMPLETE</p>
+            <div className="hud-line" style={{ margin: '4rem auto', width: '200px' }} />
+            <p>© 2026 CSEA NIT TRICHY. ALL SYSTEMS GO.</p>
+          </div>
+        </footer>
       </section>
-
-      <section id="theme-section">
-        <div className="theme-label">// THEMES</div>
-
-        <article id="card-1" className="theme-card">
-          <div className="card-icon">I</div>
-          <span className="card-number">001</span>
-          <h3>SYNERGY</h3>
-          <p>Control systems unify perception, targeting, and stabilization as one smooth loop.</p>
-        </article>
-
-        <article id="card-2" className="theme-card">
-          <div className="card-icon">II</div>
-          <span className="card-number">002</span>
-          <h3>VELOCITY</h3>
-          <p>Motion responds with deterministic interpolation for cinematic but reliable behavior.</p>
-        </article>
-
-        <article id="card-3" className="theme-card">
-          <div className="card-icon">III</div>
-          <span className="card-number">003</span>
-          <h3>ASCENT</h3>
-          <p>Final phase transitions cards outward while the robot exits upward toward the footer handoff.</p>
-        </article>
-
-        <div id="card-row" className="theme-card-row" />
-      </section>
-
-      <footer id="footer-section">
-        <h2>CONTACT OPENLOOP</h2>
-        <p>Systems ready. Continue into the next robot phase with focused profile refinements.</p>
-      </footer>
     </>
   );
 };

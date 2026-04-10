@@ -1,55 +1,62 @@
 import React from 'react';
-import { lerp, clamp } from '../utils/math';
+import { Typewriter } from './common/Typewriter';
 import './SponsorsSection.css';
 
 interface Sponsor {
   name: string;
   tier: 'Title' | 'Gold' | 'Silver' | 'Community';
-  logo?: string;
+  logoImg?: string; // Add your logo image paths here
 }
 
 const SPONSORS: Sponsor[] = [
-  { name: "NEURALINK", tier: "Title" },
-  { name: "CYBERDYNE", tier: "Gold" },
-  { name: "OSCORP", tier: "Gold" },
-  { name: "WEYLAND-YUTANI", tier: "Gold" },
-  { name: "TYRELL CORP", tier: "Silver" },
-  { name: "STARKE IND", tier: "Silver" },
-  { name: "UMBRELLA", tier: "Silver" },
-  { name: "ENCOM", tier: "Community" },
-  { name: "HEXTECH", tier: "Community" },
-  { name: "SHINRA", tier: "Community" },
+  { name: "NEURALINK", tier: "Title", logoImg: "" },
+  { name: "CYBERDYNE", tier: "Gold", logoImg: "" },
+  { name: "OSCORP", tier: "Gold", logoImg: "" },
+  { name: "WEYLAND-YUTANI", tier: "Gold", logoImg: "" },
+  { name: "TYRELL CORP", tier: "Silver", logoImg: "" },
+  { name: "STARKE IND", tier: "Silver", logoImg: "" },
+  { name: "UMBRELLA", tier: "Silver", logoImg: "" },
+  { name: "ENCOM", tier: "Community", logoImg: "" },
+  { name: "HEXTECH", tier: "Community", logoImg: "" },
+  { name: "SHINRA", tier: "Community", logoImg: "" },
 ];
 
-export const SponsorsSection: React.FC<{ scrollProgress: number }> = () => {
-  // Logic removed; parent orchestrator now strictly handles visibility/pointer-events
-  return (
-    <div 
-      id="sponsors-section" 
-      className="section-overlay sponsors-container"
-    >
-      <div className="sponsors-header">
-        <span className="hud-line"></span>
-        <h2 className="glitch-text" data-text="PARTNERS & SPONSORS">PARTNERS & SPONSORS</h2>
-        <span className="hud-line"></span>
-      </div>
+export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
+  const p = scrollProgress;
+  const isSponsorsActive = p >= 0.65 && p < 0.80;
 
-      <div className="sponsors-grid">
-        {SPONSORS.map((s, i) => (
-          <div key={i} className={`sponsor-card tier-${s.tier.toLowerCase()}`}>
-            <div className="card-inner">
-              <div className="sponsor-tier">{s.tier}</div>
-              <div className="sponsor-logo-placeholder">
-                <span className="logo-text">{s.name}</span>
+  return (
+    <div id="sponsors-section" className="section-overlay">
+      <div className="composition-grid">
+        <div className="content-right">
+          <div className="timeline-label">// 005 - PARTNERS</div>
+          <h2 className="section-heading">SPONSORS</h2>
+          <p className="body-text-safe" style={{ marginBottom: '2rem' }}>
+            <Typewriter 
+              active={isSponsorsActive} 
+              text="Our partners fueling the 2026 synergy loop. Grid layout optimized for high-fidelity logo rendering." 
+            />
+          </p>
+
+          <div className="sponsors-grid-new">
+            {SPONSORS.map((s, i) => (
+              <div key={i} className={`sponsor-box tier-${s.tier.toLowerCase()}`}>
+                {s.logoImg ? (
+                  <img src={s.logoImg} alt={s.name} className="sponsor-logo-img" />
+                ) : (
+                  <div className="sponsor-placeholder">
+                    <span className="hud-label">{s.name}</span>
+                  </div>
+                )}
+                <div className="box-decoration" />
               </div>
-              <div className="card-glimmer" />
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
-      
-      <div className="sponsors-footer">
-        <p className="hud-label">Interested in partnering? CONTACT@OPENLOOP.IO</p>
+
+          <div className="hud-label" style={{ marginTop: '2rem' }}>
+            Interested in partnering? CONTACT@OPENLOOP.IO
+          </div>
+        </div>
       </div>
     </div>
   );

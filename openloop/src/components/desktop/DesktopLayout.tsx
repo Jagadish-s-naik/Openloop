@@ -123,7 +123,7 @@ export default function DesktopLayout() {
     let context: gsap.Context | null = null;
     let rafId: number;
 
-    const sections = ['#s1-hero', '#s2-about', '#s3-features', '#s4-timeline'];
+    const sections = ['#s1-hero', '#s2-about', '#theme-section', '#s4-timeline', '#sponsors-section', '#contact-section', '#footer-section'];
 
     const setupTimeout = setTimeout(() => {
       const cards = ['#card-1', '#card-2', '#card-3']
@@ -164,19 +164,21 @@ export default function DesktopLayout() {
             const p = self.progress;
             robotProgressRef.current = p;
 
-            // Reactive cutoff for 3D unmounting
-            if (p >= 0.70 && showRobot) setShowRobot(false);
-            if (p < 0.70 && !showRobot) setShowRobot(true);
-
-            // 1. Precise Range Mapping (MANDATORY)
+            // 1. Precise Range Mapping (MANDATORY - 7 SECTIONS)
             const ranges = [
-              { name: 'LOADER', start: 0.00, end: 0.15, id: null },
-              { name: 'HERO', start: 0.15, end: 0.30, id: '#s1-hero' },
-              { name: 'TIMELINE', start: 0.30, end: 0.50, id: '#s4-timeline' },
-              { name: 'THEMES', start: 0.50, end: 0.70, id: '#theme-section' },
-              { name: 'SPONSORS', start: 0.70, end: 0.90, id: '#sponsors-section' },
-              { name: 'FOOTER', start: 0.90, end: 1.00, id: '#footer-section' },
+              { name: 'HERO', start: 0.00, end: 0.15, id: '#s1-hero' },
+              { name: 'ABOUT', start: 0.15, end: 0.30, id: '#s2-about' },
+              { name: 'THEMES', start: 0.30, end: 0.45, id: '#theme-section' },
+              { name: 'TIMELINE', start: 0.45, end: 0.65, id: '#s4-timeline' },
+              { name: 'SPONSORS', start: 0.65, end: 0.80, id: '#sponsors-section' },
+              { name: 'CONTACT', start: 0.80, end: 0.92, id: '#contact-section' },
+              { name: 'FOOTER', start: 0.92, end: 1.00, id: '#footer-section' },
             ];
+
+            // Reactive cutoff for 3D visibility (Show/Hide/Show/Hide)
+            const isRobotVisibleRange = (p < 0.30) || (p >= 0.65 && p < 0.92);
+            if (isRobotVisibleRange && !showRobot) setShowRobot(true);
+            if (!isRobotVisibleRange && showRobot) setShowRobot(false);
 
             // 2. Debug HUD Update
             const hud = document.querySelector<HTMLElement>('#debug-hud');
@@ -241,15 +243,7 @@ export default function DesktopLayout() {
               }
             });
 
-            // Cleanup any ghosting elements NOT in a range (like s2, s3)
-            ['#s2-about', '#s3-features'].forEach(sel => {
-              const el = document.querySelector<HTMLElement>(sel);
-              if (el) {
-                el.style.opacity = '0';
-                el.style.visibility = 'hidden';
-                el.style.pointerEvents = 'none';
-              }
-            });
+            // No explicit cleanup needed anymore as the unified loop handles all 7 sections via their IDs
           },
         });
       });
@@ -301,17 +295,14 @@ export default function DesktopLayout() {
               </mesh>
             ) : null
           }>
-            {(phase === 'loader' || phase === 'intro') ? (
-              <LoaderScene progress={loaderProgress} phase={phase} />
-            ) : showRobot ? (
-              <SceneContainer
-                scrollVal={rawScroll}
-                robotProgressRef={robotProgressRef}
-                themeProgressRef={themeProgressRef}
-                mouseX={mouse.x}
-                phase={phase}
-              />
-            ) : null}
+            <SceneContainer
+              scrollVal={rawScroll}
+              robotProgressRef={robotProgressRef}
+              themeProgressRef={themeProgressRef}
+              mouseX={mouse.x}
+              phase={phase}
+              isVisible={showRobot}
+            />
           </Suspense>
         </Canvas>
       </div>

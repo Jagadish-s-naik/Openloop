@@ -107,14 +107,14 @@ export const MobileAbout: React.FC<MobileAboutProps> = ({ scrollTo }) => {
         <span className="word">WHAT</span>{' '}
         <span className="word">IS</span>{' '}
         <span className="word">
-          <span style={{ color: '#ffffff' }}>OPEN</span>
-          <span style={{ color: '#C6FF00' }}>LOOP</span>
+          <span style={{backgroundColor:"#C6FF00"}}>OPEN LOOP</span>
         </span>
       </h2>
 
       <div className="about-body section-body">
         <p>
-          OpenLoop is IIIT Delhi's flagship hackathon — 48 hours of
+          OpenLoop is YenTech which is a part of Yenepoya School of 
+          Engineering's hackathon — 24 hours of
           raw innovation, sleepless engineering, and breakthrough ideas.
           We bring together the brightest minds to build what doesn't
           exist yet.
@@ -129,7 +129,7 @@ export const MobileAbout: React.FC<MobileAboutProps> = ({ scrollTo }) => {
       <div ref={traverseRef} className="traverse-block section-body">
         <div className="traverse-line" />
         <div className="traverse-content">
-          <span className="traverse-num">48</span>
+          <span className="traverse-num">24</span>
           <span className="traverse-unit">HOURS</span>
           <span className="traverse-label">of non-stop building</span>
         </div>

@@ -21,27 +21,29 @@ const MILESTONES: MilestoneData[] = [
 
 export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
   const groupRef = useRef<THREE.Group>(null);
+  const p = scrollProgress;
+
+  // NEW window: 0.45 -> 0.65
+  const isTimelineActive = p >= 0.45 && p < 0.65;
 
   useFrame(() => {
     if (!groupRef.current) return;
     
-    // STRICT window: 0.30 -> 0.50
-    const mappedP = clamp((scrollProgress - 0.30) / 0.20, 0, 1);
-    const zOffset = lerp(0, 22, mappedP);
-    
-    groupRef.current.position.z = zOffset;
+    const mappedP = clamp((p - 0.45) / 0.20, 0, 1);
+    groupRef.current.position.z = lerp(0, 22, mappedP);
+    groupRef.current.visible = p >= 0.42 && p < 0.68; // Slight buffer for entry/exit
   });
 
   return (
     <group ref={groupRef} position={[0, 0, -2]}>
       {MILESTONES.map((item, i) => (
-        <TimelineItem key={i} data={item} index={i} totalProgress={scrollProgress} />
+        <TimelineItem key={i} data={item} index={i} totalProgress={p} />
       ))}
       
       {/* Connecting Line */}
       <mesh rotation={[0, 0, 0]} position={[0, 0, -10]}>
         <cylinderGeometry args={[0.005, 0.005, 25, 8]} />
-        <meshBasicMaterial color="#C6FF00" transparent opacity={0.15} />
+        <meshBasicMaterial color="#C6FF00" transparent opacity={0.15 * (isTimelineActive ? 1 : 0)} />
       </mesh>
     </group>
   );
@@ -50,13 +52,15 @@ export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgres
 const TimelineItem = ({ data, index, totalProgress }: { data: MilestoneData; index: number; totalProgress: number }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   
-  // STRICT window: 0.30 -> 0.50
-  const timelineStart = 0.30;
+  // NEW window: 0.45 -> 0.65
+  const timelineStart = 0.45;
   const range = 0.20;
   const step = range / MILESTONES.length;
   const startAt = timelineStart + index * step;
   
   const activeP = clamp((totalProgress - startAt) / step, 0, 1);
+  const opacity = clamp((totalProgress - 0.44) / 0.05, 0, 1) * clamp((0.66 - totalProgress) / 0.05, 0, 1);
+  
   const scale = lerp(0.8, 1.2, activeP);
 
   return (
@@ -69,14 +73,14 @@ const TimelineItem = ({ data, index, totalProgress }: { data: MilestoneData; ind
           emissive="#C6FF00" 
           emissiveIntensity={lerp(0.2, 2.5, activeP)} 
           transparent
-          opacity={1}
+          opacity={opacity}
         />
       </mesh>
 
       {/* Glow Ring */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[0.12, 0.004, 16, 100]} />
-        <meshBasicMaterial color="#C6FF00" transparent opacity={activeP * 0.4} />
+        <meshBasicMaterial color="#C6FF00" transparent opacity={activeP * 0.4 * opacity} />
       </mesh>
 
       <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
@@ -86,6 +90,7 @@ const TimelineItem = ({ data, index, totalProgress }: { data: MilestoneData; ind
             color="#ffffff"
             anchorX="left"
             anchorY="middle"
+            fillOpacity={opacity}
           >
             {data.title}
           </Text>
@@ -96,6 +101,7 @@ const TimelineItem = ({ data, index, totalProgress }: { data: MilestoneData; ind
             anchorY="top"
             position={[0, -0.15, 0]}
             maxWidth={1.5}
+            fillOpacity={opacity}
           >
             {data.desc}
           </Text>

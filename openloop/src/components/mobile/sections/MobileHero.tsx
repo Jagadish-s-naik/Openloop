@@ -69,14 +69,14 @@ export const MobileHero: React.FC = () => {
       </div>
 
       <div className="hero-top">
-        <div ref={badgeRef} className="hero-badge">// HACKATHON 2025</div>
+        <div ref={badgeRef} className="hero-badge">// HACKATHON 2026</div>
         <p ref={subRef} className="hero-sub">
-          48 hours. One chance. Redefine what's possible.
+          24 hours. One chance. Redefine what's possible.
         </p>
         <div ref={statsRef} className="hero-stats">
-          <div className="stat"><span className="num">500+</span><span className="lbl">HACKERS</span></div>
-          <div className="stat"><span className="num">48H</span><span className="lbl">DURATION</span></div>
-          <div className="stat"><span className="num">₹5L</span><span className="lbl">PRIZES</span></div>
+          <div className="stat"><span className="num">20+</span><span className="lbl">Teams ofHACKERS</span></div>
+          <div className="stat"><span className="num">24H</span><span className="lbl">DURATION</span></div>
+          <div className="stat"><span className="num">₹1.5L</span><span className="lbl">PRIZES</span></div>
         </div>
       </div>
 
