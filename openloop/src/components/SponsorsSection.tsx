@@ -9,16 +9,11 @@ interface Sponsor {
 }
 
 const SPONSORS: Sponsor[] = [
-  { name: "NEURALINK", tier: "Title", logoImg: "" },
+  { name: "UnStop", tier: "Title", logoImg: "" },
   { name: "CYBERDYNE", tier: "Gold", logoImg: "" },
   { name: "OSCORP", tier: "Gold", logoImg: "" },
   { name: "WEYLAND-YUTANI", tier: "Gold", logoImg: "" },
   { name: "TYRELL CORP", tier: "Silver", logoImg: "" },
-  { name: "STARKE IND", tier: "Silver", logoImg: "" },
-  { name: "UMBRELLA", tier: "Silver", logoImg: "" },
-  { name: "ENCOM", tier: "Community", logoImg: "" },
-  { name: "HEXTECH", tier: "Community", logoImg: "" },
-  { name: "SHINRA", tier: "Community", logoImg: "" },
 ];
 
 export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {

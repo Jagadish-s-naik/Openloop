@@ -32,7 +32,7 @@ body {
 }
 
 .app-root.is-main {
-  height: 500vh; /* Unified scroll duration */
+  height: 800vh; /* Unified scroll duration */
 }
 
 .canvas-container {
@@ -151,7 +151,7 @@ nav a:hover {
 }
 
 .app-root.is-main {
-  height: 500vh; /* Mandatory scroll height for range mapping */
+  height: 800vh; /* Mandatory scroll height for range mapping */
 }
 
 #site-content {

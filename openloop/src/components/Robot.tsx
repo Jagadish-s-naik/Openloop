@@ -70,17 +70,17 @@ export const Robot: React.FC<RobotProps> = ({
     let targetGreen = 0;
     let targetBeam = 0;
 
-    // 1. HERO (0.00 -> 0.15) - Entrance
-    if (p < 0.15) {
-      const lp = p / 0.15;
+    // 1. HERO (0.00 -> 0.18) - Entrance
+    if (p < 0.18) {
+      const lp = p / 0.18;
       targetOpacity = 1;
       targetX = 0;
       targetY = lerp(-1, 0, lp);
       targetRotY = 0;
     }
-    // 2. ABOUT (0.15 -> 0.30) - Profile + Beam
-    else if (p < 0.30) {
-      const lp = (p - 0.15) / 0.15;
+    // 2. ABOUT (0.18 -> 0.36) - Profile + Beam
+    else if (p < 0.36) {
+      const lp = (p - 0.18) / 0.18;
       targetOpacity = 1;
       targetX = lerp(0, -3.5, easeInOut(lp));
       targetScale = lerp(2.0, 1.7, easeInOut(lp));
@@ -88,27 +88,23 @@ export const Robot: React.FC<RobotProps> = ({
       targetBeam = lp > 0.5 ? (lp - 0.5) * 2 : 0;
       targetGreen = 2 + targetBeam * 3;
     }
-    // 3. THEMES & 4. TIMELINE (0.30 -> 0.65) - HIDDEN
-    else if (p < 0.65) {
-      const lp = (p - 0.30) / 0.10; // Rapid exit
+    // 3. THEMES & 4. TIMELINE (0.36 -> 0.75) - HIDDEN
+    else if (p < 0.75) {
+      const lp = (p - 0.36) / 0.10; // Rapid exit
       targetOpacity = clamp(1 - lp, 0, 1);
       targetZ = -4; // Sink into depth
       targetX = -2.4;
       targetRotY = Math.PI / 2;
     }
-    // 5. SPONSORS & 6. CONTACT (0.65 -> 0.92) - RE-ENTRY
-    else if (p < 0.92) {
-      const entryP = clamp((p - 0.65) / 0.10, 0, 1);
-      const exitP = clamp((0.92 - p) / 0.08, 0, 1);
+    // 5. SPONSORS, 6. CONTACT, 7. FOOTER (0.75 -> 1.00) - RE-ENTRY
+    else {
+      const entryP = clamp((p - 0.75) / 0.10, 0, 1);
+      const exitP = clamp((1.00 - p) / 0.08, 0, 1);
       targetOpacity = Math.min(entryP, exitP);
       targetX = -2.4;
       targetZ = 0;
       targetRotY = Math.PI / 2;
       targetGreen = 1.5;
-    }
-    // 7. FOOTER (0.92 -> 1.00) - HIDDEN
-    else {
-      targetOpacity = 0;
     }
 
     // Add mouse parallax

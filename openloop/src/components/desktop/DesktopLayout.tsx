@@ -89,32 +89,35 @@ export default function DesktopLayout() {
           trigger: '.app-root',
           start: 'top top',
           end: 'bottom bottom',
-          scrub: true,
+          scrub: 2,
           onUpdate: (self) => {
             const p = self.progress;
             robotProgressRef.current = p;
 
             // 1. Precise Range Mapping (MANDATORY - 7 SECTIONS)
             const ranges = [
-              { name: 'HERO', start: 0.00, end: 0.15, id: '#s1-hero' },
-              { name: 'ABOUT', start: 0.15, end: 0.30, id: '#s2-about' },
-              { name: 'THEMES', start: 0.30, end: 0.45, id: '#theme-section' },
-              { name: 'TIMELINE', start: 0.45, end: 0.65, id: '#s4-timeline' },
-              { name: 'SPONSORS', start: 0.65, end: 0.80, id: '#sponsors-section' },
-              { name: 'CONTACT', start: 0.80, end: 0.92, id: '#contact-section' },
-              { name: 'FOOTER', start: 0.92, end: 1.00, id: '#footer-section' },
+              { name: 'HERO', start: 0.00, end: 0.18, id: '#s1-hero' },
+              { name: 'ABOUT', start: 0.18, end: 0.36, id: '#s2-about' },
+              { name: 'THEMES', start: 0.36, end: 0.55, id: '#theme-section' },
+              { name: 'TIMELINE', start: 0.55, end: 0.75, id: '#s4-timeline' },
+              { name: 'SPONSORS', start: 0.75, end: 0.88, id: '#sponsors-section' },
+              { name: 'CONTACT', start: 0.88, end: 0.96, id: '#contact-section' },
+              { name: 'FOOTER', start: 0.96, end: 1.00, id: '#footer-section' },
             ];
 
             // Reactive cutoff for 3D visibility (Show/Hide/Show/Hide)
-            const isRobotVisibleRange = (p < 0.30) || (p >= 0.65 && p < 0.92);
+            const isRobotVisibleRange = (p < 0.36) || (p >= 0.75 && p < 1.00);
             if (isRobotVisibleRange && !showRobot) setShowRobot(true);
             if (!isRobotVisibleRange && showRobot) setShowRobot(false);
 
             // 2. Debug HUD Update
             const hud = document.querySelector<HTMLElement>('#debug-hud');
+            const active = ranges.find(r => p >= r.start && p < r.end) || ranges[ranges.length - 1];
             if (hud) {
-              const active = ranges.find(r => p >= r.start && p <= r.end) || ranges[ranges.length - 1];
-              hud.innerText = `P: ${p.toFixed(3)} | ${active.name}`;
+              hud.innerText = `P: ${p.toFixed(3)} | SECTION: ${active.name}`;
+            }
+            if (p % 0.05 < 0.001) { // Throttle console logs
+               console.log(`[ScrollDebug] P: ${p.toFixed(3)} | Active: ${active.name}`);
             }
 
             // 3. Centralized Styled Control (20/60/20 ramp)
@@ -126,9 +129,9 @@ export default function DesktopLayout() {
               const lp = clamp((p - range.start) / (range.end - range.start), 0, 1);
               let op = 0;
               
-              if (lp < 0.2) op = lp / 0.2;
-              else if (lp <= 0.8) op = 1;
-              else op = (1 - lp) / 0.2;
+              if (lp < 0.25) op = lp / 0.25;
+              else if (lp <= 0.75) op = 1;
+              else op = (1 - lp) / 0.25;
 
               // Force absolute clamping
               if (p < range.start || p > range.end) op = 0;
@@ -139,7 +142,7 @@ export default function DesktopLayout() {
 
               // Specific sub-animations
               if (range.name === 'THEMES' && op > 0) {
-                const themeP = clamp((lp - 0.2) / 0.6, 0, 1); // use middle 60% for cards
+                const themeP = clamp((lp - 0.25) / 0.5, 0, 1); // use middle 50% for card transitions
                 themeProgressRef.current = themeP;
                 
                 // Re-gather cards if they were missed during initial setup
