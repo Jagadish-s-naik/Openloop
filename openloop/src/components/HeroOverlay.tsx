@@ -1,6 +1,17 @@
+import React from 'react';
 import { Typewriter } from './common/Typewriter';
+import { lerp } from '../utils/math';
 
-export const HeroOverlay = () => {
+interface HeroOverlayProps {
+  scrollProgress: number;
+}
+
+export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
+  // Normalize p for hero settling
+  // Robot settles at p=0.2 in its internal scale, which is section 0 (hero)
+  // Mapping: first 20% of the site-wide scroll
+  const heroRevealP = Math.min(Math.max((scrollProgress - 0.05) / 0.15, 0), 1);
+  const heroVisibility = heroRevealP; // Proportional visibility
   return (
     <>
       <nav>
@@ -16,9 +27,19 @@ export const HeroOverlay = () => {
       <section id="robot-sections">
         <div id="s1-hero" className="section-overlay">
           <section id="hero">
-            <div className="hero-split-container">
-              <h1 className="hero-split left">OPEN</h1>
-              <h1 className="hero-split right">LOOP</h1>
+            <div 
+              className="hero-centered-container"
+              style={{ 
+                opacity: heroVisibility,
+                transform: `scale(${0.95 + heroVisibility * 0.05})`,
+                filter: `blur(${(1 - heroVisibility) * 10}px)`
+              }}
+            >
+              <h1 className="hero-main-title">
+                <span className="title-word">OPEN</span>
+                <span className="title-spacer" />
+                <span className="title-word">LOOP</span>
+              </h1>
             </div>
 
             <div className="hero-bottom-left">
@@ -79,38 +100,35 @@ export const HeroOverlay = () => {
             <div className="timeline-track">
               <div className="timeline-line" />
               <div className="timeline-events">
-                <div className="t-event t-left">
-                  <div className="t-dot" />
-                  <div className="t-card">
-                    <span className="t-date">2023</span>
-                    <h3>Core Prototype</h3>
-                    <p>Initial face rig and lighting studies established the visual baseline.</p>
-                  </div>
-                </div>
-                <div className="t-event t-right">
-                  <div className="t-dot" />
-                  <div className="t-card">
-                    <span className="t-date">2024</span>
-                    <h3>Reactive Scroll Engine</h3>
-                    <p>Deterministic progress mapping introduced section-coupled motion control.</p>
-                  </div>
-                </div>
-                <div className="t-event t-left">
-                  <div className="t-dot" />
-                  <div className="t-card">
-                    <span className="t-date">2025</span>
-                    <h3>Rim-Lit Identity</h3>
-                    <p>High contrast silhouette and cinematic halos defined the final direction.</p>
-                  </div>
-                </div>
-                <div className="t-event t-right">
-                  <div className="t-dot" />
-                  <div className="t-card">
-                    <span className="t-date">2026</span>
-                    <h3>OPENLOOP Launch</h3>
-                    <p>Unified timeline, theme sequence, and footer handoff in one continuous flow.</p>
-                  </div>
-                </div>
+                {[
+                  { date: '2023', title: 'Core Prototype', desc: 'Initial face rig and lighting studies established the visual baseline.', type: 't-left', range: [0.65, 0.72] },
+                  { date: '2024', title: 'Reactive Scroll Engine', desc: 'Deterministic progress mapping introduced section-coupled motion control.', type: 't-right', range: [0.72, 0.79] },
+                  { date: '2025', title: 'Rim-Lit Identity', desc: 'High contrast silhouette and cinematic halos defined the final direction.', type: 't-left', range: [0.79, 0.86] },
+                  { date: '2026', title: 'OPENLOOP Launch', desc: 'Unified timeline, theme sequence, and footer handoff in one continuous flow.', type: 't-right', range: [0.86, 0.93] },
+                ].map((event, i) => {
+                  const eventP = Math.min(Math.max((scrollProgress - event.range[0]) / (event.range[1] - event.range[0]), 0), 1);
+                  const isVisible = eventP > 0;
+                  
+                  return (
+                    <div 
+                      key={i} 
+                      className={`t-event ${event.type}`}
+                      style={{
+                        opacity: eventP,
+                        transform: `translateY(${lerp(30, 0, eventP)}px) translateZ(${lerp(-100, 0, eventP)}px) scale(${lerp(0.9, 1, eventP)})`,
+                        visibility: isVisible ? 'visible' : 'hidden',
+                        transition: 'none' // GSAP/Logic controlled
+                      }}
+                    >
+                      <div className="t-dot" style={{ boxShadow: `0 0 ${lerp(0, 20, eventP)}px #00f0ff` }} />
+                      <div className="t-card">
+                        <span className="t-date">{event.date}</span>
+                        <h3>{event.title}</h3>
+                        <p>{event.desc}</p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

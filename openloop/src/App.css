@@ -184,7 +184,7 @@ nav a:hover {
   letter-spacing: 0.04em;
   line-height: 1;
   text-transform: uppercase;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 60px rgba(255, 255, 255, 0.4), 0 0 120px rgba(0, 200, 255, 0.2);
+  text-shadow: 0 0 20px rgba(0, 240, 255, 0.6), 0 0 60px rgba(0, 240, 255, 0.3);
 }
 
 .hero-bottom-left {
@@ -308,46 +308,36 @@ nav a:hover {
   transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-/* --- HERO SPLIT TYPOGRAPHY --- */
-.hero-split-container {
+/* --- HERO CENTERED TYPOGRAPHY --- */
+.hero-centered-container {
   position: absolute;
-  top: 45%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  text-align: center;
   pointer-events: none;
   z-index: 10;
-  padding: 0 12vw;
 }
 
-.hero-split {
-  font-size: clamp(6rem, 16vw, 20rem);
+.hero-main-title {
+  font-family: 'Rajdhani', sans-serif;
   font-weight: 900;
-  color: #fff;
-  letter-spacing: -0.05em;
+  font-size: clamp(6rem, 15vw, 18rem);
   line-height: 0.8;
-  text-shadow: 0 0 60px rgba(0, 240, 255, 0.4);
-  opacity: 0;
-  transform: scale(0.85);
-  animation: heroReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 0 40px rgba(0, 240, 255, 0.5), 0 0 100px rgba(0, 240, 255, 0.2);
 }
 
-.hero-split.left {
-  animation-delay: 4.2s; /* Trigger after portal transition */
+.title-spacer {
+  width: 8vw; /* Adjustable spacing */
 }
 
-.hero-split.right {
-  animation-delay: 4.4s;
-}
-
-@keyframes heroReveal {
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.title-word {
+  display: inline-block;
 }
 
 /* --- SECTION OVERLAYS --- */
@@ -513,11 +503,12 @@ nav a:hover {
   position: absolute;
   left: 50%;
   top: 0;
-  width: 1px;
+  width: 2px;
   height: 0%;
-  background: linear-gradient(180deg, #00f0ff, #ff9500);
+  background: linear-gradient(180deg, #00f0ff, #0066ff);
   transform: translateX(-50%);
   transition: height 0.1s;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
 }
 
 .timeline-events {
@@ -527,9 +518,9 @@ nav a:hover {
 .t-event {
   display: flex;
   align-items: center;
-  margin-bottom: 64px;
+  margin-bottom: 80px;
   opacity: 0;
-  transform: translateY(30px);
+  perspective: 1000px;
 }
 
 .t-event.t-left {
@@ -553,13 +544,14 @@ nav a:hover {
 }
 
 .t-card {
-  background: rgba(0, 240, 255, 0.03);
-  border: 1px solid rgba(0, 240, 255, 0.15);
-  border-radius: 4px;
-  padding: 20px 24px;
-  max-width: 260px;
-  margin: 0 24px;
-  backdrop-filter: blur(16px);
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 16px;
+  padding: 24px 28px;
+  max-width: 320px;
+  margin: 0 32px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 240, 255, 0.05);
 }
 
 .t-date {
@@ -612,14 +604,22 @@ nav a:hover {
   top: 50%;
   left: 50%;
   width: min(340px, 85vw);
-  background: rgba(0, 240, 255, 0.03);
-  border: 1px solid rgba(0, 240, 255, 0.2);
+  background: rgba(0, 240, 255, 0.05); /* Slightly darker */
+  border: 1px solid rgba(0, 240, 255, 0.3);
   border-top: 2px solid #00f0ff;
-  border-radius: 4px;
+  border-radius: 24px; /* Refined to user's request */
   padding: 36px 32px;
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(24px);
   transform: translateX(-110vw) translateY(-50%);
   opacity: 0;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+              0 0 20px rgba(0, 240, 255, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+.theme-card:hover {
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 
+              0 0 30px rgba(0, 240, 255, 0.3);
 }
 
 .theme-card .card-number {

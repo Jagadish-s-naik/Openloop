@@ -1,6 +1,7 @@
 import React from 'react';
 import { Environment } from '@react-three/drei';
 import { Robot } from './Robot';
+import { Background } from './Background';
 
 interface HeroSceneProps {
   scrollVal: number;
@@ -21,6 +22,7 @@ export const HeroScene: React.FC<HeroSceneProps> = ({
     <>
       <Environment preset="city" />
       
+      <Background scrollVal={scrollVal} />
       <Robot
         scrollVal={scrollVal}
         robotProgressRef={robotProgressRef}
