@@ -10,6 +10,8 @@ import { HeroScene } from '../HeroScene';
 import { Background } from '../Background';
 import { HeroOverlay } from '../HeroOverlay';
 import { LoaderScene } from '../LoaderScene';
+import { Timeline3D } from '../Timeline3D';
+import { SponsorsSection } from '../SponsorsSection';
 import { useMousePosition } from '../../hooks/useMousePosition';
 import { lerp, clamp } from '../../utils/math';
 import Lenis from 'lenis';
@@ -78,6 +80,7 @@ const SceneContainer = ({
       <SceneLights robotProgressRef={robotProgressRef} />
 
       <Background scrollVal={scrollVal} />
+      <Timeline3D scrollProgress={robotProgressRef.current} />
       <HeroScene
         scrollVal={scrollVal}
         robotProgressRef={robotProgressRef}
@@ -326,6 +329,7 @@ export default function DesktopLayout() {
       {phase === 'main' && (
         <div id="site-content" style={{ display: scrollEnabled ? 'block' : 'none' }}>
           <HeroOverlay scrollProgress={rawScroll} />
+          <SponsorsSection scrollProgress={rawScroll} />
         </div>
       )}
     </div>

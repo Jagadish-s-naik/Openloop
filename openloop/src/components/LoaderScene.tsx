@@ -132,7 +132,6 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
                   anchorX="right"
                   anchorY="middle"
                   position={[0, 0, 0]}
-                  font="https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/audiowide/Audiowide-Regular.ttf"
                   letterSpacing={0.15}
                 >
                   OPEN
@@ -144,7 +143,6 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
                   anchorX="left"
                   anchorY="middle"
                   position={[0, 0, 0]}
-                  font="https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/audiowide/Audiowide-Regular.ttf"
                   letterSpacing={0.15}
                 >
                   LOOP
