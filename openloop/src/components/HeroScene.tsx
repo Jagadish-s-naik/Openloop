@@ -2,6 +2,7 @@ import { Environment, Text, Float } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { Robot } from './Robot';
 import { Background } from './Background';
+import { Timeline3D } from './Timeline3D';
 import { useMousePosition } from '../hooks/useMousePosition';
 import { lerp } from '../utils/math';
 
@@ -20,6 +21,11 @@ const CameraRig = ({ robotProgressRef }: { robotProgressRef: React.MutableRefObj
     if (p > 0.75) {
       const pushP = Math.min(1, (p - 0.75) * 5);
       targetZ = lerp(3.8, 2.0, pushP);
+    }
+    
+    // 3. Move camera slightly more into depth for Timeline
+    if (p >= 0.50 && p <= 0.80) {
+      targetZ = 4.2; // Move back a bit to see the 3D timeline nodes better
     }
 
     state.camera.position.x = lerp(state.camera.position.x, targetX, 0.08);
@@ -76,6 +82,7 @@ export const SceneContainer: React.FC<SceneContainerProps> = ({
         phase={phase}
         isVisible={isVisible}
       />
+      <Timeline3D scrollProgress={scrollVal} />
     </>
   );
 };

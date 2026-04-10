@@ -10,7 +10,7 @@ interface Sponsor {
 
 const SPONSORS: Sponsor[] = [
   { name: "UnStop", tier: "Title", logoImg: "" },
-  { name: "CYBERDYNE", tier: "Gold", logoImg: "" },
+  { name: "DK24", tier: "Gold", logoImg: "" },
   { name: "OSCORP", tier: "Gold", logoImg: "" },
   { name: "WEYLAND-YUTANI", tier: "Gold", logoImg: "" },
   { name: "TYRELL CORP", tier: "Silver", logoImg: "" },
@@ -18,7 +18,7 @@ const SPONSORS: Sponsor[] = [
 
 export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
   const p = scrollProgress;
-  const isSponsorsActive = p >= 0.65 && p < 0.80;
+  const isSponsorsActive = p >= 0.75 && p < 0.88;
 
   return (
     <div id="sponsors-section" className="section-overlay">

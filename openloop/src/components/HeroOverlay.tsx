@@ -10,12 +10,12 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   const p = scrollProgress;
 
   // Active state helpers
-  const isHeroActive = p >= 0.00 && p < 0.15;
-  const isAboutActive = p >= 0.15 && p < 0.30;
-  const isThemesActive = p >= 0.30 && p < 0.45;
-  const isTimelineActive = p >= 0.45 && p < 0.65;
-  const isSponsorsActive = p >= 0.65 && p < 0.80;
-  const isContactActive = p >= 0.80 && p < 0.92;
+  const isHeroActive = p >= 0.00 && p < 0.18;
+  const isAboutActive = p >= 0.18 && p < 0.36;
+  const isThemesActive = p >= 0.36 && p < 0.55;
+  const isTimelineActive = p >= 0.55 && p < 0.75;
+  const isSponsorsActive = p >= 0.75 && p < 0.88;
+  const isContactActive = p >= 0.88 && p < 0.96;
 
   return (
     <>
@@ -79,11 +79,11 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
           <div className="composition-grid">
             <div className="content-right">
               <div className="timeline-label">// 002 - ABOUT</div>
-              <h2 className="section-heading">SYSTEM CORE</h2>
+              <h2 className="section-heading">OpenLoop Hack</h2>
               <p className="body-text-safe">
                 <Typewriter 
                   active={isAboutActive}
-                  text="Autonomous profiling initiates at 90-degree profile lock. Green-spectrum telemetry emitted via focal response array." 
+                  text="OpenLoop is a National Level Hackathon organized by the Yenepoya Technological Club in Yenenpoya School of Engineering and Technology. It is a 24-hour hackathon where teams of 2-4 can participate and showcase their technical skills." 
                 />
               </p>
               <div className="hud-label" style={{ marginTop: '2rem', color: '#C6FF00' }}>STATUS: PROFILE_LOCK_ACTIVE</div>
@@ -91,34 +91,9 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
           </div>
         </div>
 
-        {/* PHASE 4: TIMELINE (Immersive) */}
+        {/* PHASE 4: TIMELINE (3D Immersive - Content removed here to show canvas) */}
         <section id="s4-timeline" className="section-overlay">
-          <div className="overlay-content">
-            <div className="timeline-label">// 004 - TIMELINE</div>
-            <h2 className="section-heading">OUR JOURNEY</h2>
-            <div className="timeline-track">
-              <div className="timeline-line" />
-              <div className="timeline-events">
-                {[
-                  { date: '2023', title: 'Core Prototype', desc: 'Initial face rig and lighting studies.', range: [0.45, 0.50] },
-                  { date: '2024', title: 'Deterministic Sync', desc: 'Scroll-coupled phase orchestration.', range: [0.50, 0.55] },
-                  { date: '2025', title: 'Cinematic Flow', desc: 'Normalized range mapping refined.', range: [0.55, 0.60] },
-                  { date: '2026', title: 'FINAL LAUNCH', desc: 'One continuous, immersive loop.', range: [0.60, 0.65] },
-                ].map((event, i) => {
-                  const eventP = Math.min(Math.max((p - event.range[0]) / (event.range[1] - event.range[0]), 0), 1);
-                  return (
-                    <div key={i} className="t-event" style={{ opacity: eventP, transform: `translateY(${lerp(20, 0, eventP)}px)` }}>
-                      <div className="t-card">
-                        <span className="t-date">{event.date}</span>
-                        <h3>{event.title}</h3>
-                        <p>{event.desc}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          {/* 2D Content removed - 3D Timeline takes over the viewport */}
         </section>
 
         {/* PHASE 6: CONTACT (ROBOT LEFT / TEXT RIGHT) */}

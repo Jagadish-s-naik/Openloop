@@ -98,7 +98,7 @@ export const Robot: React.FC<RobotProps> = ({
     }
     // 5. SPONSORS, 6. CONTACT, 7. FOOTER (0.75 -> 1.00) - RE-ENTRY
     else {
-      const entryP = clamp((p - 0.75) / 0.10, 0, 1);
+      const entryP = clamp((p - 0.75) / 0.03, 0, 1); // Much faster entry
       const exitP = clamp((1.00 - p) / 0.08, 0, 1);
       targetOpacity = Math.min(entryP, exitP);
       targetX = -2.4;

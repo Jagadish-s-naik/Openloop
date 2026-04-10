@@ -142,7 +142,7 @@ export default function DesktopLayout() {
 
               // Specific sub-animations
               if (range.name === 'THEMES' && op > 0) {
-                const themeP = clamp((lp - 0.25) / 0.5, 0, 1); // use middle 50% for card transitions
+                const themeP = clamp(lp / 0.25, 0, 1); // Enter fully during the fade-in (0% - 25%)
                 themeProgressRef.current = themeP;
                 
                 // Re-gather cards if they were missed during initial setup
@@ -151,25 +151,20 @@ export default function DesktopLayout() {
                   .filter((el): el is HTMLElement => Boolean(el)));
 
                 activeCards.forEach((card, i) => {
-                  const perCard = 0.2;
-                  const cardStart = i * perCard * 0.4; // Slightly tighter overlap
-                  const cardP = clamp((themeP - cardStart) / 0.35, 0, 1);
+                  const staggerP = clamp((themeP - i * 0.1) / 0.7, 0, 1);
+                  const cardP = staggerP;
                   
                   let x = 0;
                   let scale = 1;
                   let zIndex = 10 + i;
                   
-                  if (themeP < 0.5) {
+                  if (staggerP < 1.0) {
                     // Entry from side
-                    x = lerp(-140, -12 * (activeCards.length - 1 - i), easeOut(cardP));
-                    scale = lerp(1.1, 1 - i * 0.04, cardP);
+                    x = lerp(-60, -12 * (activeCards.length - 1 - i), easeOut(staggerP));
+                    scale = lerp(1.1, 1 - i * 0.04, staggerP);
                   } else {
-                    // Grid assembly
-                    const assembleP = clamp((themeP - 0.5) / 0.5, 0, 1);
-                    // Adjusted grid positions for 4 narrower cards (each ~23vw)
-                    // relative to center. Spacing of ~25vw
-                    const gridPositions = [-37.5, -12.5, 12.5, 37.5];
-                    x = lerp(-12 * (activeCards.length - 1 - i), gridPositions[i], easeInOut(assembleP));
+                    // Grid assembly (already in place)
+                    x = -12 * (activeCards.length - 1 - i);
                   }
                   
                   card.style.top = '50%';
