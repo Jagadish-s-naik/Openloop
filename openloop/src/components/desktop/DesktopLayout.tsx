@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -54,6 +54,31 @@ export default function DesktopLayout() {
 
     const sections = ['#s1-hero', '#s2-about', '#theme-section', '#s4-timeline', '#sponsors-section', '#contact-section', '#footer-section'];
 
+    // IMMEDIATELY make hero content visible — before any timeout or GSAP setup
+    // This prevents the black flash between preloader exit and scroll controller init
+    const heroEl = document.querySelector<HTMLElement>('#s1-hero');
+    if (heroEl) {
+      heroEl.style.opacity = '1';
+      heroEl.style.visibility = 'visible';
+    }
+    const titleEl = document.getElementById('hero-title-fixed');
+    if (titleEl) {
+      titleEl.style.opacity = '1';
+      titleEl.style.visibility = 'visible';
+    }
+    // Hide all other sections initially
+    sections.forEach((selector) => {
+      if (selector === '#s1-hero') return;
+      const el = document.querySelector<HTMLElement>(selector);
+      if (el) {
+        el.style.opacity = '0';
+        el.style.visibility = 'hidden';
+        el.style.display = 'block';
+        el.style.transition = 'none';
+      }
+    });
+
+    // Small delay just for DOM stabilisation — not for loading
     const setupTimeout = setTimeout(() => {
 
       lenis = new Lenis({
@@ -68,24 +93,6 @@ export default function DesktopLayout() {
       rafId = requestAnimationFrame(scrollLoop);
 
       lenis.on('scroll', ScrollTrigger.update);
-
-      // Show #s1-hero immediately (it's behind the permanent title)
-      const heroEl = document.querySelector<HTMLElement>('#s1-hero');
-      if (heroEl) {
-        heroEl.style.opacity = '1';
-        heroEl.style.visibility = 'visible';
-      }
-
-      sections.forEach((selector) => {
-        if (selector === '#s1-hero') return; // hero starts visible
-        const el = document.querySelector<HTMLElement>(selector);
-        if (el) {
-          el.style.opacity = '0';
-          el.style.visibility = 'hidden';
-          el.style.display = 'block';
-          el.style.transition = 'none';
-        }
-      });
 
       context = gsap.context(() => {
         // Single Unified Scroll Orchestration
@@ -158,7 +165,7 @@ export default function DesktopLayout() {
         });
       });
       ScrollTrigger.refresh();
-    }, 1000);
+    }, 50); // minimal delay — just for DOM stabilisation
 
     return () => {
       clearTimeout(setupTimeout);
@@ -199,11 +206,10 @@ export default function DesktopLayout() {
           id="webgl"
           camera={{ position: [0, 0, 3.8], fov: 45 }}
           onCreated={({ gl }) => {
-            gl.setClearColor(0x000000, 1);
+            gl.setClearColor(0x020600, 1);
             gl.domElement.style.pointerEvents = 'none';
           }}
         >
-          <Suspense fallback={null}>
             {(phase === 'loader' || phase === 'intro') ? (
               <LoaderScene progress={loaderProgress} phase={phase} />
             ) : (
@@ -215,7 +221,6 @@ export default function DesktopLayout() {
                 phase={phase}
               />
             ) }
-          </Suspense>
         </Canvas>
       </div>
 

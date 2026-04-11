@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Environment } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { Robot } from './Robot';
@@ -44,7 +45,7 @@ const SceneLights = () => {
       <directionalLight color="#C6FF00" intensity={0.5} position={[-5, 1, -2]} />
       <directionalLight color="#AFFF00" intensity={0.5} position={[5, 0, -1]} />
       <directionalLight color="#0a1200" intensity={0.4} position={[0, 0, 5]} />
-      <ambientLight color="#000000" intensity={0.2} />
+      <ambientLight color="#0d0d0d" intensity={0.2} />
       <pointLight color="#C6FF00" intensity={1.2} distance={8} position={[0, -3, 0]} />
     </>
   );
@@ -69,17 +70,19 @@ export const SceneContainer: React.FC<SceneContainerProps> = ({
     <>
       <CameraRig robotProgressRef={robotProgressRef} />
       <SceneLights />
-      <Environment preset="city" />
-      
       <Background scrollVal={scrollVal} />
-      <Robot
-        scrollVal={scrollVal}
-        robotProgressRef={robotProgressRef}
-        themeProgressRef={themeProgressRef}
-        mouseX={mouseX}
-        phase={phase}
-      />
-      <Timeline3D scrollProgress={scrollVal} />
+      
+      <Suspense fallback={null}>
+        <Environment preset="city" />
+        <Robot
+          scrollVal={scrollVal}
+          robotProgressRef={robotProgressRef}
+          themeProgressRef={themeProgressRef}
+          mouseX={mouseX}
+          phase={phase}
+        />
+        <Timeline3D scrollProgress={scrollVal} />
+      </Suspense>
     </>
   );
 };

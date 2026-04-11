@@ -56,7 +56,7 @@ export const Background: React.FC<{ scrollVal: number }> = ({ scrollVal }) => {
       pointsRef.current.position.y = s * 2.0; // Slower background float
       
       const mat = pointsRef.current.material as THREE.PointsMaterial;
-      mat.opacity = 0.2 + Math.sin(t * 0.4) * 0.05;
+      mat.opacity = 0.4 + Math.sin(t * 0.4) * 0.1;
     }
 
     // 2. Grid Movement (Mid-speed parallax)
@@ -86,7 +86,8 @@ export const Background: React.FC<{ scrollVal: number }> = ({ scrollVal }) => {
 
   return (
     <group>
-      <fog attach="fog" args={['#000000', 5, 35]} />
+      {/* Fog color must be 6-digit hex for Three.js Color constructor */}
+      <fog attach="fog" args={['#000000', 5, 60]} />
       
       {/* 1. Particle System */}
       <points ref={pointsRef}>
@@ -111,19 +112,19 @@ export const Background: React.FC<{ scrollVal: number }> = ({ scrollVal }) => {
         />
       </points>
 
-      {/* 2. Moving Digital Grid */}
+      {/* 2. Moving Digital Grid - expanded for full site coverage */}
       <group ref={gridRef}>
         <gridHelper 
-          args={[120, 40, '#0a1a00', '#0a1a00']} 
+          args={[300, 60, '#2a3a00', '#1a2a00']} 
           rotation={[0, 0, 0]} 
           position={[0, -6, 0]} 
         />
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -6.01, 0]}>
-          <planeGeometry args={[120, 120]} />
+          <planeGeometry args={[200, 200]} />
           <meshBasicMaterial 
             color="#000000" 
             transparent 
-            opacity={0.06} 
+            opacity={0.35} 
             depthWrite={false}
           />
         </mesh>

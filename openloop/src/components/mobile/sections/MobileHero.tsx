@@ -95,7 +95,7 @@ export const MobileHero: React.FC = () => {
       <div className="hero-bottom">
         <div className="title-line">
           <span ref={titleRef} className="hero-title">
-            <span style={{ backgroundImage: "linear-gradient(to bottom, #d9ed91ff, #8cef56ff)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>OPEN LOOP</span>
+            <span style={{ backgroundImage: "linear-gradient(to bottom, #d9ed91, #8cef56)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>OPEN LOOP</span>
           </span>
         </div>
         <div className="year-line"><span ref={yearRef} className="hero-year">2026</span></div>

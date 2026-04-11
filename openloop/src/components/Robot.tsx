@@ -83,7 +83,7 @@ export const Robot: React.FC<RobotProps> = ({
     if (p < 0.16) {
       const hp = clamp(p / 0.16, 0, 1);
       targetOpacity = 1; // Always visible — Y controls when it appears on screen
-      targetY = lerp(-4, 0, easeOut(hp));
+      targetY = lerp(-2.8, 0, easeOut(hp));
       targetX = 0;
       targetRotY = 0;
       targetScale = 2.0;

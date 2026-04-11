@@ -15,7 +15,7 @@ function App() {
       {!hasLoaded && <Preloader onComplete={() => setHasLoaded(true)} />}
       
       <div style={{ visibility: hasLoaded ? 'visible' : 'hidden', height: hasLoaded ? 'auto' : '100vh', overflow: hasLoaded ? 'visible' : 'hidden' }}>
-        <Suspense fallback={<div style={{ background: '#000000', height: '100vh' }} />}>
+        <Suspense fallback={<div style={{ background: 'transparent', height: '100vh' }} />}>
           {!isMobile && <CustomCursor />}
           {isMobile ? <MobileLayout /> : <DesktopLayout />}
         </Suspense>

@@ -42,9 +42,7 @@
 .noise-overlay {
   position: absolute;
   inset: 0;
-  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
-  filter: contrast(120%) brightness(100%);
-  opacity: 0.05;
+  background: rgba(0, 0, 0, 0.05); /* Safe local replacement for failing external SVG */
 }
 
 .themes-content-wrapper {
