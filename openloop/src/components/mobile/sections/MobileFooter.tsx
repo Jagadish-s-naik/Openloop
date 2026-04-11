@@ -37,8 +37,7 @@ export const MobileFooter: React.FC = () => {
       <div ref={brandRef} className="footer-brand">
         <div className="footer-title-wrap">
           <span className="footer-title">
-            <span style={{ color: '#ffffff' }}>OPEN</span>
-            <span style={{ color: '#C6FF00' }}>LOOP</span>
+           <span style={{ backgroundImage: "linear-gradient(to bottom, #d9ed91ff, #8cef56ff)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>OPEN LOOP</span>
           </span>
         </div>
         <div className="footer-year-wrap">
@@ -47,7 +46,7 @@ export const MobileFooter: React.FC = () => {
       </div>
 
       <p ref={tagRef} className="footer-tag">
-        Built at IIIT Delhi. Powered by caffeine and curiosity.
+        Built with passion at YenTech. Powered by WebDev Domain.
       </p>
 
       <div ref={linksRef} className="footer-links">
@@ -69,7 +68,7 @@ export const MobileFooter: React.FC = () => {
 
       <div ref={copyRef} className="footer-copy">
         <span>© 2026 OPENLOOP. ALL RIGHTS RESERVED.</span>
-        <span>ANTIGRAVITY PRODUCTIONS</span>
+        <span>YenTech [Yenepoya Institute of Engineering and Technology]</span>
       </div>
 
       <button ref={topRef} className="back-to-top"

@@ -3,12 +3,12 @@ import gsap from 'gsap';
 import 'gsap/ScrollTrigger';
 
 const titleSponsors = [
-  { name: 'TITAN CORP', logo: 'https://via.placeholder.com/200x80/00f0ff/000000?text=TITAN', url: '#' },
+  { name: 'UNSTOP', logo: '', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShIUi9GBexFS90vQTB_ZWcUzK4guhSfzgWJQ&s' },
 ];
 
 const goldSponsors = [
-  { name: 'NEON SYSTEMS', logo: 'https://via.placeholder.com/150x60/00f0ff/000000?text=NEON', url: '#' },
-  { name: 'VOID TECH', logo: 'https://via.placeholder.com/150x60/00f0ff/000000?text=VOID', url: '#' },
+  { name: 'DK24', logo: 'https://dk24.org/logo.png', url: '#' },
+  { name: 'VOID TECH', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShIUi9GBexFS90vQTB_ZWcUzK4guhSfzgWJQ&s', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShIUi9GBexFS90vQTB_ZWcUzK4guhSfzgWJQ&s' },
 ];
 
 const silverSponsors = [

@@ -1,6 +1,4 @@
 import React from 'react';
-import { Typewriter } from './common/Typewriter';
-import { lerp, clamp } from '../utils/math';
 
 interface HeroOverlayProps {
   scrollProgress: number;
@@ -8,40 +6,20 @@ interface HeroOverlayProps {
 
 export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   const p = scrollProgress;
-  
-  // High-precision visibility ranges
-  let opacity = 0;
-  let scale = 0.95;
-  let translateY = 0;
 
-  if (p <= 0.1) {
-    // Fade IN: 0 -> 0.1
-    const t = clamp(p / 0.1, 0, 1);
-    opacity = t;
-    scale = lerp(0.95, 1.0, t);
-  } else if (p <= 0.18) {
-    // FULL: 0.1 -> 0.18
-    opacity = 1;
-    scale = 1.0;
-  } else if (p <= 0.25) {
-    // Fade OUT: 0.18 -> 0.25
-    const t = clamp((p - 0.18) / 0.07, 0, 1);
-    opacity = 1 - t;
-    scale = 1.0;
-    translateY = t * -40; // Slight upward movement
-  }
-
-  const isVisible = opacity > 0;
+  // Active state helpers
+  const isHeroActive = p >= 0.00 && p < 0.15;
+  const isAboutActive = p >= 0.15 && p < 0.30;
+  const isContactActive = p >= 0.90 && p < 0.97;
 
   return (
     <>
       <nav>
         <div className="nav-brand hud-label">
-          <span style={{ color: '#fff' }}>OPEN</span>
-          <span style={{ color: '#C6FF00' }}>LOOP</span>
+          <span style={{ backgroundImage: "linear-gradient(to bottom, #C6FF00, #FFFFFF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>OPEN LOOP</span>
         </div>
         <div className="nav-links">
-          <a href="#robot-sections">Core</a>
+          <a href="#s1-hero">Core</a>
           <a href="#s4-timeline">Timeline</a>
           <a href="#theme-section">Themes</a>
         </div>
@@ -49,17 +27,10 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
       </nav>
 
       <section id="robot-sections">
+        {/* PHASE 1: HERO */}
         <div id="s1-hero" className="section-overlay">
           <section id="hero">
-            <div 
-              className="hero-centered-container"
-              style={{ 
-                opacity: opacity,
-                transform: `translate(-50%, calc(-50% + ${translateY}px)) scale(${scale})`,
-                visibility: isVisible ? 'visible' : 'hidden',
-                pointerEvents: opacity > 0.5 ? 'auto' : 'none'
-              }}
-            >
+            <div className="hero-centered-container">
               <h1 className="hero-main-title">
                 <span className="title-word" style={{ color: '#ffffff' }}>OPEN</span>
                 <span className="title-spacer" />
@@ -72,129 +43,106 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
             </div>
 
             <div className="hero-bottom-left">
-              <p className="body-text-safe">
-                <Typewriter text="Cinematic autonomous intelligence rendered in real time. Scroll to transition through systems, themes, and final state." />
-              </p>
+              <div className="body-text-safe">
+                {isHeroActive && (
+                  <div className="reveal-text-fast">
+                    Enter. Build. Evolve.
+                  </div>
+                )}
+              </div>
               <button className="cta-button" type="button">Enter Loop</button>
             </div>
 
-            <aside className="hero-bottom-right secondary-card">
-              <span className="card-tag">National Level Hackathon</span>
-              <div className="card-image">
-                <span className="hud-label">Hackathon</span>
-              </div>
-              <h3>OPENLOOP</h3>
-              <p>
-                <Typewriter text="  A National Level Hackathon organized by the Computer Science and Engineering Association (CSEA) of NIT Trichy, where teams from across the country come together to innovate and compete." />
-              </p>
-            </aside>
+            
           </section>
         </div>
 
+        {/* PHASE 2: ABOUT (ROBOT LEFT / TEXT RIGHT) */}
         <div id="s2-about" className="section-overlay">
-          <div className="overlay-content panel-block align-right">
-            <div className="timeline-label text-reveal">// 002 - ABOUT</div>
-            <h2 className="section-heading text-reveal">ABOUT CORE</h2>
-            <p className="body-text-safe text-reveal">
-              <Typewriter text="Synthetic profiles transition to profile view, revealing operational metrics and green-spectrum response telemetry." />
-            </p>
-          </div>
-        </div>
-
-        <div id="s3-features" className="section-overlay">
-          <div className="overlay-content panel-block align-left">
-            <div className="timeline-label text-reveal">// 003 - FEATURES</div>
-            <h2 className="section-heading text-reveal">BACK SYSTEMS</h2>
-            <div className="feature-grid">
-              <article className="feature-card text-reveal">
-                <h3>SPINE REACTOR</h3>
-                <p><Typewriter text="Back panel energy system spikes during 180-degree lock." /></p>
-              </article>
-              <article className="feature-card text-reveal">
-                <h3>FUSED ALLOY</h3>
-                <p><Typewriter text="Low-roughness armor maintains high-contrast rim highlights." /></p>
-              </article>
-              <article className="feature-card text-reveal">
-                <h3>TEMPLE ARRAY</h3>
-                <p><Typewriter text="Profile-side amber seam detail appears in section transitions." /></p>
-              </article>
-            </div>
-          </div>
-        </div>
-
-        <section id="s4-timeline" className="section-overlay">
-          <div className="overlay-content">
-            <div className="timeline-label">// 004 - TIMELINE</div>
-            <h2 className="section-heading">OUR JOURNEY</h2>
-            <div className="timeline-track">
-              <div className="timeline-line" />
-              <div className="timeline-events">
-                {[
-                  { date: '2023', title: 'Core Prototype', desc: 'Initial face rig and lighting studies established the visual baseline.', type: 't-left', range: [0.65, 0.72] },
-                  { date: '2024', title: 'Reactive Scroll Engine', desc: 'Deterministic progress mapping introduced section-coupled motion control.', type: 't-right', range: [0.72, 0.79] },
-                  { date: '2025', title: 'Rim-Lit Identity', desc: 'High contrast silhouette and cinematic halos defined the final direction.', type: 't-left', range: [0.79, 0.86] },
-                  { date: '2026', title: 'OPENLOOP Launch', desc: 'Unified timeline, theme sequence, and footer handoff in one continuous flow.', type: 't-right', range: [0.86, 0.93] },
-                ].map((event, i) => {
-                  const eventP = Math.min(Math.max((scrollProgress - event.range[0]) / (event.range[1] - event.range[0]), 0), 1);
-                  const isVisible = eventP > 0;
-                  
-                  return (
-                    <div 
-                      key={i} 
-                      className={`t-event ${event.type}`}
-                      style={{
-                        opacity: eventP,
-                        transform: `translateY(${lerp(30, 0, eventP)}px) translateZ(${lerp(-100, 0, eventP)}px) scale(${lerp(0.9, 1, eventP)})`,
-                        visibility: isVisible ? 'visible' : 'hidden',
-                        transition: 'none' // GSAP/Logic controlled
-                      }}
-                    >
-                      <div className="t-dot" style={{ boxShadow: `0 0 ${lerp(0, 20, eventP)}px #C6FF00` }} />
-                      <div className="t-card">
-                        <span className="t-date">{event.date}</span>
-                        <h3>{event.title}</h3>
-                        <p>{event.desc}</p>
-                      </div>
-                    </div>
-                  );
-                })}
+          <div className="composition-grid">
+            <div className="content-right">
+              <div className="timeline-label">// 002 - ABOUT</div>
+              <h2 className="section-heading">OpenLoop Hack</h2>
+              <div className="body-text-safe">
+                {isAboutActive && (
+                  <div className="reveal-text-fast">
+                    OpenLoop is a National Level Hackathon organized by the Yenepoya Technological Club in Yenenpoya School of Engineering and Technology. It is a 24-hour hackathon where teams of 2-4 can participate and showcase their technical skills.
+                  </div>
+                )}
               </div>
+              <div className="hud-label" style={{ marginTop: '2rem', color: '#C6FF00' }}>STATUS: PROFILE_LOCK_ACTIVE</div>
             </div>
           </div>
+        </div>
+
+        {/* PHASE 4: TIMELINE (3D Immersive - Content removed here to show canvas) */}
+        <section id="s4-timeline" className="section-overlay">
+          {/* 2D Content removed - 3D Timeline takes over the viewport */}
         </section>
+
+        {/* PHASE 6: CONTACT */}
+        <div id="contact-section" className="section-overlay contact-fullscreen">
+          <div className="contact-inner">
+            <div className="contact-header">
+              <span className="timeline-label">// 006 — CONTACT</span>
+              <h2 className="section-heading contact-title">GET IN TOUCH</h2>
+              <p className="contact-subtitle">
+                {isContactActive && (
+                  <span className="reveal-text-fast">
+                    System link established. Reach any of our team leads directly.
+                  </span>
+                )}
+              </p>
+            </div>
+
+            <div className="contact-cards-grid">
+              {[
+                { name: 'Radhesh Pai',     role: 'Lead Organizer',       email: 'radhesh@openloop.dev',   phone: '+91 98765 43210', initials: 'RP' },
+                { name: 'Mohammed',         role: 'Secretary',             email: 'mohammed@openloop.dev',  phone: '+91 87654 32109', initials: 'MO' },
+                { name: 'Jagadhish Naik',  role: 'Web Development Head',  email: 'jagadhish@openloop.dev', phone: '+91 76543 21098', initials: 'JN' },
+              ].map((person, i) => (
+                <div key={i} className="contact-card" style={{ animationDelay: `${i * 0.12}s` }}>
+                  <div className="contact-card-glow" />
+                  <div className="contact-avatar">
+                    <span className="contact-initials">{person.initials}</span>
+                    <div className="contact-avatar-ring" />
+                  </div>
+                  <div className="contact-card-info">
+                    <h3 className="contact-name">{person.name}</h3>
+                    <span className="contact-role">{person.role}</span>
+                    <div className="contact-divider" />
+                    <a href={`mailto:${person.email}`} className="contact-link">
+                      <span className="contact-link-icon">@</span>
+                      {person.email}
+                    </a>
+                    <div className="contact-link">
+                      <span className="contact-link-icon">#</span>
+                      {person.phone}
+                    </div>
+                  </div>
+                  <div className="contact-card-corner" />
+                </div>
+              ))}
+            </div>
+
+            <div className="contact-footer-row">
+              <div className="hud-line" style={{ width: '60px' }} />
+              <span className="hud-label">AVAILABILITY: 24/7_SYNC</span>
+              <div className="hud-line" style={{ width: '60px' }} />
+            </div>
+          </div>
+        </div>
+
+        {/* PHASE 7: FOOTER */}
+        <footer id="footer-section" className="section-overlay">
+          <div style={{ textAlign: 'center' }}>
+            <h2 className="section-heading">OPENLOOP 2026</h2>
+            <p className="hud-label">TERMINAL_HANDOFF_COMPLETE</p>
+            <div className="hud-line" style={{ margin: '4rem auto', width: '200px' }} />
+            <p>© 2026 CSEA NIT TRICHY. ALL SYSTEMS GO.</p>
+          </div>
+        </footer>
       </section>
-
-      <section id="theme-section">
-        <div className="theme-label">// THEMES</div>
-
-        <article id="card-1" className="theme-card">
-          <div className="card-icon">I</div>
-          <span className="card-number">001</span>
-          <h3>SYNERGY</h3>
-          <p>Control systems unify perception, targeting, and stabilization as one smooth loop.</p>
-        </article>
-
-        <article id="card-2" className="theme-card">
-          <div className="card-icon">II</div>
-          <span className="card-number">002</span>
-          <h3>VELOCITY</h3>
-          <p>Motion responds with deterministic interpolation for cinematic but reliable behavior.</p>
-        </article>
-
-        <article id="card-3" className="theme-card">
-          <div className="card-icon">III</div>
-          <span className="card-number">003</span>
-          <h3>ASCENT</h3>
-          <p>Final phase transitions cards outward while the robot exits upward toward the footer handoff.</p>
-        </article>
-
-        <div id="card-row" className="theme-card-row" />
-      </section>
-
-      <footer id="footer-section">
-        <h2>CONTACT OPENLOOP</h2>
-        <p>Systems ready. Continue into the next robot phase with focused profile refinements.</p>
-      </footer>
     </>
   );
 };

@@ -4,24 +4,24 @@ import 'gsap/ScrollTrigger';
 
 const members = [
   { 
-    name: 'Alex Rivera', 
+    name: 'Radhesh Pai', 
     role: 'Lead Organizer', 
-    photo: 'https://via.placeholder.com/150', 
+    photo: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2F0JTIwZ2xhc3Nlc3xlbnwwfHwwfHx8MA%3D%3D', 
     email: 'alex@openloop.dev',
     linkedin: '#',
     github: '#'
   },
   { 
-    name: 'Sarah Chen', 
-    role: 'Tech Director', 
+    name: 'Mohammed', 
+    role: 'Secretary', 
     photo: 'https://via.placeholder.com/150', 
     email: 'sarah@openloop.dev',
     linkedin: '#',
     github: '#'
   },
   { 
-    name: 'Marcus Thorne', 
-    role: 'UX Architect', 
+    name: 'Jagadhish Naik', 
+    role: 'Web Development Head', 
     photo: 'https://via.placeholder.com/150', 
     email: 'marcus@openloop.dev',
     linkedin: '#',
@@ -88,10 +88,7 @@ export const MobileTeam: React.FC = () => {
       <div className="team-grid section-body">
         {members.map((m, i) => (
           <div key={i} ref={el => { cardsRef.current[i] = el; }} className="team-card">
-            <div className="team-avatar">
-              <img src={m.photo} alt={m.name} />
-              <div className="avatar-ring" />
-            </div>
+            
             <div className="team-info">
               <div className="team-name">{m.name}</div>
               <div className="team-role">{m.role}</div>

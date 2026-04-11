@@ -10,6 +10,7 @@ import { MobileLoader } from './MobileLoader';
 import { MobileNav } from './MobileNav';
 import { MobileHero } from './sections/MobileHero';
 import { MobileAbout } from './sections/MobileAbout';
+import { MobileThemesSection } from './sections/MobileThemesSection';
 import { MobileTimeline } from './sections/MobileTimeline';
 import { MobileSponsors } from './sections/MobileSponsors';
 import { MobileTeam } from './sections/MobileTeam';
@@ -63,6 +64,7 @@ export default function MobileLayout() {
           <main>
             <MobileHero />
             <MobileAbout scrollTo={scrollToSection} />
+            <MobileThemesSection />
             <MobileTimeline />
             <MobileSponsors />
             <MobileTeam />

@@ -17,6 +17,19 @@ body {
   overflow-x: hidden;
 }
 
+.reveal-text-fast {
+  animation: revealFast 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+@keyframes revealFast {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 #webgl {
   position: fixed;
   inset: 0;
@@ -31,17 +44,21 @@ body {
   min-height: 100vh;
 }
 
+.app-root.is-main {
+  height: 1200vh; /* Mandatory scroll height for range mapping */
+}
+
 .canvas-container {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 1; /* Lowest 3D Layer */
   pointer-events: none;
 }
 
 #hud-overlay {
   position: fixed;
   inset: 0;
-  z-index: 10;
+  z-index: 10; /* Middle Layer */
   pointer-events: none;
   background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.45) 100%);
   box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
@@ -62,9 +79,10 @@ body {
 }
 
 #site-content {
-  position: relative;
-  z-index: 20;
-  pointer-events: all;
+  position: fixed;
+  inset: 0;
+  z-index: 20; /* UI Section Layer (Boosted) */
+  pointer-events: none;
 }
 
 nav {
@@ -145,22 +163,24 @@ nav a:hover {
   box-shadow: 0 0 15px rgba(198, 255, 0, 0.5);
 }
 
-#robot-sections {
-  position: relative;
-  min-height: 100vh;
+.app-root.is-main {
+  height: 800vh; /* Mandatory scroll height for range mapping */
 }
 
-.section-overlay {
-  position: absolute;
+#site-content {
+  position: fixed;
   inset: 0;
-  opacity: 0;
+  z-index: 20; /* UI Section Layer (Boosted) */
   pointer-events: none;
 }
 
-#s1-hero {
-  opacity: 1;
-  pointer-events: auto;
+#robot-sections {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
+
+/* section-overlay canonical rule defined below at .section-overlay */
 
 #hero {
   min-height: 100vh;
@@ -354,25 +374,47 @@ nav a:hover {
   text-transform: uppercase;
 }
 
-/* --- SECTION OVERLAYS --- */
+/* --- COMPOSITIONAL GRID (7-Phase Flow) --- */
+.composition-grid {
+  display: grid;
+  grid-template-columns: 45% 55%; /* Robot occupies 45% (Left), Content occupies 55% (Right) */
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.content-right {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 4vw;
+  pointer-events: auto;
+}
+
+/* ========================================================
+   CANONICAL SECTION OVERLAY — Strict 100vh Viewport Fit
+   ======================================================== */
 .section-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 10vw;
+  /* Navbar safe zone: 80px top, controlled sides */
+  padding: 80px 6vw 24px;
   opacity: 0;
-  transition: opacity 0.8s ease;
+  visibility: hidden;
+  transition: opacity 0.6s ease, transform 0.6s ease;
   pointer-events: none;
-}
-
-.section-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
+  z-index: 20;
+  box-sizing: border-box;
 }
 
 #hero {
@@ -406,14 +448,16 @@ nav a:hover {
 
 /* --- TYPOGRAPHY REFINEMENTS --- */
 .section-heading {
-  font-size: clamp(3rem, 8vw, 6rem);
-  margin-bottom: 2rem;
+  /* clamp: min 28px, preferred 4vw, max 52px — scaled for viewport fit */
+  font-size: clamp(28px, 4vw, 52px);
+  margin-bottom: 1.2rem;
   letter-spacing: 0.1em;
 }
 
 .body-text-safe {
-  font-size: 1.1rem;
-  line-height: 1.8;
+  /* Reduced for viewport fit: 0.9rem base */
+  font-size: clamp(0.8rem, 1.1vw, 0.95rem);
+  line-height: 1.65;
   color: rgba(255, 255, 255, 0.7);
   font-weight: 300;
 }
@@ -462,10 +506,10 @@ nav a:hover {
 .section-heading {
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
-  font-size: clamp(36px, 5vw, 64px);
+  font-size: clamp(28px, 4vw, 52px);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin: 12px 0 20px;
+  margin: 8px 0 14px;
 }
 
 .timeline-label {
@@ -542,24 +586,27 @@ nav a:hover {
 }
 
 .t-dot {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   border: 2px solid #C6FF00;
   background: #000000;
   flex-shrink: 0;
   position: absolute;
-  left: 53px;
+  left: 54px;
+  top: 30px;
   z-index: 2;
-  box-shadow: 0 0 12px #C6FF00;
+  box-shadow: 0 0 15px rgba(198, 255, 0, 0.4);
+  transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .t-card {
-  background: rgba(198, 255, 0, 0.04);
-  border: 1px solid rgba(198, 255, 0, 0.2);
+  background: rgba(10, 10, 10, 0.85);
+  border: 1px solid rgba(198, 255, 0, 0.15);
+  border-left: 3px solid #C6FF00;
   border-radius: 4px;
   padding: 32px 40px;
-  max-width: 500px;
+  max-width: 540px;
   margin: 0;
   backdrop-filter: blur(20px);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
@@ -569,11 +616,12 @@ nav a:hover {
 .t-card::before {
   content: '';
   position: absolute;
-  left: -20px;
-  top: 24px;
-  width: 20px;
+  left: -24px;
+  top: 36px;
+  width: 24px;
   height: 1px;
-  background: rgba(198, 255, 0, 0.3);
+  background: #C6FF00;
+  opacity: 0.5;
 }
 
 .t-date {
@@ -603,108 +651,230 @@ nav a:hover {
   line-height: 1.7;
 }
 
-#theme-section {
-  position: relative;
-  height: 100vh;
-  overflow: hidden;
-  background: #000000;
-  display: flex;
+
+/* ==============================
+   CONTACT SECTION — PREMIUM CARDS
+   ============================== */
+
+.contact-fullscreen {
+  display: flex !important;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
-.theme-label {
-  position: absolute;
-  top: 90px;
-  left: 48px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  color: #C6FF00;
-  letter-spacing: 0.3em;
+.contact-inner {
+  width: 100%;
+  max-width: 1100px;
+  padding: 0 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  /* Vertical fit guarantee */
+  max-height: calc(100vh - 100px);
+  overflow: hidden;
 }
 
-.theme-card {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: min(340px, 85vw);
-  background: rgba(198, 255, 0, 0.05); /* Slightly darker */
-  border: 1px solid rgba(198, 255, 0, 0.3);
-  border-top: 2px solid #C6FF00;
-  border-radius: 24px; /* Refined to user's request */
-  padding: 36px 32px;
-  backdrop-filter: blur(24px);
-  transform: translateX(-110vw) translateY(-50%);
-  opacity: 0;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
-              0 0 20px rgba(198, 255, 0, 0.15);
-  transition: box-shadow 0.3s ease;
+.contact-header {
+  text-align: center;
 }
 
-.theme-card:hover {
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 
-              0 0 30px rgba(198, 255, 0, 0.3);
-}
-
-.theme-card .card-number {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  color: #C6FF00;
-  letter-spacing: 0.3em;
-  margin-bottom: 16px;
-  display: block;
-}
-
-.theme-card h3 {
-  font-family: 'Rajdhani', sans-serif;
-  font-weight: 700;
-  font-size: clamp(28px, 3vw, 40px);
-  letter-spacing: 0.06em;
+.contact-title {
+  margin: 8px 0 12px;
   color: #ffffff;
-  text-transform: uppercase;
-  text-shadow: 0 0 20px rgba(198, 255, 0, 0.25);
-  margin-bottom: 12px;
+  text-shadow: 0 0 30px rgba(198, 255, 0, 0.25);
 }
 
-.theme-card p {
+.contact-subtitle {
   font-family: 'Inter', sans-serif;
-  font-weight: 300;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.55);
-  line-height: 1.7;
+  min-height: 1.5em;
 }
 
-.theme-card .card-icon {
-  width: 52px;
-  height: 52px;
-  border: 1px solid rgba(198, 255, 0, 0.3);
-  border-radius: 4px;
+/* 3-column grid */
+.contact-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  width: 100%;
+}
+
+/* Individual card */
+.contact-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(198, 255, 0, 0.12);
+  border-radius: 16px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+  pointer-events: auto;
+  animation: cardFadeUp 0.6s ease both;
+}
+
+@keyframes cardFadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.contact-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(198, 255, 0, 0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4),
+              0 0 20px rgba(198, 255, 0, 0.1);
+}
+
+.contact-card-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: radial-gradient(ellipse at top center, rgba(198, 255, 0, 0.06), transparent 70%);
+  pointer-events: none;
+}
+
+/* Avatar */
+.contact-avatar {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+
+.contact-initials {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  background: rgba(198, 255, 0, 0.05);
-  font-family: 'Exo 2', sans-serif;
-  font-weight: 600;
+  background: rgba(198, 255, 0, 0.08);
+  border: 1px solid rgba(198, 255, 0, 0.3);
+  border-radius: 50%;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: #C6FF00;
+  letter-spacing: 0.05em;
+  z-index: 1;
 }
 
-.theme-card-row {
-  display: none;
+.contact-avatar-ring {
   position: absolute;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  gap: 20px;
-  opacity: 0;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(198, 255, 0, 0.15);
+  animation: ringPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1);    opacity: 0.4; }
+  50%       { transform: scale(1.12); opacity: 0.8; }
+}
+
+/* Card info */
+.contact-card-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.contact-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: #ffffff;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.contact-role {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: #C6FF00;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.contact-divider {
+  width: 32px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C6FF00, transparent);
+  margin: 8px auto;
+  opacity: 0.5;
+}
+
+.contact-link {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+a.contact-link:hover {
+  color: #C6FF00;
+}
+
+.contact-link-icon {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: #C6FF00;
+  background: rgba(198, 255, 0, 0.08);
+  border: 1px solid rgba(198, 255, 0, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.contact-card-corner {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border-right: 1px solid rgba(198, 255, 0, 0.15);
+  border-bottom: 1px solid rgba(198, 255, 0, 0.15);
+  border-bottom-right-radius: 20px;
+}
+
+/* Footer row */
+.contact-footer-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hud-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(198, 255, 0, 0.4), transparent);
 }
 
 #footer-section {
-  min-height: 100vh;
-  opacity: 0;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   display: grid;
   place-items: center;
   text-align: center;
-  padding: 24px;
+  padding: 80px 24px 24px;
   background: radial-gradient(circle at 50% 120%, rgba(198, 255, 0, 0.1), rgba(0, 0, 0, 1) 60%);
 }
 

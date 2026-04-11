@@ -114,7 +114,7 @@ export const Background: React.FC<{ scrollVal: number }> = ({ scrollVal }) => {
       {/* 2. Moving Digital Grid */}
       <group ref={gridRef}>
         <gridHelper 
-          args={[120, 40, '#C6FF00', '#0a1a00']} 
+          args={[120, 40, '#0a1a00', '#0a1a00']} 
           rotation={[0, 0, 0]} 
           position={[0, -6, 0]} 
         />

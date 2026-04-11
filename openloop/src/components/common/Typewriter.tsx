@@ -1,4 +1,4 @@
-import React, { useState, useEffect ,useRef} from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface TypewriterProps {
   text: string;
@@ -10,31 +10,13 @@ interface TypewriterProps {
 export const Typewriter: React.FC<TypewriterProps> = ({ 
   text, 
   delay = 30, 
+  active = false,
   className = "" 
 }) => {
   const [displayedText, setDisplayedText] = useState("");
-  const [started, setStarted] = useState(false);
-  const containerRef = useRef<HTMLSpanElement>(null);
-
+  
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started) {
-          setStarted(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [started]);
-
-  useEffect(() => {
-    if (started) {
+    if (active) {
       let currentIndex = 0;
       const interval = setInterval(() => {
         if (currentIndex <= text.length) {
@@ -45,8 +27,10 @@ export const Typewriter: React.FC<TypewriterProps> = ({
         }
       }, delay);
       return () => clearInterval(interval);
+    } else {
+      setDisplayedText(""); // Reset
     }
-  }, [started, text, delay]);
+  }, [active, text, delay]);
 
-  return <span ref={containerRef} className={className}>{displayedText}</span>;
+  return <span className={className}>{displayedText}</span>;
 };

@@ -109,7 +109,7 @@ export const MobileTimeline: React.FC = () => {
       <div className="section-divider" />
       <div className="section-label">// 002 — TIMELINE</div>
       <h2 className="section-heading">
-        <span className="word">48H</span>{' '}
+        <span className="word">24H</span>{' '}
         <span className="word">SCHEDULE</span>
       </h2>
 

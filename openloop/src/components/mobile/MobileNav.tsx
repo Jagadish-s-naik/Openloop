@@ -70,6 +70,7 @@ export const MobileNav: React.FC = () => {
   const navItems = [
     { label: 'Hero', id: '#hero' },
     { label: 'About', id: '#about' },
+    { label: 'Themes', id: '#themes' },
     { label: 'Timeline', id: '#timeline' },
     { label: 'Sponsors', id: '#sponsors' },
     { label: 'Team', id: '#team' },

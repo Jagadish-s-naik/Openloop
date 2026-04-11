@@ -273,14 +273,16 @@
 
 .hero-badge {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  color: var(--neon);
+  font-size: 15px;
+  background-image: linear-gradient(to right, #C6FF00, #ee9999);
+  
+  
   letter-spacing: 0.3em;
   border: 1px solid rgba(198, 255, 0, 0.25);
   padding: 6px 12px;
   border-radius: 2px;
   width: fit-content;
-  background: rgba(198, 255, 0, 0.04);
+  background: rgba(135, 232, 116, 0.04);
   opacity: 0;
   transform: translateY(20px);
 }
@@ -327,7 +329,7 @@
 
 .hero-title {
   font-family: 'Audiowide', sans-serif;
-  font-size: clamp(44px, 12vw, 72px);
+  font-size: clamp(50px, 12vw, 100px);
   color: var(--white);
   line-height: 0.95;
   display: block;

@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Audiowide&display=swap');
+
+.themes-premium-container {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  width: 100%;
+  height: 100vh;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.themes-background-decor {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+}
+
+.blob-1 {
+  background: radial-gradient(circle, #C6FF00 0%, transparent 70%);
+  top: -10%;
+  left: -10%;
+}
+
+.blob-2 {
+  background: radial-gradient(circle, #00f0ff 0%, transparent 70%);
+  bottom: -10%;
+  right: -10%;
+}
+
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+  filter: contrast(120%) brightness(100%);
+  opacity: 0.05;
+}
+
+.themes-content-wrapper {
+  width: 100%;
+  max-width: 1100px;
+  padding: 0 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Constrain inner content within viewport */
+  max-height: calc(100vh - 100px);
+  overflow: hidden;
+}
+
+.themes-header {
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.themes-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: #C6FF00;
+  letter-spacing: 0.4em;
+  opacity: 0.7;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.themes-main-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: clamp(32px, 4vw, 56px);
+  letter-spacing: 0.2em;
+  color: #ffffff;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  text-shadow: 0 0 30px rgba(198, 255, 0, 0.3);
+}
+
+.themes-header-line {
+  width: 80px;
+  height: 2px;
+  background: #C6FF00;
+  margin: 0 auto;
+  box-shadow: 0 0 10px #C6FF00;
+}
+
+.themes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 18px;
+  width: 100%;
+}
+
+.theme-card-premium {
+  position: relative;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px 28px;
+  backdrop-filter: blur(20px);
+  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.theme-card-premium:hover {
+  transform: translateY(-8px) scale(1.02) !important;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(198, 255, 0, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+              0 0 20px rgba(198, 255, 0, 0.1);
+}
+
+.card-glass-glow {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle at top right, rgba(198, 255, 0, 0.1), transparent 70%);
+  pointer-events: none;
+}
+
+.card-top-indicator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.card-hex-id {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  color: #C6FF00;
+  letter-spacing: 0.1em;
+}
+
+.card-status-dot {
+  width: 6px;
+  height: 6px;
+  background: #C6FF00;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #C6FF00;
+}
+
+.card-title-premium {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: clamp(16px, 1.6vw, 22px);
+  color: #ffffff;
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.card-accent-bar {
+  width: 32px;
+  height: 2px;
+  background: #C6FF00;
+  margin-bottom: 20px;
+  transition: width 0.3s ease;
+}
+
+.theme-card-premium:hover .card-accent-bar {
+  width: 64px;
+}
+
+.card-desc-premium {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 13.5px);
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.55;
+}
+
+.card-corner-decor {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border-right: 1px solid rgba(198, 255, 0, 0.2);
+  border-bottom: 1px solid rgba(198, 255, 0, 0.2);
+  border-bottom-right-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.theme-card-premium:hover .card-corner-decor {
+  opacity: 1;
+}
+
+@media (max-width: 1000px) {
+  .themes-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .themes-main-title {
+    font-size: 40px;
+  }
+}
