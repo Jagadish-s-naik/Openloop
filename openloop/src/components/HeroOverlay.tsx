@@ -54,7 +54,10 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
             </a>
           ))}
         </div>
-        <button className="cta-outline" type="button">Register Now</button>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <a href="https://drive.google.com/file/d/1_IM0WD6zowoyv9nopm2RbnwW2dUYwwBE/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="hud-label" style={{ textDecoration: 'none', fontSize: '12px', opacity: 0.7 }}>[ BROCHURE ]</a>
+          <a href="https://unstop.com/college-fests/openloop-26-yenepoya-school-of-engineering-and-technology-458231" target="_blank" rel="noopener noreferrer" className="cta-outline" style={{ textDecoration: 'none' }}>Register Now</a>
+        </div>
       </nav>
 
       <section id="robot-sections">

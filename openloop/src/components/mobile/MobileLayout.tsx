@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -6,7 +6,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import '../../styles/mobile.css';
 
 // Components
-import { MobileLoader } from './MobileLoader';
 import { MobileNav } from './MobileNav';
 import { MobileHero } from './sections/MobileHero';
 import { MobileAbout } from './sections/MobileAbout';

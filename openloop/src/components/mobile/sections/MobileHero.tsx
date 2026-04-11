@@ -10,6 +10,7 @@ export const MobileHero: React.FC = () => {
   const yearRef = useRef<HTMLSpanElement>(null);
   const taglineRef = useRef<HTMLParagraphElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -20,37 +21,43 @@ export const MobileHero: React.FC = () => {
         duration: 1.8,
         ease: 'power4.out'
       })
-      .to('.hero-year', {
-        y: '0%',
-        duration: 1.2,
-        ease: 'power3.out'
-      }, '-=0.8')
-      .to(badgeRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'power2.out'
-      }, '-=0.3')
-      .to(subRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'power2.out'
-      }, '-=0.3')
-      .to(statsRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'power2.out'
-      }, '-=0.3')
-      .to(taglineRef.current, {
-        opacity: 1,
-        duration: 0.4
-      }, '-=0.2')
-      .to(scrollRef.current, {
-        opacity: 1,
-        duration: 0.4
-      }, '-=0.2');
+        .to('.hero-year', {
+          y: '0%',
+          duration: 1.2,
+          ease: 'power3.out'
+        }, '-=0.8')
+        .to(badgeRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: 'power2.out'
+        }, '-=0.3')
+        .to(subRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: 'power2.out'
+        }, '-=0.3')
+        .to(statsRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: 'power2.out'
+        }, '-=0.3')
+        .to(buttonsRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: 'power2.out'
+        }, '-=0.3')
+        .to(taglineRef.current, {
+          opacity: 1,
+          duration: 0.4
+        }, '-=0.2')
+        .to(scrollRef.current, {
+          opacity: 1,
+          duration: 0.4
+        }, '-=0.2');
 
     }, heroRef);
     return () => ctx.revert();
@@ -74,9 +81,14 @@ export const MobileHero: React.FC = () => {
           24 hours. One chance. Redefine what's possible.
         </p>
         <div ref={statsRef} className="hero-stats">
-          <div className="stat"><span className="num">20+</span><span className="lbl">Teams ofHACKERS</span></div>
+          <div className="stat"><span className="num">20+</span><span className="lbl">Teams of HACKERS</span></div>
           <div className="stat"><span className="num">24H</span><span className="lbl">DURATION</span></div>
           <div className="stat"><span className="num">₹1.5L</span><span className="lbl">PRIZES</span></div>
+        </div>
+        
+        <div ref={buttonsRef} className="hero-buttons">
+          <a href="https://unstop.com/college-fests/openloop-26-yenepoya-school-of-engineering-and-technology-458231" target="_blank" rel="noopener noreferrer" className="btn-hero primary">Registration</a>
+          <a href="https://drive.google.com/file/d/1_IM0WD6zowoyv9nopm2RbnwW2dUYwwBE/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="btn-hero outline">Brochure</a>
         </div>
       </div>
 
@@ -94,6 +106,6 @@ export const MobileHero: React.FC = () => {
         <div className="scroll-line" />
         <span>SCROLL</span>
       </div>
-    </section>
+    </section >
   );
 };

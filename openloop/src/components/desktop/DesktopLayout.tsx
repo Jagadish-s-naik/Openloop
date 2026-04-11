@@ -124,12 +124,17 @@ export default function DesktopLayout() {
               const lp = clamp((p - range.start) / (range.end - range.start), 0, 1);
               let op = 0;
               
-              const ramp = 0.10; // 10% fade in/out for sharp isolation
+              const ramp = 0.10; 
               if (lp < ramp) op = lp / ramp;
               else if (lp <= (1 - ramp)) op = 1;
               else op = (1 - lp) / ramp;
 
-              // FINAL FIX: Ensure FOOTER stays at opacity 1 once it reaches peak, and never fades out
+              // SPECIAL CASE: HERO starts fully opaque at scroll=0 to avoid blank entry
+              if (range.name === 'HERO' && p === 0) {
+                op = 1;
+              }
+
+              // FINAL FIX: Ensure FOOTER stays at opacity 1 once it reaches peak
               if (range.name === 'FOOTER') {
                 if (lp > 0.5) op = 1; // Stay fully visible after mid-reveal
               }

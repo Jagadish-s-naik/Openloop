@@ -8,7 +8,7 @@ const titleSponsors = [
 
 const goldSponsors = [
   { name: 'DK24', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT49X3O04FD7fH9nqaJwyA1Pc2REDenUu0_aQ&s', url: '#' },
-  { name: 'NIAT', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6OKON2o5LyVsAC0NdfP5nLD8jzbE_CULafA&s', url: '#' },
+  { name: 'NXT WAVE', logo: 'https://static.ambitionbox.com/assets/v2/images/rs:fit:1280:960:false:false/aHR0cHM6Ly9tZWRpYS5uYXVrcmkuY29tL21lZGlhL2FiY29tcGxvZ28vbnh0d2F2ZS1vcmlnaW5hbC5qcGc.png', url: '#' },
 ];
 
 const silverSponsors = [

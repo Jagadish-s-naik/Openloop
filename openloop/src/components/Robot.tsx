@@ -79,9 +79,10 @@ export const Robot: React.FC<RobotProps> = ({
 
     // --- Deterministic State Machine (Scroll Controlled ONLY) ---
     
-    // HERO (0.00 -> 0.15): Rise from Bottom
+    // HERO (0.00 -> 0.15): Rise from Bottom (Delayed fade-in)
     if (p < 0.15) {
       const hp = clamp(p / 0.15, 0, 1);
+      // Robot starts coming in immediately on first scroll (p > 0)
       targetOpacity = hp; 
       targetY = lerp(-3, 0, easeOut(hp)); 
       targetX = 0;

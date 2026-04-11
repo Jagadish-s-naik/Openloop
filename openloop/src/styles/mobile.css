@@ -320,6 +320,47 @@
   letter-spacing: 0.2em;
 }
 
+.hero-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.btn-hero {
+  flex: 1;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 12px;
+  text-align: center;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+
+.btn-hero.primary {
+  background: var(--neon);
+  color: #000;
+  box-shadow: 0 0 20px rgba(198, 255, 0, 0.3);
+}
+
+.btn-hero.outline {
+  border: 1px solid rgba(198, 255, 0, 0.3);
+  color: var(--neon);
+  background: rgba(198, 255, 0, 0.05);
+  backdrop-filter: blur(5px);
+}
+
+.btn-hero:active {
+  transform: scale(0.96);
+  filter: brightness(1.2);
+}
+
 .hero-bottom {
   position: relative;
   z-index: 2;
