@@ -18,14 +18,14 @@ export const MobileFooter: React.FC = () => {
       start: 'top 80%',
       onEnter: () => {
         const tl = gsap.timeline();
-        tl.to('.footer-title', { y: '0%', duration: 0.8, ease: 'power3.out' })
-          .to('.footer-year', { y: '0%', duration: 0.6, ease: 'power2.out' }, '-=0.4')
-          .to(tagRef.current, { opacity: 1, duration: 0.5 }, '-=0.2')
-          .to(linksRef.current, { opacity: 1, duration: 0.4 }, '-=0.1')
-          .to(socialRef.current, { opacity: 1, duration: 0.4 }, '-=0.1')
-          .to(hrRef.current, { width: '100%', duration: 0.6, ease: 'power2.inOut' })
-          .to(copyRef.current, { opacity: 1, duration: 0.4 })
-          .to(topRef.current, { opacity: 1, duration: 0.4 });
+        tl.to('.footer-title', { y: '0%', duration: 1.5, ease: 'power3.out' })
+          .to('.footer-year', { y: '0%', duration: 1.2, ease: 'power2.out' }, '-=1.0')
+          .to(tagRef.current, { opacity: 1, duration: 1.0 }, '-=0.5')
+          .to(linksRef.current, { opacity: 1, duration: 0.8 }, '-=0.3')
+          .to(socialRef.current, { opacity: 1, duration: 0.8 }, '-=0.3')
+          .to(hrRef.current, { width: '100%', duration: 1.2, ease: 'power2.inOut' })
+          .to(copyRef.current, { opacity: 1, duration: 0.8 })
+          .to(topRef.current, { opacity: 1, duration: 0.8 });
       }
     });
   }, []);
@@ -46,7 +46,7 @@ export const MobileFooter: React.FC = () => {
       </div>
 
       <p ref={tagRef} className="footer-tag">
-        Built with passion at YenTech. Powered by WebDev Domain.
+        Built with passion at YenTech.
       </p>
 
       <div ref={linksRef} className="footer-links">

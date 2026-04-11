@@ -36,7 +36,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ scrollVal }) => {
     >
       <div style={{ maxWidth: '800px', margin: '0 auto', fontSize: '1rem', color: '#00ccff' }}>
         <h3 style={{ textTransform: 'uppercase', letterSpacing: '4px', margin: '0 0 1rem 0' }}>OPENLOOP</h3>
-        <p style={{ margin: 0, opacity: 0.8 }}>© 2026 OpenLoop Industries. All rights reserved.</p>
+        <p style={{ margin: 0, opacity: 0.8 }}>© 2026 OpenLoop Hackathon. All rights reserved.</p>
         <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center', gap: '2rem' }}>
           <span style={{ cursor: 'pointer', transition: 'color 0.2s' }}>SYSTEMS</span>
           <span style={{ cursor: 'pointer', transition: 'color 0.2s' }}>ARCHIVE</span>

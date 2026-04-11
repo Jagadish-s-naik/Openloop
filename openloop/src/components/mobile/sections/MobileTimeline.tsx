@@ -89,7 +89,7 @@ export const MobileTimeline: React.FC = () => {
       gsap.fromTo('.section-heading .word',
         { y: '100%', opacity: 0 },
         {
-          y: '0%', opacity: 1, stagger: 0.08, duration: 0.7,
+          y: '0%', opacity: 1, stagger: 0.25, duration: 1.5,
           scrollTrigger: { trigger: sectionRef.current, start: 'top 80%' }
         }
       );

@@ -39,8 +39,8 @@ export const MobileThemesSection: React.FC = () => {
         { y: '100%', opacity: 0 },
         { 
           y: '0%', opacity: 1, 
-          duration: 0.6, 
-          stagger: 0.1, 
+          duration: 1.2, 
+          stagger: 0.15, 
           ease: 'power3.out',
           scrollTrigger: {
             trigger: '.m-themes-heading',

@@ -31,8 +31,8 @@ export const MobileAbout: React.FC<MobileAboutProps> = ({ scrollTo }) => {
         { y: '100%', opacity: 0 },
         {
           y: '0%', opacity: 1,
-          stagger: 0.08,
-          duration: 0.7,
+          stagger: 0.15,
+          duration: 1.2,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: aboutRef.current,

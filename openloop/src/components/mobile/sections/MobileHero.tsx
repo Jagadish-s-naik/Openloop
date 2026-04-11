@@ -17,14 +17,14 @@ export const MobileHero: React.FC = () => {
 
       tl.to('.hero-title', {
         y: '0%',
-        duration: 1,
+        duration: 1.8,
         ease: 'power4.out'
       })
       .to('.hero-year', {
         y: '0%',
-        duration: 0.8,
+        duration: 1.2,
         ease: 'power3.out'
-      }, '-=0.5')
+      }, '-=0.8')
       .to(badgeRef.current, {
         opacity: 1,
         y: 0,

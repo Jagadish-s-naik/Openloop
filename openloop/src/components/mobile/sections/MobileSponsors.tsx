@@ -3,18 +3,17 @@ import gsap from 'gsap';
 import 'gsap/ScrollTrigger';
 
 const titleSponsors = [
-  { name: 'UNSTOP', logo: '', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShIUi9GBexFS90vQTB_ZWcUzK4guhSfzgWJQ&s' },
+  { name: 'UNSTOP', logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/03/ec/01/03ec01e9-83c9-b00f-94ca-e9b5a5b31356/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/1200x630wa.jpg', url: 'https://unstop.com' },
 ];
 
 const goldSponsors = [
-  { name: 'DK24', logo: 'https://dk24.org/logo.png', url: '#' },
-  { name: 'VOID TECH', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShIUi9GBexFS90vQTB_ZWcUzK4guhSfzgWJQ&s', url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShIUi9GBexFS90vQTB_ZWcUzK4guhSfzgWJQ&s' },
+  { name: 'DK24', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT49X3O04FD7fH9nqaJwyA1Pc2REDenUu0_aQ&s', url: '#' },
+  { name: 'NIAT', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6OKON2o5LyVsAC0NdfP5nLD8jzbE_CULafA&s', url: '#' },
 ];
 
 const silverSponsors = [
-  { name: 'A', logo: 'https://via.placeholder.com/100x40/00f0ff/000000?text=S1', url: '#' },
-  { name: 'B', logo: 'https://via.placeholder.com/100x40/00f0ff/000000?text=S2', url: '#' },
-  { name: 'C', logo: 'https://via.placeholder.com/100x40/00f0ff/000000?text=S3', url: '#' },
+  { name: 'Kalvium', logo: 'https://pbs.twimg.com/profile_images/1773285198794313729/0S43bEQA_400x400.jpg', url: '#' },
+  { name: 'XYZ', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/.xyz_logo.svg/1280px-.xyz_logo.svg.png', url: '#' },
 ];
 
 export const MobileSponsors: React.FC = () => {
@@ -37,7 +36,7 @@ export const MobileSponsors: React.FC = () => {
       gsap.fromTo('.section-heading .word',
         { y: '100%', opacity: 0 },
         {
-          y: '0%', opacity: 1, stagger: 0.08, duration: 0.7,
+          y: '0%', opacity: 1, stagger: 0.25, duration: 1.5,
           scrollTrigger: { trigger: sectionRef.current, start: 'top 80%' }
         }
       );
@@ -46,8 +45,8 @@ export const MobileSponsors: React.FC = () => {
         { opacity: 0, y: 20, scale: 0.95 },
         {
           opacity: 1, y: 0, scale: 1,
-          stagger: 0.07,
-          duration: 0.5,
+          stagger: 0.15,
+          duration: 0.8,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: '.sponsor-grid',
@@ -75,15 +74,15 @@ export const MobileSponsors: React.FC = () => {
         <div className="tier-line" />
       </div>
 
-      <div className="sponsor-grid sponsor-gold section-body">
+      <div className="sponsor-grid sponsor-tier-title section-body">
         {titleSponsors.map((s, i) => (
           <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
              className="sponsor-card sponsor-card--large">
             <div className="sponsor-logo-wrap">
-              <img src={s.logo} alt={s.name} />
+              <img src={s.logo} alt={s.name} className="sponsor-img" />
             </div>
             <span className="sponsor-name">{s.name}</span>
-            <span className="sponsor-link">↗ Visit</span>
+            <span className="sponsor-link">↗ Visit Website</span>
           </a>
         ))}
       </div>
@@ -93,12 +92,12 @@ export const MobileSponsors: React.FC = () => {
         <div className="tier-line" />
       </div>
 
-      <div className="sponsor-grid sponsor-silver section-body">
+      <div className="sponsor-grid sponsor-tier-gold section-body">
         {goldSponsors.map((s, i) => (
           <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
              className="sponsor-card">
             <div className="sponsor-logo-wrap">
-              <img src={s.logo} alt={s.name} />
+              <img src={s.logo} alt={s.name} className="sponsor-img" />
             </div>
             <span className="sponsor-name">{s.name}</span>
           </a>
@@ -110,13 +109,14 @@ export const MobileSponsors: React.FC = () => {
         <div className="tier-line" />
       </div>
 
-      <div className="sponsor-grid sponsor-bronze section-body">
+      <div className="sponsor-grid sponsor-tier-silver section-body">
         {silverSponsors.map((s, i) => (
           <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
              className="sponsor-card sponsor-card--small">
             <div className="sponsor-logo-wrap">
-              <img src={s.logo} alt={s.name} />
+              <img src={s.logo} alt={s.name} className="sponsor-img" />
             </div>
+            <span className="sponsor-name">{s.name}</span>
           </a>
         ))}
       </div>
