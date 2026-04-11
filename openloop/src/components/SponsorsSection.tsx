@@ -19,13 +19,10 @@ const SPONSORS: Sponsor[] = [
 
 export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
   const p = scrollProgress;
-  // Unified Range: 0.91 -> 0.97
-  const isSponsorsActive = p >= 0.91 && p < 0.97;
   
-  // Cinematic Entry (0.91 -> 0.96)
+  // Cinematic Entry Transform (Independent of opacity management)
+  // Maps 0.91 -> 0.96 for the slide-up effect
   const entryP = clamp((p - 0.91) / 0.05, 0, 1);
-  
-  const opacity = entryP;
   const translateY = lerp(40, 0, entryP);
 
   return (
@@ -33,10 +30,9 @@ export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollPr
       id="sponsors-section" 
       className="section-overlay"
       style={{
-        opacity: isSponsorsActive ? opacity : 0,
         transform: `translateY(${translateY}px)`,
-        visibility: isSponsorsActive && opacity > 0.01 ? 'visible' : 'hidden',
-        transition: 'none' // Use raw scroll for cinematic feel
+        pointerEvents: p > 0.91 && p < 0.97 ? 'auto' : 'none',
+        transition: 'none'
       }}
     >
       <div className="sponsors-wrapper-premium">
