@@ -143,7 +143,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
               <div className="body-text-safe">
                 {isAboutActive && (
                   <div className="reveal-text-fast">
-                    OpenLoop is a National Level Hackathon organized by the Yenepoya Technological Club in Yenenpoya School of Engineering and Technology. It is a 24-hour hackathon where teams of 2-4 can participate and showcase their technical skills.
+                    OpenLoop is a National Level Hackathon organized by the Yenepoya Tech Club in Yenepoya School of Engineering and Technology. It is a 24-hour hackathon where teams of 2-4 can participate and showcase their technical skills.
                   </div>
                 )}
               </div>
