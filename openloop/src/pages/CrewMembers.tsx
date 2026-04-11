@@ -31,9 +31,16 @@ const members: Member[] = [
   { name: 'Radhesh Pai', role: 'Lead Organizer', github: 'https://github.com', icon: <Shield size={20} />, color: '#C6FF00' },
   { name: 'Mohammed', role: 'Secretary', github: 'https://github.com', icon: <UsersRound size={20} />, color: '#00ccff' },
   { name: 'Jagadhish Naik', role: 'Web Development Head', github: 'https://github.com', icon: <Zap size={20} />, color: '#ff2244' },
-  { name: 'Arya Sharma', role: 'Technical Coordinator', github: 'https://github.com', icon: <Earth size={20} />, color: '#C6FF00' },
-  { name: 'Kevin Dsouza', role: 'Design Lead', github: 'https://github.com', icon: <Zap size={20} />, color: '#00ccff' },
-  { name: 'Zoya Khan', role: 'Student Secretary', github: 'https://github.com', icon: <Shield size={20} />, color: '#ff2244' },
+  { name: 'Dinesh A', role: 'Designer', github: 'https://github.com', icon: <Earth size={20} />, color: '#C6FF00' },
+  { name: 'Dhanush Shenoy H', role: 'AI/ML Head', github: 'https://github.com', icon: <Zap size={20} />, color: '#00ccff' },
+  { name: 'Anand', role: 'Media/Graphics Head', github: 'https://github.com', icon: <Shield size={20} />, color: '#ff2244' },
+  { name: 'Srithan', role: 'MediaTech Member', github: 'https://github.com', icon: <Shield size={20} />, color: '#C6FF00' },
+  { name: '', role: 'Frontend Architect', github: 'https://github.com', icon: <Zap size={20} />, color: '#00ccff' },
+  { name: 'Marcus Vane', role: 'Backend Engineer', github: 'https://github.com', icon: <UsersRound size={20} />, color: '#ff2244' },
+  { name: 'Luna Lovegood', role: 'Creative Director', github: 'https://github.com', icon: <Earth size={20} />, color: '#C6FF00' },
+  { name: 'Alex Rivera', role: 'DevOps Lead', github: 'https://github.com', icon: <Zap size={20} />, color: '#00ccff' },
+  { name: 'Maya Gupta', role: 'Product Manager', github: 'https://github.com', icon: <Shield size={20} />, color: '#ff2244' },
+  { name: 'Chris Jordan', role: 'Community Manager', github: 'https://github.com', icon: <UsersRound size={20} />, color: '#C6FF00' },
 ];
 
 export const CrewMembers: React.FC = () => {
@@ -41,30 +48,21 @@ export const CrewMembers: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Entry animations
-      gsap.from('.crew-header h1', {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: 'power4.out',
-      });
+      // Premium Entry animations
+      gsap.fromTo('.crew-header', 
+        { y: 60, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.2, ease: 'power4.out' }
+      );
 
-      gsap.from('.crew-card', {
-        y: 30,
-        opacity: 0,
-        stagger: 0.08,
-        duration: 0.6,
-        ease: 'power2.out',
-        delay: 0.2, // Snappier entry
-      });
+      gsap.fromTo('.crew-card', 
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.05, duration: 0.8, ease: 'power3.out', delay: 0.3 }
+      );
 
-      gsap.from('.back-link', {
-        x: -20,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power2.out',
-        delay: 0.8,
-      });
+      gsap.fromTo('.back-link', 
+        { x: -30, opacity: 0 },
+        { x: 0, opacity: 1, duration: 1, ease: 'power2.out', delay: 1 }
+      );
     }, containerRef);
 
     return () => ctx.revert();
@@ -72,64 +70,65 @@ export const CrewMembers: React.FC = () => {
 
   return (
     <div className="crew-members-page" ref={containerRef}>
-      {/* Background Decor */}
-      <div className="crew-bg-decor">
-        <div className="crew-grid-overlay" />
-        <div className="crew-glow-1" />
-        <div className="crew-glow-2" />
+      {/* Dynamic Background */}
+      <div className="page-background">
+        <div className="bg-glow-main" />
+        <div className="bg-grid-overlay" />
       </div>
 
-      <div className="crew-container">
-        <div className="crew-nav">
+      <div className="crew-content-wrapper">
+        <nav className="crew-top-nav">
           <Link to="/" className="back-link">
-            <ArrowLeft size={16} />
-            <span>RETURN TO NEXUS</span>
+            <ArrowLeft size={18} />
+            <span>BACK TO NEXUS</span>
           </Link>
-        </div>
+        </nav>
 
         <header className="crew-header">
-          <h1>OPENLOOP <span className="crew-highlight">CREW</span> MEMBERS</h1>
-          <p>The architects behind the 2026 decentralized synergy loop. Mapping human talent to digital innovation.</p>
+          <h1 className="crew-title">CREW</h1>
+          <p className="crew-subtitle">Meet the team behind OPENLOOP</p>
+          <div className="header-glow-line" />
         </header>
 
         <div className="crew-grid">
           {members.map((member, i) => (
             <div key={i} className="crew-card">
-              <div className="card-glitch-border" />
-              <div className="card-top">
-                <div className="role-badge" style={{'--accent-color': member.color} as React.CSSProperties}>
-                  {member.icon}
-                  <span>{member.role}</span>
+              <div className="card-glass-depth" />
+              <div className="card-border-glow" />
+              
+              <div className="card-image-wrapper">
+                <div className="image-placeholder">
+                  <span className="placeholder-initials">
+                    {member.name.split(' ').map(n => n[0]).join('')}
+                  </span>
+                  <div className="image-ring" style={{'--accent': member.color} as React.CSSProperties} />
                 </div>
               </div>
-              
-              <div className="card-mid">
+
+              <div className="card-info">
                 <h3 className="member-name">{member.name}</h3>
+                <span className="member-role">{member.role}</span>
               </div>
 
-              <div className="card-bottom">
+              <div className="card-actions">
                 <a 
                   href={member.github} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="github-button"
+                  className="social-btn github-btn"
                 >
-                  <GithubIcon size={18} />
-                  <span>GITHUB PROFILE</span>
+                  <GithubIcon size={20} />
+                  <span>GITHUB</span>
                 </a>
               </div>
-
-              {/* Decorative corners */}
-              <div className="corner tr" />
-              <div className="corner bl" />
             </div>
           ))}
         </div>
 
-        <footer className="crew-footer">
-          <div className="footer-line" />
-          <div className="footer-status">
-            SYSTEM STATUS: <span className="status-online">ONLINE</span>
+        <footer className="crew-page-footer">
+          <div className="footer-hud">
+            <span className="hud-unit">// TEAM_COUNT: 13</span>
+            <span className="hud-unit">// SYSTEM: STABLE</span>
           </div>
         </footer>
       </div>
