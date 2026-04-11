@@ -17,12 +17,6 @@ import { MobileTeam } from './sections/MobileTeam';
 import { MobileFooter } from './sections/MobileFooter';
 
 export default function MobileLayout() {
-  const [loaderDone, setLoaderDone] = useState(false);
-
-  const handleLoaderComplete = useCallback(() => {
-    setLoaderDone(true);
-  }, []);
-
   useEffect(() => {
     // Register GSAP plugins
     gsap.registerPlugin(ScrollTrigger);
@@ -43,35 +37,28 @@ export default function MobileLayout() {
   function scrollToSection(id: string) {
     const el = document.querySelector(id);
     if (el) {
-      // Using native smooth scroll if ScrollToPlugin isn't preferred or available
       el.scrollIntoView({ behavior: 'smooth' });
     }
   }
 
   return (
     <div id="mobile-root">
-      <MobileLoader onComplete={handleLoaderComplete} />
-
-      {loaderDone && (
-        <>
-          <MobileNav />
-          <div id="hud-corners">
-            <div className="hud-corner tl" />
-            <div className="hud-corner tr" />
-            <div className="hud-corner bl" />
-            <div className="hud-corner br" />
-          </div>
-          <main>
-            <MobileHero />
-            <MobileAbout scrollTo={scrollToSection} />
-            <MobileThemesSection />
-            <MobileTimeline />
-            <MobileSponsors />
-            <MobileTeam />
-            <MobileFooter />
-          </main>
-        </>
-      )}
+      <MobileNav />
+      <div id="hud-corners">
+        <div className="hud-corner tl" />
+        <div className="hud-corner tr" />
+        <div className="hud-corner bl" />
+        <div className="hud-corner br" />
+      </div>
+      <main>
+        <MobileHero />
+        <MobileAbout scrollTo={scrollToSection} />
+        <MobileThemesSection />
+        <MobileTimeline />
+        <MobileSponsors />
+        <MobileTeam />
+        <MobileFooter />
+      </main>
     </div>
   );
 }

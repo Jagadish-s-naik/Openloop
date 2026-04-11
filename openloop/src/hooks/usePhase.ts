@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react';
 export type Phase = 'loader' | 'intro' | 'main';
 
 export const usePhase = () => {
-  const [phase, setPhase] = useState<Phase>('loader');
-  const [loaderProgress, setLoaderProgress] = useState(0);
+  const [phase, setPhase] = useState<Phase>('main');
+  const [loaderProgress, setLoaderProgress] = useState(1);
 
   useEffect(() => {
-    if (phase !== 'loader') return;
+    // Sequence bypassed to solve 'double loading' issue.
+    // Global Preloader in App.tsx now handles initial impression.
+    if (phase === 'main') return;
 
     // Loader sequence timing
     const loaderDuration = 4500; // milliseconds

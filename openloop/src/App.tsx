@@ -1,11 +1,10 @@
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useIsMobile } from './hooks/useIsMobile';
 import { Preloader } from './components/common/Preloader';
 import { CustomCursor } from './components/common/CustomCursor';
 
-// Lazy load layouts to isolate dependencies and resolve resolution issues
-const DesktopLayout = lazy(() => import('./components/desktop/DesktopLayout'));
-const MobileLayout = lazy(() => import('./components/mobile/MobileLayout'));
+import DesktopLayout from './components/desktop/DesktopLayout';
+import MobileLayout from './components/mobile/MobileLayout';
 
 function App() {
   const isMobile = useIsMobile();

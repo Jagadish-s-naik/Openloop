@@ -10,25 +10,20 @@ interface TimelineEvent {
 }
 
 const day1Events: TimelineEvent[] = [
-  { time: '09:00 AM', title: 'Registration Opens', description: 'Check-in and kit collection', type: 'opening' },
-  { time: '10:00 AM', title: 'Inauguration Ceremony', description: 'Opening keynote + rules brief', type: 'opening' },
-  { time: '11:00 AM', title: 'HACK BEGINS', description: '48-hour countdown starts NOW', type: 'hackbegins' },
+  { time: '08:00 AM', title: 'Registration Opens', description: 'Check-in and kit collection', type: 'opening' },
+  { time: '09:00 AM', title: 'Inauguration Ceremony', description: 'Opening keynote + rules brief', type: 'opening' },
+  { time: '11:00 AM', title: 'HACK BEGINS', description: '24-hour countdown starts NOW', type: 'hackbegins' },
   { time: '01:00 PM', title: 'Lunch Break', description: 'Fuel up — keep building', type: 'meal' },
-  { time: '03:00 PM', title: 'Workshop: AI/ML', description: 'Mentor-led session', type: 'workshop' },
-  { time: '06:00 PM', title: 'Checkpoint 1', description: 'Progress review with mentors', type: 'checkpoint' },
-  { time: '08:00 PM', title: 'Dinner', description: '', type: 'meal' },
+  { time: '03:00 PM', title: 'Hacking + Mentors', description: 'Build, Iterate, Get Guidance', type: 'workshop' },
+  { time: '08:00 PM', title: 'Dinner', description: 'Pause, Eat, Reset Energy', type: 'meal' },
   { time: '11:59 PM', title: 'Day 1 Ends', description: 'Keep going. Night is young.', type: 'checkpoint' },
 ];
 
 const day2Events: TimelineEvent[] = [
-  { time: '01:00 AM', title: 'Midnight Snacks', description: 'Midnight refuel station', type: 'meal' },
-  { time: '06:00 AM', title: 'Morning Check-in', description: 'Sunrise. Still coding.', type: 'checkpoint' },
-  { time: '08:00 AM', title: 'Breakfast', description: '', type: 'meal' },
-  { time: '10:00 AM', title: 'Final Checkpoint', description: 'Last mentor round', type: 'checkpoint' },
+  { time: '07:00 AM', title: 'Breakfast', description: 'Fuel up — keep building', type: 'meal' },
   { time: '11:00 AM', title: 'SUBMISSIONS CLOSE', description: 'Freeze your code', type: 'hackbegins' },
-  { time: '12:00 PM', title: 'Project Presentations', description: 'Demo to judges', type: 'opening' },
-  { time: '03:00 PM', title: 'Judging Deliberation', description: 'Results computed...', type: 'checkpoint' },
-  { time: '04:00 PM', title: 'CLOSING CEREMONY', description: 'Winners announced. Glory.', type: 'closing' },
+  { time: '11:45 AM', title: 'Project Presentations', description: 'Demo to judges', type: 'opening' },
+  { time: '01:00 PM', title: 'CLOSING CEREMONY', description: 'Winners announced. Glory.', type: 'closing' },
 ];
 
 export const MobileTimeline: React.FC = () => {
