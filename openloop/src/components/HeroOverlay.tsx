@@ -10,11 +10,11 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   // Navigation targets based on DesktopLayout ranges
   const NAV_ITEMS = [
     { label: 'Core', target: 0.06 },
-    { label: 'About', target: 0.215 },
-    { label: 'Themes', target: 0.425 },
-    { label: 'Timeline', target: 0.72 },
-    { label: 'Sponsors', target: 0.94 },
-    { label: 'Contact', target: 0.98 },
+    { label: 'About', target: 0.235 },
+    { label: 'Themes', target: 0.450 },
+    { label: 'Timeline', target: 0.715 },
+    { label: 'Sponsors', target: 0.905 },
+    { label: 'Contact', target: 0.967 },
   ];
 
   const handleNavClick = (targetProgress: number) => {
@@ -92,6 +92,8 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
                 {isHeroActive && (
                   <div className="reveal-text-fast">
                     Enter. Build. Evolve.
+                    <br></br>
+                    And win a Prize Pool upto Rs 1,00,000
                   </div>
                 )}
               </div>

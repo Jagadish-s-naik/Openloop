@@ -89,9 +89,9 @@ export const Robot: React.FC<RobotProps> = ({
       targetScale = 2.0;
       targetGreen = 0;
     }
-    // ABOUT (0.11 -> 0.36): Shift Left + Profile
+    // ABOUT (0.08 -> 0.36): Shift Left + Profile
     else if (p < 0.36) {
-      const ap = clamp((p - 0.11) / 0.25, 0, 1);
+      const ap = clamp((p - 0.08) / 0.28, 0, 1);
       targetOpacity = 1;
       targetX = lerp(0, -3.5, easeInOut(ap));
       targetY = 0;
@@ -114,9 +114,9 @@ export const Robot: React.FC<RobotProps> = ({
     else if (p < 0.86) {
       targetOpacity = 0;
     }
-    // SPONSORS transition (0.86 -> 0.95): Fade In — left profile again
-    else if (p < 0.95) {
-      const sp = clamp((p - 0.86) / 0.09, 0, 1);
+    // SPONSORS transition (0.84 -> 0.94): Fade In — left profile again
+    else if (p < 0.94) {
+      const sp = clamp((p - 0.84) / 0.10, 0, 1);
       targetOpacity = sp;
       targetX = -3.5;
       targetRotY = Math.PI / 2;
@@ -124,7 +124,7 @@ export const Robot: React.FC<RobotProps> = ({
       targetScale = 1.7;
       targetGreen = 2;
     }
-    // CONTACT (0.95 -> 0.99): Stable Left
+    // CONTACT (0.94 -> 0.99): Stable Left
     else if (p < 0.99) {
       targetOpacity = 1;
       targetX = -3.5;

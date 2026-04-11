@@ -13,8 +13,8 @@ const CARDS_DATA = [
 
 export const ThemesSection: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
   const p = scrollProgress;
-  // Local Range: 0.35 -> 0.50 — GSAP controls outer opacity
-  const lp = clamp((p - 0.35) / (0.50 - 0.35), 0, 1);
+  // Local Range: 0.30 -> 0.45 — GSAP controls outer opacity
+  const lp = clamp((p - 0.30) / (0.45 - 0.30), 0, 1);
   const themeP = clamp(lp / 0.7, 0, 1); // Card stagger driver
 
   return (

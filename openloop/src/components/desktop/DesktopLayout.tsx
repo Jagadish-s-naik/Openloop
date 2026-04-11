@@ -111,10 +111,10 @@ export default function DesktopLayout() {
             const ranges = [
               { name: 'HERO',     start: 0.00, end: 0.16, id: '#s1-hero' },
               { name: 'ABOUT',    start: 0.11, end: 0.36, id: '#s2-about' },
-              { name: 'THEMES',   start: 0.30, end: 0.59, id: '#theme-section' },
+              { name: 'THEMES',   start: 0.30, end: 0.60, id: '#theme-section' },
               { name: 'TIMELINE', start: 0.54, end: 0.89, id: '#s4-timeline' },
-              { name: 'SPONSORS', start: 0.86, end: 0.97, id: '#sponsors-section' },
-              { name: 'CONTACT',  start: 0.95, end: 0.995, id: '#contact-section' },
+              { name: 'SPONSORS', start: 0.84, end: 0.97, id: '#sponsors-section' },
+              { name: 'CONTACT',  start: 0.94, end: 0.995, id: '#contact-section' },
               { name: 'FOOTER',   start: 0.99, end: 1.00,  id: '#footer-section' },
             ];
 
