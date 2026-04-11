@@ -32,7 +32,7 @@ export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
         onComplete: () => handleExit()
       });
 
-      tl.to({}, { duration: 3.0 }); // 3s cinematic load
+      tl.to({}, { duration: 1.8 }); // Cinematic load optimized
 
       // 2. Letter Reveal
       gsap.to(".letter", {
