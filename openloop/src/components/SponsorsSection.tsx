@@ -30,6 +30,7 @@ export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollPr
       id="sponsors-section" 
       className="section-overlay"
       style={{
+        opacity: 0, // Default hidden
         transform: `translateY(${translateY}px)`,
         pointerEvents: p > 0.91 && p < 0.97 ? 'auto' : 'none',
         transition: 'none'

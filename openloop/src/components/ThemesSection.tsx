@@ -13,8 +13,8 @@ const CARDS_DATA = [
 
 export const ThemesSection: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
   const p = scrollProgress;
-  // Local Range: 0.30 -> 0.55 — GSAP controls outer opacity, we only drive card animations
-  const lp = clamp((p - 0.30) / (0.55 - 0.30), 0, 1);
+  // Local Range: 0.35 -> 0.50 — GSAP controls outer opacity
+  const lp = clamp((p - 0.35) / (0.50 - 0.35), 0, 1);
   const themeP = clamp(lp / 0.7, 0, 1); // Card stagger driver
 
   return (
@@ -30,7 +30,8 @@ export const ThemesSection: React.FC<{ scrollProgress: number }> = ({ scrollProg
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 100,
-        pointerEvents: 'none'
+        pointerEvents: 'none',
+        opacity: 0 // Start hidden, managed by DesktopLayout
       }}
     >
       <div className="themes-background-decor">

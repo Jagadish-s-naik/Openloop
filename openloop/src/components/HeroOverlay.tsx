@@ -89,7 +89,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
         </div>
 
         {/* PHASE 2: ABOUT (ROBOT LEFT / TEXT RIGHT) */}
-        <div id="s2-about" className="section-overlay">
+        <div id="s2-about" className="section-overlay" style={{ opacity: 0 }}>
           <div className="composition-grid">
             <div className="content-right">
               <div className="timeline-label">// 002 - ABOUT</div>
@@ -106,13 +106,13 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
           </div>
         </div>
 
-        {/* PHASE 4: TIMELINE (3D Immersive - Content removed here to show canvas) */}
-        <section id="s4-timeline" className="section-overlay">
+        {/* PHASE 4: TIMELINE (3D Immersive) */}
+        <section id="s4-timeline" className="section-overlay" style={{ opacity: 0 }}>
           {/* 2D Content removed - 3D Timeline takes over the viewport */}
         </section>
 
         {/* PHASE 6: CONTACT */}
-        <div id="contact-section" className="section-overlay contact-fullscreen">
+        <div id="contact-section" className="section-overlay contact-fullscreen" style={{ opacity: 0 }}>
           <div className="contact-inner">
             <div className="contact-header">
               <span className="timeline-label">// 006 — CONTACT</span>
