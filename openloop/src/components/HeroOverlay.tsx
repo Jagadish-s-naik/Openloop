@@ -8,13 +8,14 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   const p = scrollProgress;
 
   // Navigation targets based on DesktopLayout ranges
+  // Navigation targets based on DesktopLayout ranges
   const NAV_ITEMS = [
-    { label: 'Core', target: 0.05 },
-    { label: 'About', target: 0.215 },
-    { label: 'Themes', target: 0.41 },
-    { label: 'Timeline', target: 0.685 },
-    { label: 'Sponsors', target: 0.90 },
-    { label: 'Contact', target: 0.96 },
+    { label: 'Core', target: 0.075 },
+    { label: 'About', target: 0.20 },
+    { label: 'Themes', target: 0.375 },
+    { label: 'Timeline', target: 0.675 },
+    { label: 'Sponsors', target: 0.94 },
+    { label: 'Contact', target: 0.98 },
   ];
 
   const handleNavClick = (targetProgress: number) => {

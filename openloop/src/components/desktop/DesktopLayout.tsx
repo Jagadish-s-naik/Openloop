@@ -95,12 +95,12 @@ export default function DesktopLayout() {
             // 1. Precise Range Mapping (MANDATORY - 7 SECTIONS)
             const ranges = [
               { name: 'HERO', start: 0.00, end: 0.15, id: '#s1-hero' },
-              { name: 'ABOUT', start: 0.15, end: 0.28, id: '#s2-about' },
-              { name: 'THEMES', start: 0.32, end: 0.50, id: '#theme-section' },
-              { name: 'TIMELINE', start: 0.55, end: 0.82, id: '#s4-timeline' },
-              { name: 'SPONSORS', start: 0.86, end: 0.94, id: '#sponsors-section' },
-              { name: 'CONTACT', start: 0.94, end: 0.98, id: '#contact-section' },
-              { name: 'FOOTER', start: 0.98, end: 1.00, id: '#footer-section' },
+              { name: 'ABOUT', start: 0.15, end: 0.25, id: '#s2-about' },
+              { name: 'THEMES', start: 0.30, end: 0.45, id: '#theme-section' },
+              { name: 'TIMELINE', start: 0.50, end: 0.85, id: '#s4-timeline' },
+              { name: 'SPONSORS', start: 0.91, end: 0.97, id: '#sponsors-section' },
+              { name: 'CONTACT', start: 0.97, end: 0.99, id: '#contact-section' },
+              { name: 'FOOTER', start: 0.99, end: 1.00, id: '#footer-section' },
             ];
 
             // No manual cutoff - handled by Robot component internally

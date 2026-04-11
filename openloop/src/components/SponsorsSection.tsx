@@ -19,11 +19,11 @@ const SPONSORS: Sponsor[] = [
 
 export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
   const p = scrollProgress;
-  // Unified Range: 0.86 -> 0.94
-  const isSponsorsActive = p >= 0.86 && p < 0.94;
+  // Unified Range: 0.91 -> 0.97
+  const isSponsorsActive = p >= 0.91 && p < 0.97;
   
-  // Cinematic Entry (0.86 -> 0.91)
-  const entryP = clamp((p - 0.86) / 0.05, 0, 1);
+  // Cinematic Entry (0.91 -> 0.96)
+  const entryP = clamp((p - 0.91) / 0.05, 0, 1);
   
   const opacity = entryP;
   const translateY = lerp(40, 0, entryP);
@@ -44,7 +44,7 @@ export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollPr
         <h2 className="section-heading">SPONSORS</h2>
         <p className="body-text-safe" style={{ marginBottom: '2rem' }}>
           <Typewriter 
-            active={p > 0.88} 
+            active={p > 0.93} 
             text="Our partners fueling the 2026 synergy loop. Grid layout optimized for high-fidelity logo rendering." 
           />
         </p>

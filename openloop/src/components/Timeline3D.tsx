@@ -12,19 +12,23 @@ interface TimelineEvent {
 }
 
 const TIMELINE_DATA: TimelineEvent[] = [
-  { title: 'Registration Opens', date: 'TBA', desc: 'Secure your spot and start forming your team.', range: [0.550, 0.588] },
-  { title: 'Kickoff & Opening', date: 'TBA', desc: 'Get briefed, meet participants, and dive into the challenge.', range: [0.588, 0.626] },
-  { title: 'Hacking Begins', date: 'TBA', desc: 'The clock starts. Build, break, and iterate.', range: [0.626, 0.664] },
-  { title: 'Mentorship & Checkpoints', date: 'TBA', desc: 'Refine your idea with expert feedback and stay on track.', range: [0.664, 0.702] },
-  { title: 'Project Submission', date: 'TBA', desc: 'Submit your final build and prepare to showcase.', range: [0.702, 0.740] },
-  { title: 'Final Presentations', date: 'TBA', desc: 'Pitch your project to judges and the community.', range: [0.740, 0.778] },
-  { title: 'Winners Announced', date: 'TBA', desc: 'Celebrating the best builds, bold ideas, and standout teams.', range: [0.778, 0.816] },
+  { title: 'Setup & Registration', date: 'Sat 08:00', desc: 'Secure your spot and start forming your team.', range: [0.500, 0.531] },
+  { title: 'Opening Ceremony', date: 'Sat 09:00', desc: 'Get briefed and meet the participants.', range: [0.531, 0.563] },
+  { title: 'Hacking Begins', date: 'Sat 11:00', desc: 'The clock starts. Build and iterate.', range: [0.563, 0.595] },
+  { title: 'Lunch Break', date: 'Sat 13:00', desc: 'Refuel and recharge for the next session.', range: [0.595, 0.627] },
+  { title: 'Hacking + Mentors', date: 'Sat 14:00', desc: 'Refine your project with expert feedback.', range: [0.627, 0.658] },
+  { title: 'Dinner', date: 'Sat 20:00', desc: 'Sync up and refuel.', range: [0.658, 0.690] },
+  { title: 'Night Shift', date: 'Sat Night', desc: 'The loop continues into the night.', range: [0.690, 0.722] },
+  { title: 'Breakfast', date: 'Sun 07:00', desc: 'Fresh start for the final sprint.', range: [0.722, 0.754] },
+  { title: 'Hacking Ends', date: 'Sun 11:00', desc: 'Submissions closed. Finalize the pitch.', range: [0.754, 0.785] },
+  { title: 'Presentations', date: 'Sun 11:45', desc: 'Showcase your build to the judges.', range: [0.785, 0.817] },
+  { title: 'Closing Ceremony', date: 'Sun 13:00', desc: 'Celebrating bold ideas and standout teams.', range: [0.817, 0.850] },
 ];
 
 export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
   const p = scrollProgress;
-  // Deterministic Kill-Switch
-  if (p < 0.52 || p > 0.83) return null;
+  // Deterministic Kill-Switch - Synced with expanded ranges
+  if (p < 0.48 || p > 0.88) return null;
 
   const groupRef = useRef<THREE.Group>(null);
   const pulseRef = useRef<THREE.Mesh>(null);
@@ -39,8 +43,9 @@ export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgres
 
     const p = scrollProgress;
     
-    // 1. Core Timeline Movement (0.55 -> 0.82)
-    const timelineP = clamp((p - 0.55) / 0.27, 0, 1);
+    // 1. Core Timeline Movement (0.50 -> 0.85)
+    // Slower panning speed over 35% scroll span
+    const timelineP = clamp((p - 0.50) / 0.35, 0, 1);
     
     // Move horizontally centered around nodes
     const targetXOffset = -startX - (timelineP * totalWidth);
@@ -60,28 +65,28 @@ export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgres
     // 3. Cinematic Intro/Exit Transition
     let opacity = 0;
 
-    if (p >= 0.52 && p < 0.83) {
-      // Entry Fade (0.52 -> 0.55)
-      if (p < 0.55) {
-        opacity = (p - 0.52) / 0.03;
+    if (p >= 0.48 && p < 0.88) {
+      // Entry Fade (0.48 -> 0.52)
+      if (p < 0.52) {
+        opacity = (p - 0.48) / 0.04;
       } 
-      // Main Body (0.55 -> 0.75)
-      else if (p < 0.75) {
+      // Main Body (0.52 -> 0.80)
+      else if (p < 0.80) {
         opacity = 1;
       }
-      // Cinematic Exit (0.75 -> 0.82)
+      // Cinematic Exit (0.80 -> 0.85)
       else {
-        const exitP = clamp((p - 0.75) / 0.07, 0, 1);
+        const exitP = clamp((p - 0.80) / 0.05, 0, 1);
         opacity = 1 - exitP;
       }
     }
 
-    groupRef.current.position.y = 0.5; // Locked Y - No Bouncing
+    groupRef.current.position.y = -0.8; // Lowered Y - Better Navbar Clearance
     groupRef.current.visible = opacity > 0;
   });
 
   return (
-    <group ref={groupRef} position={[0, 0.5, -2]}>
+    <group ref={groupRef} position={[0, -0.8, -2]}>
       {/* Main Track Line */}
       <mesh rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.02, 0.02, 30, 8]} />
@@ -107,7 +112,7 @@ export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgres
             xPos={xPos} 
             isLeft={isLeft} 
             scrollProgress={scrollProgress}
-            sectionOpacity={clamp((scrollProgress - 0.75) / 0.07, 0, 1)} // Sync with expanded exit
+            sectionOpacity={clamp((scrollProgress - 0.80) / 0.05, 0, 1)} // Sync with expanded exit
           />
         );
       })}
@@ -149,7 +154,7 @@ const Node: React.FC<NodeProps> = ({ event, xPos, isLeft, scrollProgress, sectio
     <group position={[xPos, 0, 0]} ref={meshRef}>
       {/* Node Geometry */}
       <mesh>
-        <octahedronGeometry args={[0.2, 0]} />
+        <octahedronGeometry args={[0.15, 0]} />
         <meshStandardMaterial 
           color={nodeColor} 
           emissive={nodeColor} 
@@ -174,7 +179,7 @@ const Node: React.FC<NodeProps> = ({ event, xPos, isLeft, scrollProgress, sectio
           background: 'rgba(0,0,0,0.9)',
           borderLeft: `3px solid ${nodeColor}`,
           padding: '16px',
-          width: '20  0px',
+          width: '190px',
           borderRadius: '4px',
           boxShadow: `0 0 30px rgba(0,0,0,0.6), inset 0 0 15px ${isActive ? 'rgba(198,255,0,0.15)' : 'transparent'}`,
           backdropFilter: 'blur(12px)',
