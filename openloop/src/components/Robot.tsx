@@ -77,22 +77,21 @@ export const Robot: React.FC<RobotProps> = ({
     let targetGreen = 0;
     let targetBeam = 0;
 
-    // --- Deterministic State Machine (Scroll Controlled ONLY) ---
-    
-    // HERO (0.00 -> 0.15): Rise from Bottom (Delayed fade-in)
-    if (p < 0.15) {
-      const hp = clamp(p / 0.15, 0, 1);
-      // Robot starts coming in immediately on first scroll (p > 0)
-      targetOpacity = hp; 
-      targetY = lerp(-3, 0, easeOut(hp)); 
+    // --- Deterministic State Machine (aligned with zero-gap section ranges) ---
+
+    // HERO (0.00 -> 0.16): Rise from BELOW viewport — opacity always 1, only Y animates
+    if (p < 0.16) {
+      const hp = clamp(p / 0.16, 0, 1);
+      targetOpacity = 1; // Always visible — Y controls when it appears on screen
+      targetY = lerp(-4, 0, easeOut(hp));
       targetX = 0;
       targetRotY = 0;
       targetScale = 2.0;
       targetGreen = 0;
     }
-    // ABOUT (0.15 -> 0.30): Shift Left + Profile
-    else if (p < 0.30) {
-      const ap = clamp((p - 0.15) / 0.15, 0, 1);
+    // ABOUT (0.11 -> 0.36): Shift Left + Profile
+    else if (p < 0.36) {
+      const ap = clamp((p - 0.11) / 0.25, 0, 1);
       targetOpacity = 1;
       targetX = lerp(0, -3.5, easeInOut(ap));
       targetY = 0;
@@ -101,22 +100,32 @@ export const Robot: React.FC<RobotProps> = ({
       targetBeam = ap > 0.5 ? (ap - 0.5) * 2 : 0;
       targetGreen = 2 + targetBeam * 3;
     }
-    // THEMES & TIMELINE (0.30 -> 0.55): Fade Out & Push Back (HIDDEN)
-    else if (p < 0.55) {
-      const tp = clamp((p - 0.30) / 0.10, 0, 1);
-      targetOpacity = 1 - tp;
+    // THEMES transition (0.36 -> 0.54): Fade Out — sections are overlapping so no black gap
+    else if (p < 0.54) {
+      const tp = clamp((p - 0.36) / 0.10, 0, 1);
+      targetOpacity = 1 - tp; // fade out quickly
       targetZ = lerp(0, -6, tp);
       targetX = -3.5;
       targetRotY = Math.PI / 2;
       targetScale = 1.7;
       targetGreen = 0;
     }
-    // TIMELINE & SPONSORS (0.55 -> 0.90): Hidden for Focus
-    else if (p < 0.90) {
+    // TIMELINE (0.54 -> 0.86): Hidden for 3D Timeline Focus
+    else if (p < 0.86) {
       targetOpacity = 0;
     }
-    // CONTACT (0.90 -> 0.97): Stable Left
-    else if (p < 0.97) {
+    // SPONSORS transition (0.86 -> 0.95): Fade In — left profile again
+    else if (p < 0.95) {
+      const sp = clamp((p - 0.86) / 0.09, 0, 1);
+      targetOpacity = sp;
+      targetX = -3.5;
+      targetRotY = Math.PI / 2;
+      targetZ = 0;
+      targetScale = 1.7;
+      targetGreen = 2;
+    }
+    // CONTACT (0.95 -> 0.99): Stable Left
+    else if (p < 0.99) {
       targetOpacity = 1;
       targetX = -3.5;
       targetRotY = Math.PI / 2;
@@ -124,9 +133,9 @@ export const Robot: React.FC<RobotProps> = ({
       targetScale = 1.7;
       targetGreen = 2;
     }
-    // FOOTER (0.97 -> 1.00): Exit & Push Back (HIDDEN)
+    // FOOTER (0.99 -> 1.00): Exit
     else {
-      const fp = clamp((p - 0.97) / 0.03, 0, 1);
+      const fp = clamp((p - 0.99) / 0.01, 0, 1);
       targetOpacity = 1 - fp;
       targetZ = lerp(0, -10, fp);
       targetX = -3.5;

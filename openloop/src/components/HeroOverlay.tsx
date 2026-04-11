@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface HeroOverlayProps {
   scrollProgress: number;
@@ -30,8 +30,30 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   const isAboutActive = p >= 0.15 && p < 0.30;
   const isContactActive = p >= 0.90 && p < 0.97;
 
+  // Fade the permanent hero title out once the user scrolls past the hero phase
+  useEffect(() => {
+    const titleEl = document.getElementById('hero-title-fixed');
+    if (!titleEl) return;
+    // Start fading at p=0.08, fully gone by p=0.14
+    const fade = 1 - Math.min(1, Math.max(0, (p - 0.08) / 0.06));
+    titleEl.style.opacity = String(fade);
+  }, [p]);
+
   return (
     <>
+      {/* PERMANENT HERO TITLE — always visible, unaffected by scroll system */}
+      <div id="hero-title-fixed">
+        <h1 className="hero-main-title">
+          <span className="title-word" style={{ color: '#ffffff' }}>OPEN</span>
+          <span className="title-spacer" />
+          <span className="title-word" style={{ 
+            color: '#C6FF00',
+            textShadow: '0 0 20px rgba(198, 255, 0, 0.4)'
+          }}>LOOP</span>
+        </h1>
+        <div className="hero-sub-title">2026</div>
+      </div>
+
       <nav>
         <div className="nav-brand hud-label">
           <span style={{ backgroundImage: "linear-gradient(to bottom, #C6FF00, #FFFFFF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>OPEN LOOP</span>
@@ -61,21 +83,10 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
       </nav>
 
       <section id="robot-sections">
-        {/* PHASE 1: HERO */}
+        {/* PHASE 1: HERO — bottom content only, title is in #hero-title-fixed above */}
         <div id="s1-hero" className="section-overlay">
           <section id="hero">
-            <div className="hero-centered-container">
-              <h1 className="hero-main-title">
-                <span className="title-word" style={{ color: '#ffffff' }}>OPEN</span>
-                <span className="title-spacer" />
-                <span className="title-word" style={{ 
-                  color: '#C6FF00',
-                  textShadow: '0 0 20px rgba(198, 255, 0, 0.4)'
-                }}>LOOP</span>
-              </h1>
-              <div className="hero-sub-title">2026</div>
-            </div>
-
+            {/* No title here — it lives in the permanent layer */}
             <div className="hero-bottom-left">
               <div className="body-text-safe">
                 {isHeroActive && (
@@ -84,10 +95,16 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
                   </div>
                 )}
               </div>
-              <button className="cta-button" type="button">Enter Loop</button>
+              <a
+                href="https://unstop.com/college-fests/openloop-26-yenepoya-school-of-engineering-and-technology-458231"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cta-button"
+                style={{ textDecoration: 'none', pointerEvents: 'auto' }}
+              >
+                Enter Loop
+              </a>
             </div>
-
-            
           </section>
         </div>
 

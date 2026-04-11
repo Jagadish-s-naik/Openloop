@@ -69,15 +69,21 @@ export default function DesktopLayout() {
 
       lenis.on('scroll', ScrollTrigger.update);
 
+      // Show #s1-hero immediately (it's behind the permanent title)
+      const heroEl = document.querySelector<HTMLElement>('#s1-hero');
+      if (heroEl) {
+        heroEl.style.opacity = '1';
+        heroEl.style.visibility = 'visible';
+      }
+
       sections.forEach((selector) => {
+        if (selector === '#s1-hero') return; // hero starts visible
         const el = document.querySelector<HTMLElement>(selector);
         if (el) {
-          // All sections start hidden; GSAP onUpdate will handle them
-          // #theme-section visibility is also driven by GSAP scroll progress
           el.style.opacity = '0';
           el.style.visibility = 'hidden';
           el.style.display = 'block';
-          el.style.transition = 'none'; // Prevent CSS transitions fighting GSAP
+          el.style.transition = 'none';
         }
       });
 
@@ -92,80 +98,62 @@ export default function DesktopLayout() {
             const p = self.progress;
             robotProgressRef.current = p;
 
-            // 1. Precise Range Mapping (MANDATORY - 7 SECTIONS)
+            // ZERO-GAP range mapping: every section OVERLAPS the next so
+            // there is NEVER a point where all sections are at opacity 0.
+            // Ramp is calculated only within each section's own window.
             const ranges = [
-              { name: 'HERO', start: 0.00, end: 0.12, id: '#s1-hero' },
-              { name: 'ABOUT', start: 0.15, end: 0.28, id: '#s2-about' },
-              { name: 'THEMES', start: 0.35, end: 0.50, id: '#theme-section' },
-              { name: 'TIMELINE', start: 0.58, end: 0.88, id: '#s4-timeline' },
-              { name: 'SPONSORS', start: 0.91, end: 0.97, id: '#sponsors-section' },
-              { name: 'CONTACT', start: 0.97, end: 0.99, id: '#contact-section' },
-              { name: 'FOOTER', start: 0.99, end: 1.00, id: '#footer-section' },
+              { name: 'HERO',     start: 0.00, end: 0.16, id: '#s1-hero' },
+              { name: 'ABOUT',    start: 0.11, end: 0.36, id: '#s2-about' },
+              { name: 'THEMES',   start: 0.30, end: 0.59, id: '#theme-section' },
+              { name: 'TIMELINE', start: 0.54, end: 0.89, id: '#s4-timeline' },
+              { name: 'SPONSORS', start: 0.86, end: 0.97, id: '#sponsors-section' },
+              { name: 'CONTACT',  start: 0.95, end: 0.995, id: '#contact-section' },
+              { name: 'FOOTER',   start: 0.99, end: 1.00,  id: '#footer-section' },
             ];
 
-            // No manual cutoff - handled by Robot component internally
-
-            // 2. Debug HUD Update
+            // Debug HUD
             const hud = document.querySelector<HTMLElement>('#debug-hud');
             const active = ranges.find(r => p >= r.start && p < r.end) || ranges[ranges.length - 1];
-            if (hud) {
-              hud.innerText = `P: ${p.toFixed(3)} | SECTION: ${active.name}`;
-            }
-            if (p % 0.05 < 0.001) { // Throttle console logs
-               console.log(`[ScrollDebug] P: ${p.toFixed(3)} | Active: ${active.name}`);
-            }
+            if (hud) hud.innerText = `P: ${p.toFixed(3)} | SECTION: ${active.name}`;
 
-            // 3. Centralized Styled Control (20/60/20 ramp)
             ranges.forEach(range => {
               if (!range.id) return;
               const el = document.querySelector<HTMLElement>(range.id);
               if (!el) return;
 
+              // Normalised progress within this section [0..1]
               const lp = clamp((p - range.start) / (range.end - range.start), 0, 1);
               let op = 0;
-              
-              const ramp = 0.10; 
-              if (lp < ramp) op = lp / ramp;
-              else if (lp <= (1 - ramp)) op = 1;
-              else op = (1 - lp) / ramp;
 
-              // SPECIAL CASE: HERO starts fully opaque at scroll=0 to avoid blank entry
-              if (range.name === 'HERO' && p === 0) {
-                op = 1;
+              if (range.name === 'HERO') {
+                // Hold full opacity; only start fading when ABOUT is already fading in (lp > 0.65)
+                op = lp <= 0.65 ? 1 : clamp((1 - lp) / 0.35, 0, 1);
+              } else if (range.name === 'FOOTER') {
+                // Footer rises in and stays
+                const ramp = 0.5;
+                op = lp < ramp ? lp / ramp : 1;
+              } else {
+                // Standard 15/70/15 ramp — gentler than before
+                const ramp = 0.15;
+                if (lp < ramp)        op = lp / ramp;
+                else if (lp < 1 - ramp) op = 1;
+                else                  op = (1 - lp) / ramp;
               }
 
-              // FINAL FIX: Ensure FOOTER stays at opacity 1 once it reaches peak
-              if (range.name === 'FOOTER') {
-                if (lp > 0.5) op = 1; // Stay fully visible after mid-reveal
-              }
-
-              // Force absolute clamping - allow Footer to persist if progress is at or slightly past 1.0
+              // Outside the window → fully hidden
               const isPastEnd = p > range.end && range.name !== 'FOOTER';
               if (p < range.start || isPastEnd) op = 0;
 
               el.style.opacity = String(op);
               el.style.visibility = op > 0.001 ? 'visible' : 'hidden';
               el.style.pointerEvents = op > 0.5 ? 'auto' : 'none';
-              
-              // Ensure active layer is always on top (z-index priority)
-              if (op > 0.05) {
-                el.style.zIndex = '100';
-              } else {
-                el.style.zIndex = '10';
-              }
+              el.style.zIndex = op > 0.05 ? '100' : '10';
 
-              // Specific sub-animations
-              if (range.name === 'THEMES') {
-                // Always update themeProgressRef so ThemesSection receives live scroll data
-                themeProgressRef.current = lp;
-              }
-
+              if (range.name === 'THEMES') themeProgressRef.current = lp;
               if (range.name === 'FOOTER' && op > 0) {
                 el.style.transform = `translateY(${lerp(50, 0, op)}px)`;
               }
             });
-
-            // No explicit cleanup needed anymore as the unified loop handles all 7 sections via their IDs
           },
         });
       });
