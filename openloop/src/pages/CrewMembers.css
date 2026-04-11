@@ -118,36 +118,26 @@
 
 /* Cards */
 .crew-card {
-  background: rgba(255, 255, 255, 0.08); /* Brighter base */
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(198, 255, 0, 0.3); /* Always has a neon hint */
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12); /* Much brighter for visibility */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid rgba(198, 255, 0, 0.8); /* Solid neon border */
+  border-radius: 4px;
   padding: 40px;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-  overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-}
-
-.crew-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-  pointer-events: none;
+  gap: 32px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  overflow: visible; /* Ensure nothing is cut off */
 }
 
 .crew-card:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.18);
   border-color: #C6FF00;
-  transform: translateY(-12px) scale(1.02);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 40px rgba(198, 255, 0, 0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 0 30px rgba(198, 255, 0, 0.4);
 }
 
 .card-top {
@@ -191,16 +181,15 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.95);
+  background: #C6FF00; /* Force bright button */
   color: #000000;
   text-decoration: none;
   font-family: 'Share Tech Mono', monospace;
   font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.1em;
+  font-size: 13px;
   padding: 14px;
   border-radius: 4px;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: opacity 0.3s ease;
   width: 100%;
 }
 

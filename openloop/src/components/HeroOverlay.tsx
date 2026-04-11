@@ -153,7 +153,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
               {[
                 { name: 'Radhesh Pai',     role: 'Lead Organizer',       phone: '+91 89513 49166', initials: 'RP' },
                 { name: 'Mohammed',         role: 'Secretary',             phone: '+91 6282 679 146', initials: 'MO' },
-                { name: 'Jagadhish Naik',  role: 'Web Development Head',  phone: '+91 80732 36744', initials: 'JN' },
+                { name: 'Jagadish Naik',  role: 'Web Development Head',  phone: '+91 80732 36744', initials: 'JN' },
               ].map((person, i) => (
                 <div key={i} className="contact-card" style={{ animationDelay: `${i * 0.12}s` }}>
                   <div className="contact-card-glow" />
