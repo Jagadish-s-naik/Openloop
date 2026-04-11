@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import 'gsap/ScrollTrigger';
 
@@ -64,6 +65,17 @@ export const MobileTeam: React.FC = () => {
         }
       });
 
+      // Show CTA button
+      gsap.to('.team-cta-wrap', {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        scrollTrigger: {
+          trigger: '.team-cta-wrap',
+          start: 'top 95%'
+        }
+      });
+
       // Avatar rings stagger start
       gsap.fromTo('.avatar-ring',
         { opacity: 0 },
@@ -85,7 +97,7 @@ export const MobileTeam: React.FC = () => {
         <span className="word">CREW</span>
       </h2>
 
-      <div className="team-grid section-body">
+      <div className="team-grid section-body" style={{ marginBottom: '32px' }}>
         {members.map((m, i) => (
           <div key={i} ref={el => { cardsRef.current[i] = el; }} className="team-card">
             
@@ -115,6 +127,24 @@ export const MobileTeam: React.FC = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Meet the Crew Link */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem', opacity: 0, transform: 'translateY(20px)' }} className="team-cta-wrap">
+        <Link 
+          to="/crew" 
+          className="cta-button" 
+          style={{ 
+            textDecoration: 'none',
+            fontSize: '13px',
+            padding: '10px 24px',
+            border: '1px solid #C6FF00',
+            background: 'transparent',
+            color: '#C6FF00'
+          }}
+        >
+          MEET ALL CREW MEMBERS
+        </Link>
       </div>
     </section>
   );

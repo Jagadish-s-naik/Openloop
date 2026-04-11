@@ -1,0 +1,289 @@
+.crew-members-page {
+  min-height: 100vh;
+  background: #010400; /* Deepest green-black */
+  color: #ffffff;
+  position: relative;
+  overflow-x: hidden;
+  padding-bottom: 120px;
+}
+
+/* Background Decor */
+.crew-bg-decor {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.crew-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(198, 255, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(198, 255, 0, 0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.4;
+}
+
+.crew-glow-1 {
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(198, 255, 0, 0.08) 0%, transparent 70%);
+  top: -300px;
+  left: -200px;
+}
+
+.crew-glow-2 {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0, 204, 255, 0.06) 0%, transparent 70%);
+  bottom: -100px;
+  right: -100px;
+}
+
+/* Container */
+.crew-container {
+  position: relative;
+  z-index: 10;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.crew-nav {
+  margin-bottom: 80px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  padding: 10px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  text-transform: uppercase;
+}
+
+.back-link:hover {
+  color: #C6FF00;
+  border-color: rgba(198, 255, 0, 0.6);
+  background: rgba(198, 255, 0, 0.1);
+  box-shadow: 0 0 20px rgba(198, 255, 0, 0.2);
+}
+
+/* Header */
+.crew-header {
+  margin-bottom: 100px;
+  max-width: 900px;
+}
+
+.crew-header h1 {
+  font-family: 'Audiowide', sans-serif;
+  font-size: clamp(36px, 6vw, 72px);
+  margin: 0 0 24px 0;
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+}
+
+.crew-highlight {
+  color: #C6FF00;
+  text-shadow: 0 0 30px rgba(198, 255, 0, 0.3);
+}
+
+.crew-header p {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  line-height: 1.7;
+  max-width: 700px;
+  letter-spacing: 0.01em;
+}
+
+/* Grid */
+.crew-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 40px;
+}
+
+/* Cards */
+.crew-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 40px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.crew-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.crew-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(198, 255, 0, 0.4);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(198, 255, 0, 0.1);
+}
+
+.card-top {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 18px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--accent-color);
+  border-radius: 4px; /* Professional squared look */
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--accent-color);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.member-name {
+  font-family: 'Audiowide', sans-serif;
+  font-weight: 400;
+  font-size: 32px;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  margin: 0;
+}
+
+.card-mid {
+  flex-grow: 1;
+}
+
+.github-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #000000;
+  text-decoration: none;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  padding: 14px;
+  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  width: 100%;
+}
+
+.github-button:hover {
+  background: #C6FF00;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(198, 255, 0, 0.4);
+}
+
+/* Card Decor */
+.corner {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border: 2px solid #C6FF00;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+.corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+
+.crew-card:hover .corner {
+  opacity: 1;
+  width: 25px;
+  height: 25px;
+}
+
+/* Footer Section */
+.crew-footer {
+  margin-top: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.footer-line {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, #C6FF00 0%, transparent 100%);
+  opacity: 0.3;
+}
+
+.footer-status {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.status-online {
+  color: #C6FF00;
+  text-shadow: 0 0 10px rgba(198, 255, 0, 0.5);
+  font-weight: 700;
+}
+
+@media (max-width: 1024px) {
+  .crew-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .crew-container {
+    padding: 60px 20px;
+  }
+  
+  .crew-header {
+    margin-bottom: 60px;
+  }
+
+  .crew-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .crew-card {
+    padding: 30px;
+  }
+
+  .member-name {
+    font-size: 28px;
+  }
+}
