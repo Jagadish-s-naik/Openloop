@@ -76,6 +76,29 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
               {item.label}
             </a>
           ))}
+          <Link 
+            to="/crew" 
+            style={{ 
+              textDecoration: 'none',
+              marginLeft: '20px',
+              fontFamily: "'Share Tech Mono', monospace",
+              fontSize: '14px',
+              letterSpacing: '0.25em',
+              color: 'rgba(255, 255, 255, 0.7)',
+              textTransform: 'uppercase',
+              transition: 'color 0.2s ease, text-shadow 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#C6FF00';
+              e.currentTarget.style.textShadow = '0 0 8px #C6FF00';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
+              e.currentTarget.style.textShadow = 'none';
+            }}
+          >
+            Crew
+          </Link>
         </div>
         <div style={{ display: 'flex', gap: '1rem' }}>
           <a href="https://drive.google.com/file/d/1_IM0WD6zowoyv9nopm2RbnwW2dUYwwBE/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="hud-label" style={{ textDecoration: 'none', fontSize: '12px', opacity: 0.7 }}>[ BROCHURE ]</a>

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 
 export const MobileNav: React.FC = () => {
@@ -74,6 +75,7 @@ export const MobileNav: React.FC = () => {
     { label: 'Timeline', id: '#timeline' },
     { label: 'Sponsors', id: '#sponsors' },
     { label: 'Team', id: '#team' },
+    { label: 'Crew', path: '/crew' },
     { label: 'Contact', id: '#footer' },
   ];
 
@@ -102,15 +104,28 @@ export const MobileNav: React.FC = () => {
 
       <div ref={menuRef} id="mobile-menu" style={{ visibility: 'hidden', pointerEvents: 'none' }}>
         {navItems.map((item, i) => (
-          <a
-            key={i}
-            ref={el => { linksRef.current[i] = el; }}
-            href={item.id}
-            onClick={() => { toggleMenu(); }}
-          >
-            <span className="menu-num">0{i + 1}</span>
-            {item.label}
-          </a>
+          item.path ? (
+            <Link
+              key={i}
+              to={item.path}
+              onClick={() => { toggleMenu(); }}
+              className="mobile-nav-link"
+              style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none' }}
+            >
+              <span className="menu-num">0{i + 1}</span>
+              {item.label}
+            </Link>
+          ) : (
+            <a
+              key={i}
+              ref={el => { linksRef.current[i] = el; }}
+              href={item.id}
+              onClick={() => { toggleMenu(); }}
+            >
+              <span className="menu-num">0{i + 1}</span>
+              {item.label}
+            </a>
+          )
         ))}
       </div>
     </div>
