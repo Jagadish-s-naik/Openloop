@@ -8,14 +8,13 @@ interface HeroOverlayProps {
 export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   const p = scrollProgress;
 
-  // Navigation targets based on DesktopLayout ranges
   const NAV_ITEMS = [
-    { label: 'Core', target: 0.06 },
-    { label: 'About', target: 0.235 },
-    { label: 'Themes', target: 0.450 },
-    { label: 'Timeline', target: 0.602 },
-    { label: 'Sponsors', target: 0.905 },
-    { label: 'Contact', target: 0.985 },
+    { label: 'Core', target: 0.05 },
+    { label: 'About', target: 0.24 },
+    { label: 'Themes', target: 0.44 },
+    { label: 'Timeline', target: 0.60 },
+    { label: 'Sponsors', target: 0.90 },
+    { label: 'Contact', target: 0.96 },
   ];
 
   const handleNavClick = (targetProgress: number) => {
@@ -27,9 +26,9 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   };
 
   // Active state helpers
-  const isHeroActive = p >= 0.00 && p < 0.15;
-  const isAboutActive = p >= 0.15 && p < 0.30;
-  const isContactActive = p >= 0.90 && p < 0.97;
+  const isHeroActive = p >= 0.00 && p <= 0.15;
+  const isAboutActive = p >= 0.14 && p <= 0.34;
+  const isContactActive = p >= 0.93 && p <= 0.99;
 
   // Fade the permanent hero title out once the user scrolls past the hero phase
   useEffect(() => {
@@ -56,7 +55,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
       </div>
 
       <nav>
-        <div className="nav-brand hud-label">
+        <div className="nav-brand hud-label" style={{ cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <span style={{ backgroundImage: "linear-gradient(to bottom, #C6FF00, #FFFFFF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>OPEN LOOP</span>
         </div>
         <div className="nav-links">
@@ -100,8 +99,8 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
             Crew
           </Link>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <a href="https://drive.google.com/file/d/1_IM0WD6zowoyv9nopm2RbnwW2dUYwwBE/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="hud-label" style={{ textDecoration: 'none', fontSize: '12px', opacity: 0.7 }}>[ BROCHURE ]</a>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <a href="https://drive.google.com/file/d/1_IM0WD6zowoyv9nopm2RbnwW2dUYwwBE/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="cta-button" style={{ textDecoration: 'none', padding: '8px 20px', fontSize: '11px' }}>Brochure</a>
           <a href="https://unstop.com/college-fests/openloop-26-yenepoya-school-of-engineering-and-technology-458231" target="_blank" rel="noopener noreferrer" className="cta-outline" style={{ textDecoration: 'none' }}>Register Now</a>
         </div>
       </nav>
@@ -112,7 +111,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
           <section id="hero">
             {/* No title here — it lives in the permanent layer */}
             <div className="hero-bottom-left">
-              <div className="body-text-safe">
+              <div className="body-text-safe" style={{ paddingLeft: '1.5rem' }}>
                 {isHeroActive && (
                   <div className="reveal-text-fast">
                     Enter. Build. Evolve.
@@ -140,7 +139,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
             <div className="content-right">
               <div className="timeline-label">// 002 - ABOUT</div>
               <h2 className="section-heading">OpenLoop Hack</h2>
-              <div className="body-text-safe">
+              <div className="body-text-safe" style={{ paddingLeft: '1.5rem' }}>
                 {isAboutActive && (
                   <div className="reveal-text-fast">
                     OpenLoop is a National Level Hackathon organized by the Yenepoya Tech Club in Yenepoya School of Engineering and Technology. It is a 24-hour hackathon where teams of 2-4 can participate and showcase their technical skills.

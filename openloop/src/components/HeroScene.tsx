@@ -5,7 +5,7 @@ import { Robot } from './Robot';
 import { Background } from './Background';
 import { Timeline3D } from './Timeline3D';
 import { useMousePosition } from '../hooks/useMousePosition';
-import { lerp } from '../utils/math';
+import { lerp, clamp } from '../utils/math';
 
 const CameraRig = ({ robotProgressRef }: { robotProgressRef: React.MutableRefObject<number> }) => {
   const mouse = useMousePosition();
@@ -17,16 +17,22 @@ const CameraRig = ({ robotProgressRef }: { robotProgressRef: React.MutableRefObj
     const targetX = mouse.x * 0.45;
     const targetY = mouse.y * 0.45;
     
-    // 2. Camera Push / Inside System Feel
+    // Base position
     let targetZ = 3.8;
-    if (p > 0.75) {
-      const pushP = Math.min(1, (p - 0.75) * 5);
-      targetZ = lerp(3.8, 2.0, pushP);
-    }
     
-    // 3. Move camera slightly more into depth for Timeline
-    if (p >= 0.58 && p <= 0.82) {
-      targetZ = 4.2; // Move back a bit to see the 3D timeline nodes better
+    // Smooth Timeline View & Transition
+    if (p >= 0.55 && p <= 0.86) {
+      if (p <= 0.82) {
+        targetZ = 4.2; // Move back slightly to see the timeline spread
+      } else {
+        // Gently zoom in between 0.82 and 0.86 (Timeline Exit)
+        // Zooming "some percentage, not that much" as requested
+        const zoomP = clamp((p - 0.82) / 0.04, 0, 1);
+        targetZ = lerp(4.2, 3.4, zoomP);
+      }
+    } else if (p > 0.86) {
+      // Maintain gentle zoom after timeline ends
+      targetZ = 3.4;
     }
 
     state.camera.position.x = lerp(state.camera.position.x, targetX, 0.08);

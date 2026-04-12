@@ -43,8 +43,9 @@ export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgres
 
     const p = scrollProgress;
     
-    // 1. Core Timeline Movement (0.58 -> 0.86)
-    const timelineP = clamp((p - 0.58) / 0.28, 0, 1);
+    // 1. Core Timeline Movement (0.58 -> 0.84)
+    // Speed up horizontal shifting slightly so we arrive at the final node early
+    const timelineP = clamp((p - 0.58) / 0.26, 0, 1);
     
     // Move horizontally centered around nodes
     const targetXOffset = -startX - (timelineP * totalWidth);
@@ -69,13 +70,13 @@ export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgres
       if (p < 0.58) {
         opacity = (p - 0.55) / 0.03;
       } 
-      // Main Body (0.58 -> 0.83)
-      else if (p < 0.83) {
+      // Main Body (0.58 -> 0.84)
+      else if (p < 0.84) {
         opacity = 1;
       }
-      // Cinematic Exit (0.83 -> 0.86)
+      // Cinematic Exit (0.84 -> 0.86)
       else {
-        const exitP = clamp((p - 0.83) / 0.03, 0, 1);
+        const exitP = clamp((p - 0.84) / 0.02, 0, 1);
         opacity = 1 - exitP;
       }
     }
@@ -111,7 +112,7 @@ export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgres
             xPos={xPos} 
             isLeft={isLeft} 
             scrollProgress={scrollProgress}
-            sectionOpacity={clamp((scrollProgress - 0.83) / 0.03, 0, 1)} // Sync with delayed exit
+            sectionOpacity={clamp((scrollProgress - 0.84) / 0.02, 0, 1)} // Sync with delayed exit
           />
         );
       })}

@@ -21,8 +21,8 @@ export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollPr
   const p = scrollProgress;
   
   // Cinematic Entry Transform (Independent of opacity management)
-  // Maps 0.91 -> 0.96 for the slide-up effect
-  const entryP = clamp((p - 0.91) / 0.05, 0, 1);
+  // Maps 0.86 -> 0.88 for the slide-up effect
+  const entryP = clamp((p - 0.86) / 0.02, 0, 1);
   const translateY = lerp(40, 0, entryP);
 
   return (
@@ -32,7 +32,7 @@ export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollPr
       style={{
         opacity: 0, // Default hidden
         transform: `translateY(${translateY}px)`,
-        pointerEvents: p > 0.91 && p < 0.97 ? 'auto' : 'none',
+        pointerEvents: p > 0.86 && p < 0.94 ? 'auto' : 'none',
         transition: 'none'
       }}
     >
@@ -41,7 +41,8 @@ export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollPr
         <h2 className="section-heading">SPONSORS</h2>
         <p className="body-text-safe" style={{ marginBottom: '2rem' }}>
           <Typewriter 
-            active={p > 0.93} 
+            active={p > 0.865} 
+            delay={10}
             text="Our partners fueling the 2026 synergy loop. Grid layout optimized for high-fidelity logo rendering." 
           />
         </p>
