@@ -75,10 +75,10 @@ export const ThemesSection: React.FC<{ scrollProgress: number }> = ({ scrollProg
                   <h3 className="card-title-premium">{card.title}</h3>
                   <div className="card-accent-bar" />
                   <p className="card-desc-premium">
-                    {index === 0 && "Architecting high-fidelity tools for ultra-efficient development cycles and autonomous learning loops."}
-                    {index === 1 && "Leveraging predictive intelligence to redefine patient care and medical response systems."}
-                    {index === 2 && "Synchronizing secure digital assets with near-zero latency for the future of global exchange."}
-                    {index === 3 && "Unlocking cross-system synergy through unrestricted ideation and collaborative fusion."}
+                    {index === 0 && "Build tools that help people learn faster and developers work smarter. From AI-powered learning platforms to dev tools, automation, and workflow optimization—anything that boosts efficiency and skill growth."}
+                    {index === 1 && "Create impactful solutions that improve healthcare access, diagnostics, and patient care. Focus on real-world challenges using tech like AI, telemedicine, and health monitoring systems."}
+                    {index === 2 && "Reimagine how people interact with money through secure, seamless, and inclusive solutions. Explore payments, finance management, fraud detection, blockchain, and financial accessibility."}
+                    {index === 3 && "No limits—build anything bold, creative, or disruptive across any domain. Perfect for experimental ideas, emerging tech, social impact, or solutions that don’t fit a single category"}
                   </p>
                 </div>
 

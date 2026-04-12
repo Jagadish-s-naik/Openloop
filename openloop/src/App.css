@@ -226,11 +226,10 @@ nav a:hover {
   line-height: 1.7;
   /* Removed black background as requested */
   background: transparent !important;
-  padding: 16px 24px 16px 0;
+  padding: 16px 24px 16px 16px; /* Added 16px left padding */
   border-left-width: 2px;
   border-left-style: solid;
-  border-left-color: rgba(0, 240, 255, 0.4);
-  margin-bottom: 16px;
+  border-image: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.1) 20%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0.1) 80%, transparent) 1 100%;
 }
 
 .cta-button {
@@ -361,7 +360,7 @@ nav a:hover {
 }
 
 .title-spacer {
-  width: 12vw; /* Adjustable spacing for robot face framing */
+  width: 8vw; /* Adjustable spacing for robot face framing */
 }
 
 .title-word {

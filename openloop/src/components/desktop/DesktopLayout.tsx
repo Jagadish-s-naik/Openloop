@@ -109,20 +109,17 @@ export default function DesktopLayout() {
             // there is NEVER a point where all sections are at opacity 0.
             // Ramp is calculated only within each section's own window.
             const ranges = [
-              { name: 'HERO',     start: 0.00, end: 0.16, id: '#s1-hero' },
-              { name: 'ABOUT',    start: 0.11, end: 0.36, id: '#s2-about' },
-              { name: 'THEMES',   start: 0.30, end: 0.60, id: '#theme-section' },
-              { name: 'TIMELINE', start: 0.54, end: 0.89, id: '#s4-timeline' },
-              { name: 'SPONSORS', start: 0.84, end: 0.97, id: '#sponsors-section' },
-              { name: 'CONTACT',  start: 0.94, end: 0.995, id: '#contact-section' },
-              { name: 'FOOTER',   start: 0.99, end: 1.00,  id: '#footer-section' },
+              { name: 'HERO',     start: 0.00, end: 0.15, id: '#s1-hero' },
+              { name: 'ABOUT',    start: 0.15, end: 0.33, id: '#s2-about' },
+              { name: 'THEMES',   start: 0.33, end: 0.55, id: '#theme-section' },
+              { name: 'TIMELINE', start: 0.55, end: 0.86, id: '#s4-timeline' },
+              { name: 'SPONSORS', start: 0.86, end: 0.94, id: '#sponsors-section' },
+              { name: 'CONTACT',  start: 0.94, end: 0.985, id: '#contact-section' },
+              { name: 'FOOTER',   start: 0.985, end: 1.00,  id: '#footer-section' },
             ];
 
             // Debug HUD
-            const hud = document.querySelector<HTMLElement>('#debug-hud');
-            const active = ranges.find(r => p >= r.start && p < r.end) || ranges[ranges.length - 1];
-            if (hud) hud.innerText = `P: ${p.toFixed(3)} | SECTION: ${active.name}`;
-
+            // Removed
             ranges.forEach(range => {
               if (!range.id) return;
               const el = document.querySelector<HTMLElement>(range.id);
@@ -133,8 +130,8 @@ export default function DesktopLayout() {
               let op = 0;
 
               if (range.name === 'HERO') {
-                // Hold full opacity; only start fading when ABOUT is already fading in (lp > 0.65)
-                op = lp <= 0.65 ? 1 : clamp((1 - lp) / 0.35, 0, 1);
+                // Hold full opacity; only start fading when nearing the end
+                op = lp <= 0.70 ? 1 : clamp((1 - lp) / 0.30, 0, 1);
               } else if (range.name === 'FOOTER') {
                 // Footer rises in and stays
                 const ramp = 0.5;
@@ -177,23 +174,7 @@ export default function DesktopLayout() {
 
   return (
     <div className={`app-root ${phase === 'main' ? 'is-main' : ''}`}>
-      {phase === 'main' && (
-        <div id="debug-hud" style={{
-          position: 'fixed',
-          bottom: '20px',
-          left: '20px',
-          background: 'rgba(0,0,0,0.8)',
-          color: '#C6FF00',
-          padding: '8px 12px',
-          borderRadius: '4px',
-          fontFamily: 'monospace',
-          fontSize: '12px',
-          zIndex: 1000,
-          border: '1px solid #C6FF00'
-        }}>
-          P: 0.000 | SECTION: HERO
-        </div>
-      )}
+      {/* Debug HUD removed as per request */}
 
       <div 
         className="canvas-container"

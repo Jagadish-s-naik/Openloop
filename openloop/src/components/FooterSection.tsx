@@ -53,9 +53,12 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ scrollVal }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h3 style={{ 
               fontFamily: 'Audiowide, sans-serif', 
-              fontSize: '24px', 
+              fontSize: '30px', 
               letterSpacing: '2px',
-              color: '#C6FF00',
+              background: 'linear-gradient(to bottom, #C6FF00, #9c5c5c)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
               margin: 0
           }}>OPENLOOP</h3>
           <p style={{ 
@@ -84,8 +87,6 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ scrollVal }) => {
         <div>
           <h4 style={headerStyle}>Connect</h4>
           <ul style={listStyle}>
-            <li><a href="#" style={linkStyle}>Twitter/X</a></li>
-            <li><a href="#" style={linkStyle}>Discord</a></li>
             <li><a href="#" style={linkStyle}>GitHub</a></li>
             <li><a href="mailto:hello@openloop.dev" style={linkStyle}>Email</a></li>
           </ul>
@@ -121,8 +122,8 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ scrollVal }) => {
       }}>
         <span>© 2026 OPENLOOP HACKATHON. ALL RIGHTS RESERVED.</span>
         <div style={{ display: 'flex', gap: '20px' }}>
-          <span>YENTECH INDUSTRIES</span>
-          <span style={{ color: '#C6FF00' }}>v1.0.4-BETA</span>
+          <span>YENTECH</span>
+          <span style={{ color: '#C6FF00' }}>v1.0.0</span>
         </div>
       </div>
     </footer>

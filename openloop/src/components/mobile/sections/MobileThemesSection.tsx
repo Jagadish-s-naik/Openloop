@@ -7,22 +7,22 @@ const THEMES = [
   {
     id: '01',
     title: 'Learning and developer productivity',
-    desc: 'Cyber-Synthesis of high-level protocols and hackathon execution environments.'
+    desc: 'Build tools that help people learn faster and developers work smarter. From AI-powered learning platforms to dev tools, automation, and workflow optimization—anything that boosts efficiency and skill growth.'
   },
   {
     id: '02',
     title: 'Healthcare and Medtech',
-    desc: 'Seamless merging of distributed systems and decentralized intelligence.'
+    desc: 'Create impactful solutions that improve healthcare access, diagnostics, and patient care. Focus on real-world challenges using tech like AI, telemedicine, and health monitoring systems.'
   },
   {
     id: '03',
     title: 'FineTech & Banking',
-    desc: 'Scaling autonomous intelligence via multi-node synchronization loops.'
+    desc: 'Reimagine how people interact with money through secure, seamless, and inclusive solutions. Explore payments, finance management, fraud detection, blockchain, and financial accessibility.'
   },
   {
     id: '04',
     title: 'Open Innovation',
-    desc: 'Self-correcting execution environments and deterministic logic arrays.'
+    desc: 'No limits—build anything bold, creative, or disruptive across any domain. Perfect for experimental ideas, emerging tech, social impact, or solutions that don’t fit a single category'
   }
 ];
 

@@ -16,48 +16,29 @@ export const MobileHero: React.FC = () => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.2 });
 
-      tl.to('.hero-title', {
-        y: '0%',
-        duration: 1.8,
-        ease: 'power4.out'
-      })
-        .to('.hero-year', {
-          y: '0%',
-          duration: 1.2,
-          ease: 'power3.out'
-        }, '-=0.8')
-        .to(badgeRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          ease: 'power2.out'
-        }, '-=0.3')
-        .to(subRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          ease: 'power2.out'
-        }, '-=0.3')
-        .to(statsRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          ease: 'power2.out'
-        }, '-=0.3')
-        .to(buttonsRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          ease: 'power2.out'
-        }, '-=0.3')
-        .to(taglineRef.current, {
-          opacity: 1,
-          duration: 0.4
-        }, '-=0.2')
-        .to(scrollRef.current, {
-          opacity: 1,
-          duration: 0.4
-        }, '-=0.2');
+      // Hologram Boot-Up Sequence (Scale + Blur + Exposure)
+      tl.fromTo(['.hero-title', '.hero-year'], 
+        { y: 0, scale: 1.5, opacity: 0, filter: 'blur(20px) brightness(3)' },
+        { y: 0, scale: 1, opacity: 1, filter: 'blur(0px) brightness(1)', duration: 2, ease: 'power4.out', stagger: 0.3 }
+      )
+      // High-speed lateral data feed
+      .fromTo([badgeRef.current, subRef.current, statsRef.current, buttonsRef.current],
+        { y: 0, x: -50, opacity: 0, skewX: 15 },
+        { x: 0, opacity: 1, skewX: 0, duration: 0.8, stagger: 0.1, ease: 'back.out(2)' },
+        '-=1.4'
+      )
+      // System Flicker Boot for tagline
+      .fromTo(taglineRef.current,
+        { opacity: 0, y: 0, scale: 1.1 },
+        { opacity: 1, scale: 1, duration: 0.08, repeat: 4, yoyo: true, ease: 'steps(1)' },
+        '-=0.5'
+      )
+      // Elastic drop for scroll cue
+      .fromTo(scrollRef.current,
+        { opacity: 0, y: -40, scaleY: 2 },
+        { opacity: 1, y: 0, scaleY: 1, duration: 1.2, ease: 'elastic.out(1, 0.5)' },
+        '-=0.2'
+      );
 
     }, heroRef);
     return () => ctx.revert();
@@ -65,13 +46,15 @@ export const MobileHero: React.FC = () => {
 
   return (
     <section id="hero" ref={heroRef}>
-      <div className="hero-rings-wrap">
-        <div className="hero-rings">
-          <div className="ring ring-1" />
-          <div className="ring ring-2" />
-          <div className="ring ring-3" />
-          <div className="ring-core" />
-          <div className="ring-dot" />
+      <div className="hero-cyber-grid-wrap">
+        <div className="cyber-grid-plane" />
+        <div className="cyber-grid-glow" />
+        <div className="crosshair-ui">
+          <div className="xh-line xh-top" />
+          <div className="xh-line xh-bottom" />
+          <div className="xh-line xh-left" />
+          <div className="xh-line xh-right" />
+          <div className="xh-center-glitch" />
         </div>
       </div>
 
