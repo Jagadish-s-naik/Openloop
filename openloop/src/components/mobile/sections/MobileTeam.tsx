@@ -8,25 +8,19 @@ const members = [
     name: 'Radhesh Pai', 
     role: 'Lead Organizer', 
     photo: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2F0JTIwZ2xhc3Nlc3xlbnwwfHwwfHx8MA%3D%3D', 
-    email: 'alex@openloop.dev',
-    linkedin: '#',
-    github: '#'
+    phone: '+91 89513 49166',
   },
   { 
-    name: 'Mohammed', 
-    role: 'Secretary', 
+    name: 'Mohammed shameer', 
+    role: 'Vice president', 
     photo: 'https://via.placeholder.com/150', 
-    email: 'sarah@openloop.dev',
-    linkedin: '#',
-    github: '#'
+    phone: '+91 6282 679 146',
   },
   { 
-    name: 'Jagadhish Naik', 
+    name: 'Jagadish Naik', 
     role: 'Web Development Head', 
     photo: 'https://via.placeholder.com/150', 
-    email: 'marcus@openloop.dev',
-    linkedin: '#',
-    github: '#'
+    phone: '+91 80732 36744',
   },
 ];
 
@@ -106,24 +100,10 @@ export const MobileTeam: React.FC = () => {
               <div className="team-role">{m.role}</div>
             </div>
             <div className="team-links">
-              {m.email && (
-                <a href={`mailto:${m.email}`} className="team-link">
-                  <span className="link-icon">@</span>
-                  <span>{m.email}</span>
-                </a>
-              )}
-              {m.linkedin && (
-                <a href={m.linkedin} target="_blank" rel="noopener noreferrer" className="team-link">
-                  <span className="link-icon">in</span>
-                  <span>LinkedIn</span>
-                </a>
-              )}
-              {m.github && (
-                <a href={m.github} target="_blank" rel="noopener noreferrer" className="team-link">
-                  <span className="link-icon">gh</span>
-                  <span>GitHub</span>
-                </a>
-              )}
+              <a href={`tel:${m.phone.replace(/\s+/g, '')}`} className="team-link">
+                <span className="link-icon">#</span>
+                <span>{m.phone}</span>
+              </a>
             </div>
           </div>
         ))}
