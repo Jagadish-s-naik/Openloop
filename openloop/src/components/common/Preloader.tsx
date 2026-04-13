@@ -9,135 +9,91 @@ interface PreloaderProps {
 export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const coreRef = useRef<HTMLDivElement>(null);
-  const burstRef = useRef<HTMLDivElement>(null);
-  const progressRingRef = useRef<SVGCircleElement>(null);
-
-  const title = "OPENLOOP";
+  const ringRef = useRef<HTMLDivElement>(null);
+  const brandRef = useRef<HTMLDivElement>(null);
+  const percentRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. Progress Animation
       const tl = gsap.timeline({
+        onComplete: () => {
+          const exitTl = gsap.timeline({
+            onComplete: () => onComplete()
+          });
+
+          // Elegant split exit
+          exitTl.to(ringRef.current, {
+            scale: 0.8,
+            opacity: 0,
+            duration: 0.4,
+            ease: "power2.inOut"
+          })
+          .to([brandRef.current, percentRef.current], {
+            y: 20,
+            opacity: 0,
+            duration: 0.4,
+            ease: "power2.inOut",
+            stagger: 0.1
+          }, "-=0.3")
+          .to(overlayRef.current, {
+            opacity: 1,
+            duration: 0.3
+          }, "-=0.2")
+          .to(containerRef.current, {
+            opacity: 0,
+            duration: 0.6,
+            ease: "power2.out"
+          });
+        }
+      });
+
+      // Smooth manual progress simulation to prevent layout thrashing
+      const dummyObj = { p: 0 };
+      tl.to(dummyObj, {
+        p: 100,
+        duration: 2.2, // Smooth ease loading time
+        ease: "power1.inOut",
         onUpdate: () => {
-          const p = Math.floor(tl.progress() * 100);
-          setProgress(p);
-          
-          // Update SVG ring stroke (circumference is ~283)
-          if (progressRingRef.current) {
-            const offset = 283 - (tl.progress() * 283);
-            progressRingRef.current.style.strokeDashoffset = offset.toString();
-          }
-        },
-        onComplete: () => handleExit()
+          setProgress(Math.round(dummyObj.p));
+        }
       });
 
-      tl.to({}, { duration: 1.8 }); // Cinematic load optimized
-
-      // 2. Letter Reveal
-      gsap.to(".letter", {
-        opacity: 1,
-        y: 0,
-        stagger: 0.1,
-        duration: 0.8,
-        ease: "power2.out",
-        delay: 0.2
-      });
-
-      // 3. Glitch intensify sequence
-      gsap.to(".main-title", {
-        className: "main-title glitch",
-        delay: 2.4,
-        duration: 0.6
-      });
-
-      const handleExit = () => {
-        const exitTl = gsap.timeline({
-          onComplete: () => onComplete()
-        });
-
-        exitTl.to(coreRef.current, {
-          scale: 1.8,
-          opacity: 1,
-          duration: 0.4,
-          ease: "back.in(2)"
-        });
-
-        exitTl.to(".ring, .loader-text", {
-          scale: 12,
-          opacity: 0,
-          stagger: 0.05,
-          duration: 0.8,
-          ease: "power4.out"
-        }, "-=0.2");
-
-        exitTl.set(burstRef.current, { display: 'block' });
-        exitTl.to(burstRef.current, {
-          opacity: 1,
-          duration: 0.3,
-          ease: "power2.in"
-        }, "-=0.6");
-
-        exitTl.to(containerRef.current, {
-          opacity: 0,
-          duration: 0.6,
-          ease: "power2.out"
-        });
-      };
+      gsap.fromTo(brandRef.current, 
+        { opacity: 0, letterSpacing: '0px' },
+        { opacity: 1, letterSpacing: '8px', duration: 1.5, ease: "power2.out" }
+      );
     });
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+    };
   }, [onComplete]);
 
   return (
-    <div className="preloader-container" ref={containerRef}>
-      <div className="preloader-noise" />
-      <div className="preloader-scanlines" />
-      <div className="preloader-scanner" />
+    <div className="hq-preloader" ref={containerRef}>
+      <div className="hq-background"></div>
       
-      {/* HUD Readouts */}
-      <div className="terminal-readout tr-tl">
-        [ SYSTEM_BOOT_SEQUENCE_IDENTIFIED ]<br/>
-        [ KERNEL_LOAD_OFFSET_0x7F ]<br/>
-        [ SYNCING_CORE_SYNERGY ]
-      </div>
+      <div className="hq-core">
+        <div className="hq-rings-wrapper" ref={ringRef}>
+          <div className="hq-ring hq-ring-1"></div>
+          <div className="hq-ring hq-ring-2"></div>
+          <div className="hq-ring hq-ring-3"></div>
+          <div className="hq-ring-glow"></div>
+        </div>
 
-      <div className="terminal-readout tr-br">
-        VER: 2.0.26_STABLE<br/>
-        UID: 89AB-FF21-C6D9<br/>
-        LOC: GLOBAL_GRID
+        <div className="hq-info-wrapper">
+          <div className="hq-percentage" ref={percentRef}>
+            {progress.toString().padStart(2, '0')}<span className="text-accent">%</span>
+          </div>
+          <h1 className="hq-brand" ref={brandRef}>
+            OPEN<span className="text-accent">LOOP</span>
+          </h1>
+          <div className="hq-status">INITIALIZING SYSTEMS</div>
+        </div>
       </div>
       
-      <div className="exit-burst" ref={burstRef} />
-
-      <div className="loader-visual" ref={coreRef}>
-        <div className="pulse-ring" />
-        <svg viewBox="0 0 100 100" className="ring">
-          {/* Static Background Rings */}
-          <circle cx="50" cy="50" r="48" className="ring-outer" />
-          
-          {/* Rotating Hud Arc */}
-          <circle cx="50" cy="50" r="32" className="ring-arc" />
-          
-          {/* Progress Filling Ring */}
-          <circle 
-            ref={progressRingRef}
-            cx="50" cy="50" r="45" 
-            className="ring-progress" 
-            style={{ strokeDashoffset: '283' }}
-          />
-        </svg>
-      </div>
-
-      <div className="loader-text">
-        <h1 className="main-title">
-          {title.split("").map((l, i) => (
-            <span key={i} className="letter" style={{ transform: 'translateY(10px)' }}>{l}</span>
-          ))}
-        </h1>
-        <p className="sub-title">Initializing System diagnostic...</p>
-        <div className="percentage">{progress}%</div>
-      </div>
+      <div className="hq-exit-overlay" ref={overlayRef}></div>
     </div>
   );
 };
