@@ -43,7 +43,7 @@ export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollPr
           <Typewriter 
             active={p > 0.77} 
             delay={10}
-            text="Our partners fueling the 2026 synergy loop. Grid layout optimized for high-fidelity logo rendering." 
+            text="Our partners fueling the 2026 Open Loop." 
           />
         </p>
 
