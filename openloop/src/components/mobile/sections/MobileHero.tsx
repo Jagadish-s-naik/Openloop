@@ -16,28 +16,28 @@ export const MobileHero: React.FC = () => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.2 });
 
-      // Hologram Boot-Up Sequence (Scale + Blur + Exposure)
+      // Clean, minimal elegant fade up for main titles
       tl.fromTo(['.hero-title', '.hero-year'], 
-        { y: 0, scale: 1.5, opacity: 0, filter: 'blur(20px) brightness(3)' },
-        { y: 0, scale: 1, opacity: 1, filter: 'blur(0px) brightness(1)', duration: 2, ease: 'power4.out', stagger: 0.3 }
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.2, ease: 'power3.out', stagger: 0.2 }
       )
-      // High-speed lateral data feed
+      // Smooth subtle reveal for content
       .fromTo([badgeRef.current, subRef.current, statsRef.current, buttonsRef.current],
-        { y: 0, x: -50, opacity: 0, skewX: 15 },
-        { x: 0, opacity: 1, skewX: 0, duration: 0.8, stagger: 0.1, ease: 'back.out(2)' },
-        '-=1.4'
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: 'power3.out' },
+        '-=0.8'
       )
-      // System Flicker Boot for tagline
+      // Soft entrance for tagline
       .fromTo(taglineRef.current,
-        { opacity: 0, y: 0, scale: 1.1 },
-        { opacity: 1, scale: 1, duration: 0.08, repeat: 4, yoyo: true, ease: 'steps(1)' },
-        '-=0.5'
+        { opacity: 0 },
+        { opacity: 1, duration: 1, ease: 'power2.out' },
+        '-=0.6'
       )
-      // Elastic drop for scroll cue
+      // Gentle drop for scroll cue
       .fromTo(scrollRef.current,
-        { opacity: 0, y: -40, scaleY: 2 },
-        { opacity: 1, y: 0, scaleY: 1, duration: 1.2, ease: 'elastic.out(1, 0.5)' },
-        '-=0.2'
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 1, ease: 'power3.out' },
+        '-=0.6'
       );
 
     }, heroRef);

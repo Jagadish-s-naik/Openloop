@@ -1,4 +1,4 @@
-/* Premium HQ Preloader Styles */
+/* Minimal Linear Preloader Styles */
 .hq-preloader {
   position: fixed;
   inset: 0;
@@ -8,173 +8,66 @@
   background-color: #050505;
   z-index: 10000;
   font-family: 'Share Tech Mono', monospace;
-  overflow: hidden;
   color: #ffffff;
+  overflow: hidden;
 }
 
-.hq-background {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(198, 255, 0, 0.05) 0%, #050505 60%);
-  pointer-events: none;
-}
-
-.hq-core {
-  position: relative;
+.hq-preloader-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  z-index: 2;
+  width: 80%;
+  max-width: 320px;
 }
 
-/* 3D Hardware Accelerated Rings */
-.hq-rings-wrapper {
-  position: relative;
-  width: 180px;
-  height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 2.5rem;
-  perspective: 800px;
-  transform-style: preserve-3d;
-}
-
-.hq-ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  will-change: transform;
-}
-
-.hq-ring-1 {
-  width: 100%;
-  height: 100%;
-  border-top-color: #c6ff00;
-  border-bottom-color: rgba(198, 255, 0, 0.3);
-  animation: hq-spin-1 3s linear infinite;
-}
-
-.hq-ring-2 {
-  width: 75%;
-  height: 75%;
-  border-right-color: #c6ff00;
-  border-left-color: rgba(198, 255, 0, 0.3);
-  animation: hq-spin-2 2.5s linear infinite reverse;
-}
-
-.hq-ring-3 {
-  width: 50%;
-  height: 50%;
-  border-top-color: #ffffff;
-  border-bottom-color: rgba(255, 255, 255, 0.3);
-  animation: hq-spin-3 1.5s linear infinite;
-}
-
-.hq-ring-glow {
-  position: absolute;
-  width: 30%;
-  height: 30%;
-  background: #c6ff00;
-  border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0.15;
-  animation: hq-pulse 2s ease-in-out infinite alternate;
-}
-
-/* Typography and Layout */
-.hq-info-wrapper {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.hq-percentage {
-  font-size: 1.2rem;
-  font-weight: 400;
-  letter-spacing: 2px;
-  margin-bottom: 0.5rem;
-  opacity: 0.8;
-  font-family: inherit;
-}
-
-.hq-brand {
-  font-size: 2.5rem;
+.hq-preloader-title {
+  font-size: 2.8rem;
   font-weight: 700;
-  margin: 0;
-  line-height: 1;
-  text-shadow: 0 0 20px rgba(198, 255, 0, 0.2);
-  white-space: nowrap;
+  letter-spacing: 6px;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 0 0 20px rgba(198, 255, 0, 0.15);
 }
 
 .text-accent {
   color: #c6ff00;
 }
 
-.hq-status {
-  margin-top: 1rem;
-  font-size: 0.75rem;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
-  animation: hq-blink 2s infinite;
+.hq-preloader-bar-bg {
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 1rem;
+  overflow: hidden;
+  position: relative;
 }
 
-.hq-exit-overlay {
+.hq-preloader-bar-fill {
   position: absolute;
-  inset: 0;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
   background: #c6ff00;
-  z-index: 10;
-  opacity: 0;
-  pointer-events: none;
+  transform-origin: left;
+  will-change: transform;
+  box-shadow: 0 0 10px #c6ff00;
 }
 
-/* GPU Accelerated Keyframes */
-@keyframes hq-spin-1 {
-  0% { transform: rotateX(60deg) rotateY(0deg) rotateZ(0deg); }
-  100% { transform: rotateX(60deg) rotateY(0deg) rotateZ(360deg); }
-}
-
-@keyframes hq-spin-2 {
-  0% { transform: rotateX(0deg) rotateY(60deg) rotateZ(0deg); }
-  100% { transform: rotateX(0deg) rotateY(60deg) rotateZ(360deg); }
-}
-
-@keyframes hq-spin-3 {
-  0% { transform: rotateX(45deg) rotateY(45deg) rotateZ(0deg); }
-  100% { transform: rotateX(45deg) rotateY(45deg) rotateZ(360deg); }
-}
-
-@keyframes hq-pulse {
-  0% { opacity: 0.1; transform: scale(0.8); }
-  100% { opacity: 0.3; transform: scale(1.2); }
-}
-
-@keyframes hq-blink {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.8; }
+.hq-preloader-sub {
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
 }
 
 /* Mobile Adjustments */
 @media (max-width: 768px) {
-  .hq-rings-wrapper {
-    width: 140px;
-    height: 140px;
-    margin-bottom: 2rem;
-  }
-  
-  .hq-brand {
+  .hq-preloader-title {
     font-size: 2rem;
+    letter-spacing: 4px;
   }
-  
-  .hq-percentage {
-    font-size: 1rem;
-  }
-  
-  .hq-status {
-    font-size: 0.65rem;
-    letter-spacing: 3px;
+  .hq-preloader-sub {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
   }
 }
