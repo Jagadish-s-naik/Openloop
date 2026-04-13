@@ -6,10 +6,9 @@ interface MobileAboutProps {
   scrollTo: (id: string) => void;
 }
 
-export const MobileAbout: React.FC<MobileAboutProps> = ({ scrollTo }) => {
+export const MobileAbout: React.FC<MobileAboutProps> = () => {
   const aboutRef = useRef<HTMLElement>(null);
   const traverseRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -135,15 +134,7 @@ export const MobileAbout: React.FC<MobileAboutProps> = ({ scrollTo }) => {
           </div>
         ))}
       </div>
-
-      <button ref={ctaRef} className="about-cta section-body"
-              onClick={() => scrollTo('#timeline')}>
-        <span>VIEW TIMELINE</span>
-        <div className="cta-arrow">
-          <div className="arrow-line" />
-          <div className="arrow-head" />
-        </div>
-      </button>
+      
     </section>
   );
 };

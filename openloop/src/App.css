@@ -17,6 +17,38 @@ body {
   overflow-x: hidden;
 }
 
+/* Modernistic HUD Scrollbar — Webkit */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #C6FF00 0%, #a2ff00 100%);
+  background-clip: padding-box;
+  /* Creates the "floating" effect by adding transparent borders */
+  border: 3px solid transparent; 
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(198, 255, 0, 0.5);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C6FF00;
+  background-clip: padding-box;
+  border: 2px solid transparent; /* Expands slightly on hover */
+  box-shadow: 0 0 15px rgba(198, 255, 0, 0.4);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 .reveal-text-fast {
   animation: revealFast 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   opacity: 0;
