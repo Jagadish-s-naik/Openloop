@@ -349,10 +349,9 @@ nav a:hover {
 }
 
 .hero-main-title {
-  font-family: 'Rajdhani', sans-serif;
-  font-weight: 900;
-  font-style: italic;
-  font-size: clamp(8rem, 20vw, 24rem);
+  font-family: 'Audiowide', sans-serif;
+  font-weight: 400;
+  font-size: clamp(4rem, 20vw, 13rem);
   line-height: 0.8;
   color: #ffffff;
   display: flex;
@@ -372,9 +371,11 @@ nav a:hover {
 .hero-sub-title {
   margin-top: 2rem;
   font-family: 'Share Tech Mono', monospace;
-  font-size: clamp(1.2rem, 3vw, 2.5rem);
+  font-size: clamp(1.2rem, 3vw, 5rem);
   letter-spacing: 0.8em;
-  color: #ffffff;
+  background-image: linear-gradient(to bottom, #C6FF00, #db5151);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   opacity: 0.85;
   text-transform: uppercase;
 }
