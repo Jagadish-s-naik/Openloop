@@ -27,6 +27,36 @@ export const MobileHero: React.FC = () => {
         marginTop: '-40px' 
       }}>
         
+        {/* Institution Logo */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          width: '100%',
+          marginBottom: '4px',
+        }}>
+          <div style={{
+            background: 'rgba(255,255,255,0.07)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            borderRadius: '10px',
+            padding: '7px 16px',
+            display: 'inline-flex',
+            alignItems: 'center',
+          }}>
+            <img
+              src="/yset-logo.png"
+              alt="Yenepoya School of Engineering & Technology"
+              style={{
+                height: '36px',
+                width: 'auto',
+                objectFit: 'contain',
+                filter: 'brightness(0) invert(1) drop-shadow(0 0 4px rgba(255,255,255,0.25))',
+                display: 'block',
+              }}
+            />
+          </div>
+        </div>
+
         <div className="hero-badge" style={{ opacity: 1, transform: 'none', margin: '0 auto' }}>
           // HACKATHON 2026
         </div>

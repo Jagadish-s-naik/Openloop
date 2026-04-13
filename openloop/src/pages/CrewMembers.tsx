@@ -85,7 +85,7 @@ export const CrewMembers: React.FC = () => {
         <nav className="crew-top-nav">
           <Link to="/" className="back-link">
             <ArrowLeft size={18} />
-            <span>BACK TO NEXUS</span>
+            <span>BACK TO PAGE</span>
           </Link>
         </nav>
 
@@ -127,7 +127,7 @@ export const CrewMembers: React.FC = () => {
                   className="cyber-btn"
                 >
                   <GithubIcon size={16} />
-                  <span>INIT_LINK</span>
+                  <span>Connect_Member</span>
                 </a>
               </div>
             </div>

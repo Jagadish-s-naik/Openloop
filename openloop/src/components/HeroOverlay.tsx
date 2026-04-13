@@ -43,6 +43,37 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
     <>
       {/* PERMANENT HERO TITLE — always visible, unaffected by scroll system */}
       <div id="hero-title-fixed">
+        {/* Institution Logo — top center */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '12px',
+          marginTop: '0px',
+        }}>
+          <div style={{
+            background: 'rgba(255,255,255,0.07)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            borderRadius: '12px',
+            padding: '8px 20px',
+            display: 'inline-flex',
+            alignItems: 'center',
+          }}>
+            <img
+              src="/yset-logo.jpeg"
+              alt="Yenepoya School of Engineering & Technology"
+              style={{
+                height: '52px',
+                width: 'auto',
+                objectFit: 'contain',
+                filter: 'brightness(0) invert(1) drop-shadow(0 0 6px rgba(255,255,255,0.3))',
+                display: 'block',
+              }}
+            />
+          </div>
+        </div>
+
         <h1 className="hero-main-title">
           <span className="title-word" style={{ color: '#ffffff' }}>OPEN</span>
           <span className="title-spacer" />
