@@ -48,26 +48,24 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          marginBottom: '12px',
-          marginTop: '0px',
+          marginBottom: '16px',
         }}>
           <div style={{
-            background: 'rgba(255,255,255,0.07)',
-            backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255,255,255,0.12)',
-            borderRadius: '12px',
-            padding: '8px 20px',
+            background: 'rgba(255,255,255,0.95)',
+            borderRadius: '10px',
+            padding: '6px 18px 6px 12px',
             display: 'inline-flex',
             alignItems: 'center',
+            boxShadow: '0 0 20px rgba(198,255,0,0.25), 0 2px 12px rgba(0,0,0,0.4)',
+            borderLeft: '3px solid #C6FF00',
           }}>
             <img
               src="/yset-logo.jpeg"
               alt="Yenepoya School of Engineering & Technology"
               style={{
-                height: '52px',
+                height: '46px',
                 width: 'auto',
                 objectFit: 'contain',
-                filter: 'brightness(0) invert(1) drop-shadow(0 0 6px rgba(255,255,255,0.3))',
                 display: 'block',
               }}
             />

@@ -32,25 +32,24 @@ export const MobileHero: React.FC = () => {
           display: 'flex',
           justifyContent: 'center',
           width: '100%',
-          marginBottom: '4px',
+          marginBottom: '8px',
         }}>
           <div style={{
-            background: 'rgba(255,255,255,0.07)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255,255,255,0.12)',
+            background: 'rgba(255,255,255,0.95)',
             borderRadius: '10px',
-            padding: '7px 16px',
+            padding: '5px 14px 5px 10px',
             display: 'inline-flex',
             alignItems: 'center',
+            boxShadow: '0 0 16px rgba(198,255,0,0.2), 0 2px 10px rgba(0,0,0,0.4)',
+            borderLeft: '3px solid #C6FF00',
           }}>
             <img
-              src="/yset-logo.png"
+              src="/yset-logo.jpeg"
               alt="Yenepoya School of Engineering & Technology"
               style={{
-                height: '36px',
+                height: '32px',
                 width: 'auto',
                 objectFit: 'contain',
-                filter: 'brightness(0) invert(1) drop-shadow(0 0 4px rgba(255,255,255,0.25))',
                 display: 'block',
               }}
             />
