@@ -13,7 +13,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
     { label: 'About', target: 0.24 },
     { label: 'Themes', target: 0.50 },
     { label: 'Timeline', target: 0.60 },
-    { label: 'Sponsors', target: 0.90 },
+    { label: 'Sponsors', target: 0.88 },
     { label: 'Contact', target: 0.96 },
   ];
 
