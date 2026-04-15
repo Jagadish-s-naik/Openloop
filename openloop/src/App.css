@@ -457,7 +457,7 @@ nav a:hover {
   align-items: center;
   justify-content: center;
   /* Navbar safe zone: 80px top, controlled sides */
-  padding: 80px min(6vw, 48px) 40px;
+  padding: 80px min(4vw, 48px) 40px;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.6s ease, transform 0.6s ease;

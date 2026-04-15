@@ -23,7 +23,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ scrollVal }) => {
         zIndex: 100,
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         borderTop: '1px solid rgba(198, 255, 0, 0.1)',
       }}
     >
@@ -99,7 +99,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ scrollVal }) => {
           <ul style={listStyle}>
             <li><a href="#" style={linkStyle}>Privacy Policy</a></li>
             <li><a href="#" style={linkStyle}>Terms of Service</a></li>
-            <li><a href="#" style={linkStyle}>Code of Conduct</a></li>
+            
           </ul>
         </div>
       </div>

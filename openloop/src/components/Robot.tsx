@@ -124,8 +124,8 @@ export const Robot: React.FC<RobotProps> = ({
       targetScale = 1.7;
       targetGreen = 2;
     }
-    // CONTACT (0.94 -> 0.99): Stable Left
-    else if (p < 0.99) {
+    // CONTACT (0.94 -> 0.97): Stable Left
+    else if (p < 0.97) {
       targetOpacity = 1;
       targetX = -3.5;
       targetRotY = Math.PI / 2;
@@ -133,15 +133,21 @@ export const Robot: React.FC<RobotProps> = ({
       targetScale = 1.7;
       targetGreen = 2;
     }
-    // FOOTER (0.99 -> 1.00): Exit
+    // FOOTER (0.97 -> 1.00): Rise up and face center
     else {
-      const fp = clamp((p - 0.99) / 0.01, 0, 1);
-      targetOpacity = 1 - fp;
-      targetZ = lerp(0, -10, fp);
-      targetX = -3.5;
-      targetRotY = Math.PI / 2;
-      targetScale = 1.7;
-      targetGreen = 0;
+      const fp = clamp((p - 0.97) / 0.03, 0, 1);
+      targetOpacity = 1;
+      // Fly in from far left and center
+      targetX = lerp(-10, 0, easeOut(fp));
+      targetY = lerp(3, 1, easeOut(fp)); // Position in the "free space" above footer text
+      targetZ = 0;
+      targetRotY = lerp(Math.PI / 2, 0, easeOut(fp)); // Turn to face user
+      targetScale = 3.5; // Large face
+      targetGreen = 1.5;
+      
+      // Add subtle "interactive" looking moves for the footer
+      targetRotX = Math.sin(state.clock.elapsedTime * 2) * 0.1;
+      targetRotY += Math.cos(state.clock.elapsedTime * 1.5) * 0.15;
     }
 
     // Add mouse parallax

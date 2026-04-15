@@ -178,7 +178,8 @@ export default function DesktopLayout() {
       <div 
         className="canvas-container"
         style={{
-          opacity: rawScroll > 0.96 ? lerp(1, 0, (rawScroll - 0.96) / 0.04) : 1,
+          // Removed fade out at very end so robot stays visible in footer
+          opacity: 1,
           transition: 'opacity 0.3s ease-out'
         }}
       >
