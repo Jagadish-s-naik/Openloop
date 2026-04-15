@@ -192,7 +192,7 @@ export const Robot: React.FC<RobotProps> = ({
       
       // COLOR SHIFT: Neon Green -> Silver/White in Footer
       const colorProgress = clamp((pRaw - 0.94) / 0.06, 0, 1);
-      material.emissive.lerpColors(new THREE.Color('#C6FF00'), new THREE.Color('#ffffff'), colorProgress);
+      material.emissive.lerpColors(new THREE.Color('#C6FF00'), new THREE.Color('#33b023ff'), colorProgress);
     });
 
     if (beamRef.current) {
@@ -222,23 +222,8 @@ export const Robot: React.FC<RobotProps> = ({
       </mesh>
       <pointLight ref={headLightRef} color="#ffffff" intensity={0} distance={5} position={[0, 0, 1]} />
       
-      {/* Footer Interface HUD */}
-      {isFooter && (
-        <Html center position={[0, -1.2, 0]}>
-          <div className="cyber-hud-container" style={{ 
-            opacity: stateRef.current.opacity,
-            transform: `scale(${stateRef.current.scale * 0.4})`,
-            pointerEvents: 'none',
-            whiteSpace: 'nowrap'
-          }}>
-            <div className="hud-corner top-left" />
-            <div className="hud-corner top-right" />
-            <h2 className="hud-title" style={{ fontSize: '18px', letterSpacing: '2px' }}>ROBOT_CORE_V1</h2>
-            <div className="hud-divider" />
-            <p className="hud-hint" style={{ fontSize: '10px' }}>TAP ROBOT TO INITIALIZE UPLINK</p>
-          </div>
-        </Html>
-      )}
+      
+      
     </group>
   );
 };
