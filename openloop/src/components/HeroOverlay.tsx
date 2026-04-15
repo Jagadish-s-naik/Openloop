@@ -68,9 +68,10 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
                 maxWidth: 'min(80vw, 320px)',
                 objectFit: 'contain',
                 display: 'block',
+                
               }}
             />
-            <p className="hero-subtitle" style={{ fontSize: 'clamp(10px, 1.2vw, 12px)', color: 'white', opacity: 0.8, marginTop: '8px' }}>
+            <p className="hero-subtitle" style={{ fontSize: 'clamp(10px, 1.2vw, 12px)', color: 'white', opacity: 0.8, marginTop: '8px',marginBottom:'30px'}}>
               Affiliated to Yenepoya Deemed to be University
             </p>
           </div>
@@ -133,7 +134,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
           </Link>
         </div>
         <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
-          <a href="https://drive.google.com/file/d/1_IM0WD6zowoyv9nopm2RbnwW2dUYwwBE/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="cta-button" style={{ textDecoration: 'none', padding: '8px 20px', fontSize: '11px' }}>Brochure</a>
+          <a href="https://drive.google.com/file/d/1gjljz8WOTlMNwnejjiFDjYIKInKaKb1i/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="cta-button" style={{ textDecoration: 'none', padding: '8px 20px', fontSize: '11px' }}>Brochure</a>
           <a href="https://unstop.com/college-fests/openloop-26-yenepoya-school-of-engineering-and-technology-458231" target="_blank" rel="noopener noreferrer" className="cta-outline" style={{ textDecoration: 'none' }}>Register Now</a>
         </div>
       </nav>

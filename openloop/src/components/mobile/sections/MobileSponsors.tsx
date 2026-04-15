@@ -3,17 +3,17 @@ import gsap from 'gsap';
 import 'gsap/ScrollTrigger';
 
 const titleSponsors = [
-  { name: 'UNSTOP', logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/03/ec/01/03ec01e9-83c9-b00f-94ca-e9b5a5b31356/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/1200x630wa.jpg', url: 'https://unstop.com' },
+  { name: 'UNSTOP', logo: '/sponsors/unstop logo without background.png', url: 'https://unstop.com' },
 ];
 
 const goldSponsors = [
-  { name: 'DK24', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT49X3O04FD7fH9nqaJwyA1Pc2REDenUu0_aQ&s', url: '#' },
-  { name: 'NXT WAVE', logo: 'https://static.ambitionbox.com/assets/v2/images/rs:fit:1280:960:false:false/aHR0cHM6Ly9tZWRpYS5uYXVrcmkuY29tL21lZGlhL2FiY29tcGxvZ28vbnh0d2F2ZS1vcmlnaW5hbC5qcGc.png', url: '#' },
+  { name: 'DK24', logo: '/sponsors/dk24.enc.jpeg', url: '#' },
+  { name: 'NXT WAVE', logo: '/sponsors/NxtWave-Logo.webp', url: '#' },
 ];
 
 const silverSponsors = [
-  { name: 'Kalvium', logo: 'https://pbs.twimg.com/profile_images/1773285198794313729/0S43bEQA_400x400.jpg', url: '#' },
-  { name: 'XYZ', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/.xyz_logo.svg/1280px-.xyz_logo.svg.png', url: '#' },
+  { name: 'Kalvium', logo: '/sponsors/kalvium.webp', url: '#' },
+  { name: 'XYZ', logo: '/sponsors/xyz.webp', url: '#' },
 ];
 
 export const MobileSponsors: React.FC = () => {
