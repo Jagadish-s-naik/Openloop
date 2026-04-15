@@ -112,7 +112,7 @@ export default function DesktopLayout() {
               { name: 'ABOUT',    start: 0.14, end: 0.28, id: '#s2-about' },
               { name: 'THEMES',   start: 0.30, end: 0.50, id: '#theme-section' },
               { name: 'TIMELINE', start: 0.52, end: 0.74, id: '#s4-timeline' },
-              { name: 'SPONSORS', start: 0.85, end: 0.92, id: '#sponsors-section' },
+              { name: 'SPONSORS', start: 0.88, end: 0.92, id: '#sponsors-section' },
               { name: 'CONTACT',  start: 0.94, end: 0.97, id: '#contact-section' },
               { name: 'FOOTER',   start: 0.98, end: 1.00, id: '#footer-section' },
             ];

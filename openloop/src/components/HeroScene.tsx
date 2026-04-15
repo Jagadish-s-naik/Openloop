@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { Environment } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { Robot } from './Robot';
+import { InteractiveSphere } from './InteractiveSphere';
 import { Background } from './Background';
 import { Timeline3D } from './Timeline3D';
 import { useMousePosition } from '../hooks/useMousePosition';
@@ -87,6 +88,7 @@ export const SceneContainer: React.FC<SceneContainerProps> = ({
           mouseX={mouseX}
           phase={phase}
         />
+        <InteractiveSphere scrollVal={scrollVal} />
         <Timeline3D scrollProgress={scrollVal} />
       </Suspense>
     </>
