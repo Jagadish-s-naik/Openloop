@@ -131,7 +131,10 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ scrollVal }) => {
           alignItems: 'center',
           fontFamily: 'Share Tech Mono, monospace',
           fontSize: '11px',
-          background: 'transparent',
+          background: 'linear-gradient(to bottom, #C6FF00, #9c5c5c)',
+          backgroundClip: 'text',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
           letterSpacing: '1px',
           transform: `translateY(${lerp(40, 0, (scrollVal - 0.99) / 0.01)}px)`,
           opacity: (scrollVal - 0.99) / 0.01
