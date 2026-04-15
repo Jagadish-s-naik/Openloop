@@ -139,10 +139,10 @@ export const Robot: React.FC<RobotProps> = ({
       targetOpacity = 1;
       // Fly in from far left and center
       targetX = lerp(-10, 0, easeOut(fp));
-      targetY = lerp(3, 1, easeOut(fp)); // Position in the "free space" above footer text
+      targetY = lerp(3, 0.0, easeOut(fp)); // Position lower in footer (changed from 1)
       targetZ = 0;
       targetRotY = lerp(Math.PI / 2, 0, easeOut(fp)); // Turn to face user
-      targetScale = 1.0; // Even smaller face
+      targetScale = 1.4; // Even smaller face
       targetGreen = 2.5; 
       
       // Interactive moves: Idle breathing/looking around
