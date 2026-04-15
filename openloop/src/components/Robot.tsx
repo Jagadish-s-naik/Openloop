@@ -40,16 +40,21 @@ export const Robot: React.FC<RobotProps> = ({
     beamOpacity: 0,
   });
 
-  useMemo(() => {
-    const material = materials['Material_MR'];
-    if (material) {
-      material.metalness = 1.0;
-      material.roughness = 0.15;
-      material.emissive = new THREE.Color('#C6FF00');
-      material.emissiveIntensity = 0;
-      material.transparent = true;
-    }
-  }, [materials]);
+  const targetMaterials = useMemo(() => {
+    const mats: THREE.MeshStandardMaterial[] = [];
+    scene.traverse((node: any) => {
+      if (node.isMesh && node.material) {
+        const mat = node.material as THREE.MeshStandardMaterial;
+        mats.push(mat);
+        mat.metalness = 1.0;
+        mat.roughness = 0.15;
+        mat.emissive = new THREE.Color('#C6FF00');
+        mat.emissiveIntensity = 0;
+        mat.transparent = true;
+      }
+    });
+    return mats;
+  }, [scene]);
 
   useFrame((state) => {
     if (!groupRef.current) return;
@@ -146,7 +151,7 @@ export const Robot: React.FC<RobotProps> = ({
       
       // Organic 'breathing' scale pulse for 'Perfect' feel
       const breathe = Math.sin(state.clock.elapsedTime * 0.8) * 0.05;
-      targetScale = lerp(1.7, 1.4, easeInOut(fp)) + breathe; 
+      targetScale = lerp(1.7, 1.1, easeInOut(fp)) + breathe; 
       
       targetOpacity = 1; 
       
@@ -181,15 +186,14 @@ export const Robot: React.FC<RobotProps> = ({
     // Smooth visibility blend
     groupRef.current.visible = stateRef.current.opacity > 0.001;
 
-    const material = materials['Material_MR'];
-    if (material) {
+    targetMaterials.forEach(material => {
       material.emissiveIntensity = stateRef.current.greenIntensity;
       material.opacity = stateRef.current.opacity;
       
       // COLOR SHIFT: Neon Green -> Silver/White in Footer
       const colorProgress = clamp((pRaw - 0.94) / 0.06, 0, 1);
       material.emissive.lerpColors(new THREE.Color('#C6FF00'), new THREE.Color('#ffffff'), colorProgress);
-    }
+    });
 
     if (beamRef.current) {
       (beamRef.current.material as THREE.MeshBasicMaterial).opacity = stateRef.current.beamOpacity * 0.15;
