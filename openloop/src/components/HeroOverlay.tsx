@@ -68,9 +68,10 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
                 maxWidth: 'min(80vw, 320px)',
                 objectFit: 'contain',
                 display: 'block',
+                
               }}
             />
-            <p className="hero-subtitle" style={{ fontSize: 'clamp(10px, 1.2vw, 12px)', color: 'white', opacity: 0.8, marginTop: '8px' }}>
+            <p className="hero-subtitle" style={{ fontSize: 'clamp(10px, 1.2vw, 12px)', color: 'white', opacity: 0.8, marginTop: '8px',marginBottom:'30px'}}>
               Affiliated to Yenepoya Deemed to be University
             </p>
           </div>
