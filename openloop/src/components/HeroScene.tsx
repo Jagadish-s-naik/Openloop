@@ -2,9 +2,7 @@ import { Suspense } from 'react';
 import { Environment } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { Robot } from './Robot';
-
 import { Background } from './Background';
-
 import { Timeline3D } from './Timeline3D';
 import { useMousePosition } from '../hooks/useMousePosition';
 import { lerp, clamp } from '../utils/math';
