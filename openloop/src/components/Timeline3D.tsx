@@ -25,33 +25,22 @@ const TIMELINE_DATA: TimelineEvent[] = [
   { title: 'Closing Ceremony', date: 'Sun 13:00', desc: 'Celebrating bold ideas and standout teams.', range: [0.832, 0.860] },
 ];
 
-export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
-  const p = scrollProgress;
-  // Deterministic Kill-Switch - Refined for absolute isolation
-  if (p < 0.55 || p > 0.89) return null;
+const spacing = 2.2;
+const startX = -((TIMELINE_DATA.length - 1) * spacing) / 2;
+const totalWidth = (TIMELINE_DATA.length - 1) * spacing;
 
+const TimelineContent: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
   const groupRef = useRef<THREE.Group>(null);
   const pulseRef = useRef<THREE.Mesh>(null);
-
-  // We'll spread nodes along the X axis - Tightened for multiple visibility
-  const spacing = 2.2;
-  const startX = -((TIMELINE_DATA.length - 1) * spacing) / 2;
-  const totalWidth = (TIMELINE_DATA.length - 1) * spacing;
 
   useFrame((state) => {
     if (!groupRef.current) return;
 
     const p = scrollProgress;
-    
-    // 1. Core Timeline Movement (0.58 -> 0.84)
-    // Speed up horizontal shifting slightly so we arrive at the final node early
     const timelineP = clamp((p - 0.58) / 0.26, 0, 1);
-    
-    // Move horizontally centered around nodes
     const targetXOffset = -startX - (timelineP * totalWidth);
     groupRef.current.position.x = lerp(groupRef.current.position.x, targetXOffset, 0.1);
 
-    // 2. Traveling Light Pulse
     if (pulseRef.current) {
       const pulseX = startX + (timelineP * (TIMELINE_DATA.length - 1) * spacing);
       pulseRef.current.position.x = pulseX;
@@ -62,48 +51,36 @@ export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgres
       material.emissiveIntensity = 2 + Math.sin(state.clock.elapsedTime * 10) * 1;
     }
 
-    // 3. Cinematic Intro/Exit Transition
     let opacity = 0;
-
     if (p >= 0.55 && p < 0.88) {
-      // Entry Fade (0.55 -> 0.58)
-      if (p < 0.58) {
-        opacity = (p - 0.55) / 0.03;
-      } 
-      // Main Body (0.58 -> 0.84)
-      else if (p < 0.84) {
-        opacity = 1;
-      }
-      // Cinematic Exit (0.84 -> 0.86)
+      if (p < 0.58) opacity = (p - 0.55) / 0.03;
+      else if (p < 0.84) opacity = 1;
       else {
         const exitP = clamp((p - 0.84) / 0.02, 0, 1);
         opacity = 1 - exitP;
       }
     }
 
-    groupRef.current.position.y = -0.4; // Raised Y - More central visibility
+    groupRef.current.position.y = -0.4;
     groupRef.current.visible = opacity > 0;
   });
 
   return (
     <group ref={groupRef} position={[0, -0.4, -2]}>
-      {/* Main Track Line */}
       <mesh rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.02, 0.02, 30, 8]} />
         <meshStandardMaterial color="#C6FF00" emissive="#C6FF00" emissiveIntensity={0.5} transparent opacity={0.3} />
       </mesh>
 
-      {/* Traveling Data Pulse */}
       <mesh ref={pulseRef}>
         <sphereGeometry args={[0.08, 16, 16]} />
         <meshStandardMaterial color="#ffffff" emissive="#C6FF00" emissiveIntensity={3} />
         <pointLight color="#C6FF00" intensity={1} distance={2} />
       </mesh>
 
-      {/* Nodes */}
       {TIMELINE_DATA.map((event, i) => {
         const xPos = startX + i * spacing;
-        const isLeft = i % 2 !== 0; // Alternating
+        const isLeft = i % 2 !== 0;
 
         return (
           <Node 
@@ -112,12 +89,17 @@ export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgres
             xPos={xPos} 
             isLeft={isLeft} 
             scrollProgress={scrollProgress}
-            sectionOpacity={clamp((scrollProgress - 0.84) / 0.02, 0, 1)} // Sync with delayed exit
+            sectionOpacity={clamp((scrollProgress - 0.84) / 0.02, 0, 1)}
           />
         );
       })}
     </group>
   );
+};
+
+export const Timeline3D: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
+  if (scrollProgress < 0.55 || scrollProgress > 0.89) return null;
+  return <TimelineContent scrollProgress={scrollProgress} />;
 };
 
 interface NodeProps {
@@ -132,18 +114,13 @@ const Node: React.FC<NodeProps> = ({ event, xPos, isLeft, scrollProgress, sectio
   const meshRef = useRef<THREE.Group>(null);
   const p = scrollProgress;
   
-  // Calculate state
   const isActive = p >= event.range[0] && p < event.range[1];
   const isCompleted = p >= event.range[1];
   const isPending = p < event.range[0];
-
-  // Global fade factor (1 during active, fades to 0 during section exit)
   const globalFade = 1 - sectionOpacity;
 
   useFrame(() => {
     if (!meshRef.current) return;
-
-    // Locked scale - No Pulse
     meshRef.current.scale.set(1, 1, 1);
   });
 
@@ -152,7 +129,6 @@ const Node: React.FC<NodeProps> = ({ event, xPos, isLeft, scrollProgress, sectio
 
   return (
     <group position={[xPos, 0, 0]} ref={meshRef}>
-      {/* Node Geometry */}
       <mesh>
         <octahedronGeometry args={[0.15, 0]} />
         <meshStandardMaterial 
@@ -164,13 +140,12 @@ const Node: React.FC<NodeProps> = ({ event, xPos, isLeft, scrollProgress, sectio
         />
       </mesh>
 
-      {/* Label Panel */}
       <Html
         position={[0, isLeft ? -1.2 : 1.2, 0]}
         center
         distanceFactor={10}
         style={{
-          transition: 'opacity 0.5s ease', // Smooth opacity, removed transform bouncing
+          transition: 'opacity 0.5s ease',
           opacity: (isActive ? 1 : (isCompleted ? 0.5 : 0)) * globalFade,
           pointerEvents: 'none'
         }}

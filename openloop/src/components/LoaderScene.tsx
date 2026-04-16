@@ -9,16 +9,8 @@ interface LoaderSceneProps {
   phase: 'loader' | 'intro' | 'main';
 }
 
-export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => {
-  const { mouse } = useThree();
-  const particleRef = useRef<THREE.Points>(null);
-  const portalRef = useRef<THREE.Group>(null);
-  const introTimerRef = useRef<number | null>(null);
-  const textGroupRef = useRef<THREE.Group>(null);
-
-  // Generate a swarm of digital particles
-  const particleData = useMemo(() => {
-    const count = 3000;
+const count = 3000;
+const generateParticleData = () => {
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     const color = new THREE.Color('#C6FF00');
@@ -37,7 +29,19 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
         colors[i * 3 + 2] = color.b;
     }
     return { positions, colors };
-  }, []);
+};
+
+export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => {
+  const { mouse } = useThree();
+  const particleRef = useRef<THREE.Points>(null);
+  const portalRef = useRef<THREE.Group>(null);
+  const portalMeshRef = useRef<THREE.Mesh>(null);
+  const introTimerRef = useRef<number | null>(null);
+  const textGroupRef = useRef<THREE.Group>(null);
+
+  // Purely generate data once
+  const particleData = useMemo(() => generateParticleData(), []);
+
 
   const portalMaterial = useMemo(() => new THREE.MeshBasicMaterial({
     color: '#C6FF00',
@@ -55,13 +59,11 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
         particleRef.current.rotation.y = time * 0.05;
         particleRef.current.rotation.x = time * 0.02;
 
-        // Reactive mouse warping
         const targetX = mouse.x * 2;
         const targetY = mouse.y * 2;
         particleRef.current.position.x = lerp(particleRef.current.position.x, targetX, 0.05);
         particleRef.current.position.y = lerp(particleRef.current.position.y, targetY, 0.05);
 
-        // Progress-based gathering into tunnel
         const intensity = 1.0 - Math.min(progress, 1.0);
         particleRef.current.scale.setScalar(lerp(0.5, 2.0, intensity));
     }
@@ -80,7 +82,7 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
         const t = Math.min(elapsed / introDuration, 1);
 
         // Zoom camera high speed
-        const zoomP = Math.pow(t, 4); // Aggressive ease-in for high speed feel
+        const zoomP = Math.pow(t, 4); 
         camera.position.z = lerp(8.0, -10.0, zoomP);
 
         if (camera instanceof THREE.PerspectiveCamera) {
@@ -88,12 +90,12 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
           camera.updateProjectionMatrix();
         }
 
-        if (portalRef.current) {
+        if (portalRef.current && portalMeshRef.current) {
             portalRef.current.scale.setScalar(lerp(0, 50, zoomP));
-            portalMaterial.opacity = lerp(0, 1, Math.min(t * 1.5, 1));
+            const mat = portalMeshRef.current.material as THREE.MeshBasicMaterial;
+            mat.opacity = lerp(0, 1, Math.min(t * 1.5, 1));
         }
 
-        // Hide text as we zoom past
         if (textGroupRef.current) {
             textGroupRef.current.visible = zoomP < 0.4;
         }
@@ -110,7 +112,6 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
     <group>
       <PerspectiveCamera makeDefault position={[0, 0, 8.0]} />
       
-      {/* Background Particles Swarm */}
       <points ref={particleRef}>
         <bufferGeometry>
           <bufferAttribute
@@ -131,7 +132,6 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
         />
       </points>
 
-      {/* Floating Center Branding */}
       <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
         <group ref={textGroupRef}>
             <Text
@@ -161,7 +161,7 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
       </Float>
 
       <group ref={portalRef} rotation={[Math.PI / 2, 0, 0]}>
-        <mesh material={portalMaterial}>
+        <mesh ref={portalMeshRef} material={portalMaterial}>
           <cylinderGeometry args={[1, 1, 50, 32, 1, true]} />
         </mesh>
       </group>
@@ -171,4 +171,3 @@ export const LoaderScene: React.FC<LoaderSceneProps> = ({ progress, phase }) => 
     </group>
   );
 };
-

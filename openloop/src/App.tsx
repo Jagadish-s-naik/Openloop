@@ -1,12 +1,13 @@
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, lazy } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useIsMobile } from './hooks/useIsMobile';
 import { Preloader } from './components/common/Preloader';
 import { CustomCursor } from './components/common/CustomCursor';
 
-import DesktopLayout from './components/desktop/DesktopLayout';
-import MobileLayout from './components/mobile/MobileLayout';
-import { CrewMembers } from './pages/CrewMembers';
+// Lazy load layout components to optimize initial bundle size
+const DesktopLayout = lazy(() => import('./components/desktop/DesktopLayout'));
+const MobileLayout = lazy(() => import('./components/mobile/MobileLayout'));
+const CrewMembers = lazy(() => import('./pages/CrewMembers').then(m => ({ default: m.CrewMembers })));
 
 function App() {
   const isMobile = useIsMobile();
@@ -23,7 +24,7 @@ function App() {
       {!hasLoaded && <Preloader onComplete={() => setHasLoaded(true)} />}
       
       <div style={{ visibility: hasLoaded ? 'visible' : 'hidden', height: hasLoaded ? 'auto' : '100vh', overflow: hasLoaded ? 'visible' : 'hidden' }}>
-        <Suspense fallback={<div style={{ background: 'transparent', height: '100vh' }} />}>
+        <Suspense fallback={<div style={{ background: '#020600', height: '100vh' }} />}>
           {!isMobile && <CustomCursor />}
           <Routes>
             <Route path="/" element={isMobile ? <MobileLayout /> : <DesktopLayout />} />
@@ -36,4 +37,3 @@ function App() {
 }
 
 export default App;
-  

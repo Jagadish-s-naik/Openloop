@@ -10,12 +10,13 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ scrollVal }) => {
   const isVisible = scrollVal >= 0.96;
 
   React.useEffect(() => {
-    const handleGravity = (e: any) => {
-      setGravityActive(e.detail.active);
+    const handleGravity = (e: Event) => {
+      setGravityActive((e as CustomEvent).detail.active);
     };
     window.addEventListener('blackhole_expand', handleGravity);
     return () => window.removeEventListener('blackhole_expand', handleGravity);
   }, []);
+
 
   if (!isVisible) return null;
 

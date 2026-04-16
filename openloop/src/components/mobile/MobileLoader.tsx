@@ -71,7 +71,6 @@ export const MobileLoader: React.FC<MobileLoaderProps> = ({ onComplete }) => {
       ease: 'none',
       onUpdate: function() {
         if (percentRef.current) {
-          // @ts-ignore
           percentRef.current.textContent = Math.round(this.targets()[0].val) + '%';
         }
       }

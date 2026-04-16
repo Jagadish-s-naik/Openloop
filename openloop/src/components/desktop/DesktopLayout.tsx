@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+
 import { Canvas } from '@react-three/fiber';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -28,20 +29,22 @@ export default function DesktopLayout() {
   const { phase, loaderProgress } = usePhase();
   const robotProgressRef = useRef(0);
   const themeProgressRef = useRef(0);
-  const [scrollEnabled, setScrollEnabled] = useState(false);
+  
+  // Derived state to avoid cascading renders in useEffect
+  const scrollEnabled = phase !== 'loader' && phase !== 'intro';
+
 
   useEffect(() => {
-    if (phase === 'loader' || phase === 'intro') {
+    if (!scrollEnabled) {
       window.scrollTo(0, 0);
       document.body.style.overflow = 'hidden';
       document.body.style.height = '100vh';
-      setScrollEnabled(false);
     } else {
       document.body.style.overflow = 'auto';
       document.body.style.height = 'auto';
-      setScrollEnabled(true);
     }
-  }, [phase]);
+  }, [scrollEnabled]);
+
 
   useEffect(() => {
     if (phase !== 'main') return;

@@ -22,4 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+lint_errors.json
+lint_full.txt
+lint_fix.txt
 lint_results.txt
