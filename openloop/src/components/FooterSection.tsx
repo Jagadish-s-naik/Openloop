@@ -102,7 +102,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ scrollVal }) => {
         <div className="footer-col" style={{ animationDelay: '0.3s' }}>
           <h4 style={headerStyle}>Connect</h4>
           <ul style={listStyle}>
-            <li><a href="mailto:hello@openloop.dev" style={linkStyle}>Email</a></li>
+            <li><a href="mailto:yentechh@gmail.com" style={linkStyle}>Email</a></li>
             <li><a href="https://www.instagram.com/yentech.community/" style={linkStyle}>Instagram</a></li>
             <li><a href="https://www.linkedin.com/in/yentech-community-964369402/" style={linkStyle}>LinkedIn</a></li>
           </ul>
