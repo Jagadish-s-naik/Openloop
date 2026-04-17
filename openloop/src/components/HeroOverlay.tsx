@@ -57,7 +57,6 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   };
 
   // Active state helpers matching DesktopLayout ranges
-  const isHeroActive = p >= 0.00 && p <= 0.12;
   const isAboutActive = p >= 0.14 && p <= 0.28;
   const isContactActive = p >= 0.90 && p <= 0.96;
 

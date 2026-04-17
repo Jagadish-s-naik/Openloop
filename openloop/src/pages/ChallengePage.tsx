@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { Square, RotateCcw, FastForward } from 'lucide-react';
 
@@ -16,7 +15,6 @@ export const ChallengePage: React.FC = () => {
   const timerRef = useRef<HTMLDivElement>(null);
   const countdownRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
 
   // Mouse move for spotlight effect
   useEffect(() => {
