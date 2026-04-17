@@ -156,10 +156,9 @@ export default async function handler(req, res) {
       };
     } else if (action === 'stop') {
       next = {
-        ...current,
-        mode: 'CHALLENGE',
-        state: 'STOPPED',
-        endAtMs: null,
+        ...defaultState(),
+        mode: 'EVENT',
+        state: 'IDLE',
         updatedAt: Date.now(),
       };
     } else if (action === 'reset') {

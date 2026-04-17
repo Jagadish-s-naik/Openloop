@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
+  TOTAL_SECONDS,
   safeGetTimerSnapshot,
   type TimerMode,
 } from '../utils/timerClient';
@@ -12,8 +13,15 @@ interface HeroOverlayProps {
 export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   const p = scrollProgress;
 
+  const initialEventSeconds = Math.max(
+    0,
+    Math.ceil((new Date('2026-04-25T11:00:00+05:30').getTime() - Date.now()) / 1000)
+  );
+
   // Timer state for hero overlay
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(
+    initialEventSeconds > 0 ? initialEventSeconds : TOTAL_SECONDS
+  );
   const [timerMode, setTimerMode] = useState<TimerMode>('EVENT');
   const [hoveredTimerCard, setHoveredTimerCard] = useState<number | null>(null);
 
