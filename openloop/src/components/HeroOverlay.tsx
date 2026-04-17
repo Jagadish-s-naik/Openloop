@@ -137,8 +137,8 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 background: 'rgba(10,10,10,0.85)',
-                border: '2.5px solid #C6FF00',
-                borderRadius: '14px',
+                border: '2.5px solid #292b21',
+                borderRadius: '5px',
                 minWidth: '62px',
                 minHeight: '62px',
                 boxShadow: '0 0 18px 2px rgba(198,255,0,0.10)',
@@ -150,6 +150,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
                 letterSpacing: '0.08em',
                 position: 'relative',
                 zIndex: 2,
+                padding: '12px 0',
               }}>
                 <span>{val}</span>
                 <span style={{

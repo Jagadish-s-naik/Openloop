@@ -30,7 +30,7 @@ function App() {
           <Routes>
             <Route path="/" element={isMobile ? <MobileLayout /> : <DesktopLayout />} />
             <Route path="/crew" element={<CrewMembers />} />
-            <Route path="/open-" element={<ChallengePage />} />
+            <Route path="/open-24h" element={<ChallengePage />} />
           </Routes>
         </Suspense>
       </div>
