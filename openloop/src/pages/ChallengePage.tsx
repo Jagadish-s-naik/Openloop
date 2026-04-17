@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
-import { Square, RotateCcw } from 'lucide-react';
+import { Square, RotateCcw, FastForward } from 'lucide-react';
 
 type TimerState = 'IDLE' | 'COUNTDOWN_321' | 'RUNNING' | 'STOPPED';
 
@@ -10,6 +10,8 @@ export const ChallengePage: React.FC = () => {
   const [countdown321, setCountdown321] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState(24 * 60 * 60); // 24 hours in seconds
   const [isDimmed, setIsDimmed] = useState(false);
+  // For fast-forward animation feedback
+  const [fastForwarded, setFastForwarded] = useState(false);
   
   const timerRef = useRef<HTMLDivElement>(null);
   const countdownRef = useRef<HTMLDivElement>(null);
@@ -87,11 +89,28 @@ export const ChallengePage: React.FC = () => {
     setIsDimmed(false);
   };
 
+
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
     return `${h.toString().padStart(2, '0')} : ${m.toString().padStart(2, '0')} : ${s.toString().padStart(2, '0')}`;
+  };
+
+  // Timer color logic
+  const getTimerColor = () => {
+    if (timeLeft <= 3600) return '#FF3B30'; // Red for last 1hr
+    if (timeLeft <= 5 * 3600) return '#FFA500'; // Orange for last 5hr
+    return state === 'RUNNING' ? '#C6FF00' : '#ffffff';
+  };
+
+  // Fast forward 1 hour
+  const handleFastForward = () => {
+    if (state === 'RUNNING' && timeLeft > 3600) {
+      setTimeLeft((prev) => Math.max(prev - 3600, 0));
+      setFastForwarded(true);
+      setTimeout(() => setFastForwarded(false), 600);
+    }
   };
 
   return (
@@ -145,12 +164,40 @@ export const ChallengePage: React.FC = () => {
                 ref={timerRef} 
                 style={{
                   ...timerTextStyle,
-                  textShadow: state === 'RUNNING' ? '0 0 30px #C6FF00' : 'none',
-                  color: state === 'RUNNING' ? '#C6FF00' : '#ffffff'
+                  textShadow: state === 'RUNNING' ? `0 0 30px ${getTimerColor()}` : 'none',
+                  color: getTimerColor(),
+                  transition: 'color 0.5s, text-shadow 0.5s',
+                  animation: fastForwarded ? 'fastForwardFlash 0.6s' : undefined
                 }}
             >
               {formatTime(timeLeft)}
             </div>
+            {/* Fast Forward Button (only show if more than 1hr left and running) */}
+            {state === 'RUNNING' && timeLeft > 3600 && (
+              <button
+                onClick={handleFastForward}
+                style={{
+                  ...secondaryButtonStyle,
+                  marginTop: 32,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  backgroundColor: '#222',
+                  border: '1px solid #FFA500',
+                  color: '#FFA500',
+                  boxShadow: '0 0 10px rgba(255,165,0,0.2)',
+                  fontWeight: 'bold',
+                  fontSize: 18,
+                  cursor: 'pointer',
+                  opacity: 0.85,
+                  transition: 'all 0.2s',
+                }}
+                title="Fast forward 1 hour"
+              >
+                <FastForward size={20} />
+                Fast Forward 1hr
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -336,5 +383,15 @@ const systemLabelStyle: React.CSSProperties = {
     letterSpacing: '2px',
     zIndex: 20,
 };
+
+
+// Keyframes for fast forward flash
+const styleSheet = document.createElement('style');
+styleSheet.innerHTML = `
+@keyframes fastForwardFlash {
+  0% { filter: brightness(1.5) drop-shadow(0 0 10px #FFA500); }
+  100% { filter: none; }
+}`;
+document.head.appendChild(styleSheet);
 
 export default ChallengePage;
