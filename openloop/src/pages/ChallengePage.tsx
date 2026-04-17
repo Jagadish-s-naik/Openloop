@@ -197,20 +197,14 @@ export const ChallengePage: React.FC = () => {
           <div style={centerBlockStyle}>
             <div
               style={{
-                ...timerCardGridStyle,
-                animation: fastForwarded ? 'fastForwardFlash 0.6s' : undefined,
+                ...timerTextStyle,
+                textShadow: state === 'RUNNING' ? `0 0 30px ${getTimerColor()}` : 'none',
+                color: getTimerColor(),
+                transition: 'color 0.5s, text-shadow 0.5s',
+                animation: fastForwarded ? 'fastForwardFlash 0.6s' : undefined
               }}
             >
-              {['DAY', 'HOUR', 'MIN', 'SEC'].map((label, i) => {
-                const [d, h, m, s] = getTimeParts(timeLeft);
-                const val = [d, h, m, s][i];
-                return (
-                  <div key={label} style={{ ...timerCardStyle, borderColor: getTimerColor() }}>
-                    <span style={{ ...timerValueStyle, color: getTimerColor() }}>{val}</span>
-                    <span style={timerLabelStyle}>{label}</span>
-                  </div>
-                );
-              })}
+              {getTimeParts(timeLeft).join(' : ')}
             </div>
             {/* Fast Forward Button (only show if more than 1hr left and running) */}
             {state === 'RUNNING' && timeLeft > 3600 && (
@@ -362,40 +356,12 @@ const countdownNumberStyle: React.CSSProperties = {
   textShadow: '0 0 40px rgba(198, 255, 0, 0.6)',
 };
 
-const timerCardGridStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '16px',
-  justifyContent: 'center',
-  flexWrap: 'wrap',
-};
-
-const timerCardStyle: React.CSSProperties = {
-  minWidth: '120px',
-  minHeight: '120px',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  border: '2px solid #C6FF00',
-  borderRadius: '12px',
-  background: 'rgba(7, 12, 0, 0.7)',
-  boxShadow: '0 0 22px rgba(198, 255, 0, 0.22)',
-  padding: '14px',
-};
-
-const timerValueStyle: React.CSSProperties = {
-  fontSize: 'clamp(38px, 7vw, 74px)',
+const timerTextStyle: React.CSSProperties = {
+  fontSize: 'clamp(60px, 10vw, 140px)',
   fontFamily: 'Share Tech Mono, monospace',
   fontWeight: 'bold',
-  lineHeight: 1,
-};
-
-const timerLabelStyle: React.CSSProperties = {
-  marginTop: '8px',
-  fontSize: '12px',
-  letterSpacing: '0.2em',
-  fontFamily: 'Share Tech Mono, monospace',
-  color: 'rgba(255, 255, 255, 0.75)',
+  transition: 'all 0.3s ease',
+  letterSpacing: '0.05em',
 };
 
 const secondaryButtonStyle: React.CSSProperties = {

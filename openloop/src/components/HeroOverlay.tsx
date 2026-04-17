@@ -111,23 +111,6 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
     return [d, h, m, s].map((v) => v.toString().padStart(2, '0'));
   };
 
-  const handleHeroStartPause = () => {
-    if (timerState === 'RUNNING') {
-      setTimerState('STOPPED');
-      return;
-    }
-
-    if (timeLeft === 0) {
-      setTimeLeft(TOTAL_SECONDS);
-    }
-    setTimerState('RUNNING');
-  };
-
-  const handleHeroReset = () => {
-    setTimerState('IDLE');
-    setTimeLeft(TOTAL_SECONDS);
-  };
-
   const NAV_ITEMS = [
     { label: 'Core', target: 0.08 },
     { label: 'About', target: 0.21 },
@@ -242,40 +225,6 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
               </div>
             );
           })}
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '14px' }}>
-          <button
-            onClick={handleHeroStartPause}
-            style={{
-              padding: '10px 20px',
-              fontFamily: 'Share Tech Mono, monospace',
-              fontSize: '12px',
-              letterSpacing: '0.16em',
-              borderRadius: '10px',
-              border: '1px solid rgba(198, 255, 0, 0.45)',
-              background: 'rgba(8, 12, 6, 0.6)',
-              color: '#C6FF00',
-              cursor: 'pointer',
-            }}
-          >
-            {timerState === 'RUNNING' ? 'PAUSE' : 'START'}
-          </button>
-          <button
-            onClick={handleHeroReset}
-            style={{
-              padding: '10px 20px',
-              fontFamily: 'Share Tech Mono, monospace',
-              fontSize: '12px',
-              letterSpacing: '0.16em',
-              borderRadius: '10px',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              background: 'rgba(8, 12, 6, 0.4)',
-              color: 'rgba(255, 255, 255, 0.85)',
-              cursor: 'pointer',
-            }}
-          >
-            RESET
-          </button>
         </div>
       </div>
 
