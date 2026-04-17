@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { Square, RotateCcw, FastForward } from 'lucide-react';
 import {
   TIMER_SYNC_EVENT,
+  TOTAL_SECONDS,
   fastForwardOneHour,
   readTimerSnapshot,
   resetTimer,
@@ -60,7 +61,7 @@ export const ChallengePage: React.FC = () => {
         } else {
           clearInterval(interval);
           setCountdown321(null);
-          const snapshot = startTimer(timeLeft);
+          const snapshot = startTimer(TOTAL_SECONDS);
           setState(snapshot.state);
           setTimeLeft(snapshot.remainingSeconds);
           setIsDimmed(true);
@@ -69,7 +70,7 @@ export const ChallengePage: React.FC = () => {
 
       return () => clearInterval(interval);
     }
-  }, [state, timeLeft]);
+  }, [state]);
 
   // Keep challenge page synced with shared timer (including across tab close/reopen).
   useEffect(() => {
@@ -97,6 +98,7 @@ export const ChallengePage: React.FC = () => {
   }, [state]);
 
   const handleStart = () => {
+    setTimeLeft(TOTAL_SECONDS);
     setState('COUNTDOWN_321');
   };
 
