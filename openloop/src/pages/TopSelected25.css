@@ -73,17 +73,20 @@
 }
 
 .team-card-item {
-  background: linear-gradient(160deg, rgba(21, 27, 16, 0.9) 0%, rgba(12, 16, 9, 0.84) 100%);
-  border: 1px solid rgba(198, 255, 0, 0.24);
-  border-radius: 10px;
-  padding: clamp(14px, 2.6vw, 20px);
-  min-height: 170px;
+  background:
+    radial-gradient(circle at 92% 10%, rgba(198, 255, 0, 0.1), transparent 32%),
+    linear-gradient(165deg, rgba(20, 26, 16, 0.92) 0%, rgba(9, 12, 8, 0.9) 100%);
+  border: 1px solid rgba(198, 255, 0, 0.22);
+  border-radius: 14px;
+  padding: clamp(14px, 2.3vw, 18px);
+  min-height: 176px;
   backdrop-filter: blur(12px);
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 12px;
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -102,38 +105,63 @@
 .team-card-item:hover {
   border-color: #c6ff00;
   transform: translateY(-5px);
-  box-shadow: 0 12px 26px rgba(198, 255, 0, 0.12);
+  box-shadow: 0 12px 26px rgba(198, 255, 0, 0.15);
 }
 
-.team-id-label,
-.team-name-label {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.58);
-  letter-spacing: 0.2em;
-  margin-bottom: 4px;
+.team-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
   position: relative;
   z-index: 1;
 }
 
-.team-id-text {
-  font-size: clamp(15px, 1.8vw, 18px);
-  font-weight: 700;
+.team-id-pill,
+.team-rank-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.09em;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.team-id-pill {
   color: #c6ff00;
-  letter-spacing: 0.12em;
-  margin-bottom: 10px;
-  position: relative;
-  z-index: 1;
+  background: rgba(198, 255, 0, 0.1);
+  border-color: rgba(198, 255, 0, 0.35);
+}
+
+.team-rank-pill {
+  color: rgba(255, 255, 255, 0.76);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .team-name-text {
-  font-size: clamp(16px, 2.1vw, 20px);
+  font-size: clamp(17px, 1.8vw, 22px);
   font-weight: 700;
   color: #ffffff;
-  letter-spacing: 0.03em;
-  line-height: 1.25;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
   position: relative;
   z-index: 1;
   word-break: break-word;
+}
+
+.team-card-foot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+}
+
+.team-tag {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .team-card-corner {
@@ -306,24 +334,28 @@
   }
 
   .team-card-item {
-    min-height: 145px;
+    min-height: 150px;
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 10px;
   }
 
-  .team-id-label,
-  .team-name-label {
-    letter-spacing: 0.14em;
+  .team-id-pill,
+  .team-rank-pill {
+    font-size: 10px;
+    padding: 4px 8px;
   }
 
-  .team-id-text {
-    letter-spacing: 0.08em;
-    margin-bottom: 8px;
+  .team-card-item {
+    gap: 10px;
   }
 
   .team-name-text {
     font-size: 15px;
     line-height: 1.2;
+  }
+
+  .team-tag {
+    font-size: 9px;
   }
 
   .achievements-section {

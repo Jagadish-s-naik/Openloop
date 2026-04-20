@@ -63,16 +63,19 @@ export const TopSelected25: React.FC = () => {
         <p className="selected-subtitle">Official shortlisted teams with Team ID and Team Name</p>
 
         <div className="teams-grid">
-          {teams.map((team) => (
+          {teams.map((team, index) => (
             <article key={team.id} className="team-card-item">
-              <div className="team-id-label">TEAM ID</div>
-              <div className="team-id-text">
-                {team.id}
+              <div className="team-card-meta">
+                <span className="team-id-pill">{team.id}</span>
+                <span className="team-rank-pill">#{String(index + 1).padStart(2, '0')}</span>
               </div>
 
-              <div className="team-name-label">TEAM NAME</div>
               <div className="team-name-text" title={team.name}>
                 {team.name}
+              </div>
+
+              <div className="team-card-foot">
+                <span className="team-tag">SHORTLISTED TEAM</span>
               </div>
 
               <div className="team-card-corner" />
