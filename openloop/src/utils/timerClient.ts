@@ -11,7 +11,6 @@ export interface TimerSnapshot {
 const API_PATH = '/api/timer';
 const EVENT_TARGET_MS = new Date('2026-04-25T11:00:00+05:30').getTime();
 const FALLBACK_CHANNEL_NAME = 'openloop-timer-fallback';
-const FALLBACK_STORAGE_KEY = 'openloop:timer:fallback:v1';
 
 export const TOTAL_SECONDS = 24 * 60 * 60;
 
@@ -38,37 +37,6 @@ let fallbackState: FallbackState = {
   endAtMs: null,
 };
 
-const hydrateFallbackState = () => {
-  if (typeof window === 'undefined' || !('localStorage' in window)) return;
-  try {
-    const raw = window.localStorage.getItem(FALLBACK_STORAGE_KEY);
-    if (!raw) return;
-    const parsed = JSON.parse(raw) as Partial<FallbackState>;
-    fallbackState = {
-      mode: parsed.mode === 'CHALLENGE' ? 'CHALLENGE' : 'EVENT',
-      state:
-        parsed.state === 'RUNNING' || parsed.state === 'STOPPED'
-          ? parsed.state
-          : 'IDLE',
-      remainingSeconds: clampSeconds(parsed.remainingSeconds ?? TOTAL_SECONDS),
-      endAtMs: typeof parsed.endAtMs === 'number' ? parsed.endAtMs : null,
-    };
-  } catch {
-    // Ignore localStorage parsing errors and keep defaults.
-  }
-};
-
-const persistFallbackState = () => {
-  if (typeof window === 'undefined' || !('localStorage' in window)) return;
-  try {
-    window.localStorage.setItem(FALLBACK_STORAGE_KEY, JSON.stringify(fallbackState));
-  } catch {
-    // Ignore localStorage write errors.
-  }
-};
-
-hydrateFallbackState();
-
 let fallbackChannel: BroadcastChannel | null = null;
 
 if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
@@ -81,33 +49,8 @@ if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
 }
 
 const publishFallback = () => {
-  persistFallbackState();
   if (!fallbackChannel) return;
   fallbackChannel.postMessage(fallbackState);
-};
-
-// Publish timer sync events for cross-component updates
-let syncBroadcastChannel: BroadcastChannel | null = null;
-
-if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
-  try {
-    syncBroadcastChannel = new BroadcastChannel('openloop-timer-sync');
-  } catch {
-    // BroadcastChannel not available
-  }
-}
-
-const publishTimerSync = (snapshot: TimerSnapshot) => {
-  if (!syncBroadcastChannel) return;
-  try {
-    syncBroadcastChannel.postMessage({
-      type: 'timer-sync',
-      timestamp: Date.now(),
-      data: snapshot,
-    });
-  } catch (error) {
-    console.warn('Failed to publish timer sync:', error);
-  }
 };
 
 const getFallbackSnapshot = (): TimerSnapshot => {
@@ -143,7 +86,6 @@ const getFallbackSnapshot = (): TimerSnapshot => {
     ...fallbackState,
     remainingSeconds: live,
   };
-  persistFallbackState();
 
   if (live === 0) {
     fallbackState = {
@@ -201,10 +143,7 @@ const postAction = async (action: 'start' | 'stop' | 'reset' | 'fast-forward'): 
       throw new Error(`Timer action failed: ${res.status}`);
     }
 
-    const snapshot = (await res.json()) as TimerSnapshot;
-    // Broadcast the updated state to all listeners
-    publishTimerSync(snapshot);
-    return snapshot;
+    return (await res.json()) as TimerSnapshot;
   } catch {
     if (action === 'start') {
       const startFrom =
@@ -221,9 +160,7 @@ const postAction = async (action: 'start' | 'stop' | 'reset' | 'fast-forward'): 
         endAtMs: Date.now() + startFrom * 1000,
       };
       publishFallback();
-      const snapshot = getFallbackSnapshot();
-      publishTimerSync(snapshot);
-      return snapshot;
+      return getFallbackSnapshot();
     }
 
     if (action === 'stop') {
@@ -241,9 +178,7 @@ const postAction = async (action: 'start' | 'stop' | 'reset' | 'fast-forward'): 
         endAtMs: null,
       };
       publishFallback();
-      const snapshot = getFallbackSnapshot();
-      publishTimerSync(snapshot);
-      return snapshot;
+      return getFallbackSnapshot();
     }
 
     if (action === 'reset') {
@@ -254,9 +189,7 @@ const postAction = async (action: 'start' | 'stop' | 'reset' | 'fast-forward'): 
         endAtMs: null,
       };
       publishFallback();
-      const snapshot = getFallbackSnapshot();
-      publishTimerSync(snapshot);
-      return snapshot;
+      return getFallbackSnapshot();
     }
 
     if (
@@ -270,14 +203,10 @@ const postAction = async (action: 'start' | 'stop' | 'reset' | 'fast-forward'): 
         endAtMs: Math.max(Date.now(), fallbackState.endAtMs - 3600 * 1000),
       };
       publishFallback();
-      const snapshot = getFallbackSnapshot();
-      publishTimerSync(snapshot);
-      return snapshot;
+      return getFallbackSnapshot();
     }
 
-    const snapshot = getFallbackSnapshot();
-    publishTimerSync(snapshot);
-    return snapshot;
+    return getFallbackSnapshot();
   }
 };
 

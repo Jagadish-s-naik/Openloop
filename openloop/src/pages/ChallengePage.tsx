@@ -5,10 +5,10 @@ import {
   TOTAL_SECONDS,
   fastForwardChallengeTimer,
   resetChallengeTimer,
+  safeGetTimerSnapshot,
   startChallengeTimer,
   stopChallengeTimer,
 } from '../utils/timerClient';
-import { useTimerSync } from '../hooks/useTimerSync';
 
 type TimerState = 'IDLE' | 'COUNTDOWN_321' | 'RUNNING' | 'STOPPED';
 
@@ -83,24 +83,33 @@ export const ChallengePage: React.FC = () => {
     }
   }, [state]);
 
-  // Keep challenge page synced with shared backend timer state using robust hook
-  const { snapshot: timerSnapshot } = useTimerSync({
-    pollInterval: 500, // More responsive polling (500ms instead of 1000ms)
-  });
-
-  // Sync timer snapshot to local state
+  // Keep challenge page synced with shared backend timer state.
   useEffect(() => {
-    if (!timerSnapshot) return;
-    if (state === 'COUNTDOWN_321') return;
+    let active = true;
 
-    if (timerSnapshot.mode === 'CHALLENGE') {
-      setTimeLeft(timerSnapshot.remainingSeconds);
-      setState(timerSnapshot.state as TimerState);
-    } else {
-      setTimeLeft(TOTAL_SECONDS);
-      setState('IDLE');
-    }
-  }, [timerSnapshot, state]);
+    const sync = async () => {
+      if (state === 'COUNTDOWN_321') return;
+
+      const snapshot = await safeGetTimerSnapshot();
+      if (!active) return;
+
+      if (snapshot.mode === 'CHALLENGE') {
+        setTimeLeft(snapshot.remainingSeconds);
+        setState(snapshot.state as TimerState);
+      } else {
+        setTimeLeft(TOTAL_SECONDS);
+        setState('IDLE');
+      }
+    };
+
+    void sync();
+    const interval = window.setInterval(sync, 1000);
+
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [state]);
 
   useEffect(() => {
     setIsDimmed(state === 'RUNNING');

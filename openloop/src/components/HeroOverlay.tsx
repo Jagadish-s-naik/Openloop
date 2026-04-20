@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useTimerSync } from '../hooks/useTimerSync';
+import {
+  safeGetTimerSnapshot,
+  type TimerMode,
+} from '../utils/timerClient';
 
 interface HeroOverlayProps {
   scrollProgress: number;
@@ -27,15 +30,9 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
     Math.ceil((new Date('2026-04-25T11:00:00+05:30').getTime() - Date.now()) / 1000)
   );
 
-  const { snapshot } = useTimerSync({
-    pollInterval: 1000,
-  });
-
-  const timeLeft = snapshot?.mode === 'CHALLENGE' && snapshot.state === 'RUNNING' 
-    ? snapshot.remainingSeconds 
-    : (snapshot?.eventRemainingSeconds ?? initialEventSeconds);
-    
-  const timerMode = (snapshot?.mode === 'CHALLENGE' && snapshot.state === 'RUNNING') ? 'CHALLENGE' : 'EVENT';
+  // Timer state for hero overlay
+  const [timeLeft, setTimeLeft] = useState(initialEventSeconds);
+  const [timerMode, setTimerMode] = useState<TimerMode>('EVENT');
   const [hoveredTimerCard, setHoveredTimerCard] = useState<number | null>(null);
 
   const glassCardBase: React.CSSProperties = {
@@ -76,6 +73,32 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
       inset 0 0 16px rgba(198, 255, 0, 0.1)
     `,
   };
+
+  // Keep hero timer synced live with shared backend timer state.
+  useEffect(() => {
+    let active = true;
+
+    const sync = async () => {
+      const snapshot = await safeGetTimerSnapshot();
+      if (!active) return;
+
+      const showChallenge = snapshot.mode === 'CHALLENGE' && snapshot.state === 'RUNNING';
+      setTimerMode(showChallenge ? 'CHALLENGE' : 'EVENT');
+      setTimeLeft(
+        showChallenge
+          ? snapshot.remainingSeconds
+          : snapshot.eventRemainingSeconds
+      );
+    };
+
+    void sync();
+    const interval = window.setInterval(sync, 1000);
+
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   // Format time for boxes
   const getTimeParts = (seconds: number) => {
@@ -173,7 +196,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
           marginBottom: '12px',
           textAlign: 'center',
         }}>
-          {timerMode === 'CHALLENGE' ? 'CHALLENGE TIMER LIVE' : 'COUNTDOWN TO APR 25'}
+          {timerMode === 'CHALLENGE' ? 'CHALLENGE TIMER LIVE' : 'EVENT COUNTDOWN TO APR 25 - 11:00 AM'}
         </div>
         <div style={{
           display: 'flex',
