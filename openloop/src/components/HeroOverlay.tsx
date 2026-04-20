@@ -349,6 +349,12 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
               animation: static-pulsate 2.6s infinite ease-in-out;
             }
 
+            .button-main-layer {
+              position: relative;
+              z-index: 2;
+              transition: letter-spacing 0.2s ease, transform 0.2s ease;
+            }
+
             .top-25-glow-button::after {
               content: '';
               position: absolute;
@@ -372,11 +378,16 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
             }
 
             .top-25-glow-button:hover {
-              box-shadow: 0 0 56px rgba(198, 255, 0, 0.95) !important;
-              background: #C6FF00 !important;
+              box-shadow: 0 0 18px rgba(255, 255, 255, 0.45), 0 0 60px rgba(198, 255, 0, 0.92) !important;
+              background: linear-gradient(135deg, #ffffff 0%, #e7ff9f 48%, #c6ff00 100%) !important;
               color: #000 !important;
-              transform: scale(1.12) rotate(-0.7deg) !important;
+              transform: scale(1.08) translateY(-2px) !important;
               border-color: #f3ffd0;
+            }
+
+            .top-25-glow-button:hover .button-main-layer {
+              letter-spacing: 0.16em;
+              transform: translateY(-1px);
             }
 
             .top-25-glow-button::before {
@@ -394,6 +405,10 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
               );
               transition: 0.5s;
               animation: light-sweep 2.8s infinite linear;
+            }
+
+            .top-25-glow-button:hover::before {
+              animation-duration: 1.4s;
             }
 
             @keyframes light-sweep {
@@ -417,17 +432,14 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
             }
 
             .top-25-glow-button:hover .button-glitch-layer {
-              opacity: 1;
-              background: #C6FF00;
-              animation: button-glitch 0.2s infinite;
+              opacity: 0.22;
+              background: radial-gradient(circle at 15% 50%, rgba(255, 255, 255, 0.9), rgba(198, 255, 0, 0.15) 60%, transparent 90%);
+              animation: glow-drift 1.2s ease-in-out infinite alternate;
             }
 
-            @keyframes button-glitch {
-              0% { transform: translate(4px, -4px); clip-path: inset(10% 0 30% 0); }
-              25% { transform: translate(-4px, 4px); clip-path: inset(40% 0 10% 0); }
-              50% { transform: translate(4px, 4px); clip-path: inset(20% 0 60% 0); }
-              75% { transform: translate(-4px, -4px); clip-path: inset(70% 0 5% 0); }
-              100% { transform: translate(4px, -4px); clip-path: inset(10% 0 30% 0); }
+            @keyframes glow-drift {
+              0% { transform: translateX(-6%) scale(1); opacity: 0.16; }
+              100% { transform: translateX(8%) scale(1.05); opacity: 0.28; }
             }
           `}</style>
         </Link>
