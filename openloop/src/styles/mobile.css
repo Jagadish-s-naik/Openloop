@@ -328,6 +328,34 @@
   transform: translateY(20px);
 }
 
+.mobile-hero-timer-wrap {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.mobile-hero-timer-label {
+  margin: 0;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(9px, 2vw, 11px);
+  letter-spacing: 0.2em;
+  color: rgba(198, 255, 0, 0.75);
+  text-transform: uppercase;
+}
+
+.mobile-hero-timer-value {
+  margin: 0;
+  font-family: 'Audiowide', sans-serif;
+  font-size: clamp(19px, 6vw, 28px);
+  line-height: 1.1;
+  letter-spacing: 0.09em;
+  color: #ffffff;
+  text-shadow: 0 0 18px rgba(198, 255, 0, 0.25);
+}
+
 .btn-hero {
   flex: 1;
   font-family: 'Rajdhani', sans-serif;

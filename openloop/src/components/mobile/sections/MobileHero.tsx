@@ -1,7 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { safeGetTimerSnapshot } from '../../../utils/timerClient';
 
 export const MobileHero: React.FC = () => {
+  const initialEventSeconds = Math.max(
+    0,
+    Math.ceil((new Date('2026-04-25T11:00:00+05:30').getTime() - Date.now()) / 1000)
+  );
+
+  const [eventTimeLeft, setEventTimeLeft] = useState(initialEventSeconds);
+
+  useEffect(() => {
+    let active = true;
+
+    const sync = async () => {
+      const snapshot = await safeGetTimerSnapshot();
+      if (!active) return;
+      setEventTimeLeft(snapshot.eventRemainingSeconds);
+    };
+
+    void sync();
+    const interval = window.setInterval(sync, 1000);
+
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, []);
+
+  const formatEventTime = (seconds: number): string => {
+    const clamped = Math.max(0, seconds);
+    const days = Math.floor(clamped / 86400);
+    const hours = Math.floor((clamped % 86400) / 3600);
+    const minutes = Math.floor((clamped % 3600) / 60);
+    const secs = clamped % 60;
+    return `${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+
   return (
     <section id="hero" style={{ justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
       <div className="hero-cyber-grid-wrap">
@@ -111,7 +146,7 @@ export const MobileHero: React.FC = () => {
           className="top-25-mobile-button"
         >
           <span className="btn-shine"></span>
-          <span className="btn-text">TOP SELECTED 25</span>
+          <span className="btn-text">SHORTLISTED 25 TEAMS</span>
           <style>{`
             .top-25-mobile-button {
               position: relative;
@@ -162,30 +197,23 @@ export const MobileHero: React.FC = () => {
             }
           `}</style>
         </Link>
-      </div>
-      <div style={{ 
-        position: 'absolute', 
-        bottom: 'clamp(20px, 4vh, 60px)',
-        left: '0', 
-        right: '0', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        gap: '24px',
-        zIndex: 5,
-        paddingLeft: 'clamp(16px, 4vw, 24px)',
-        paddingRight: 'clamp(16px, 4vw, 24px)'
-      }}>
+
         <div className="hero-buttons" style={{ 
           width: '100%',
-          maxWidth: '400px',
+          maxWidth: '420px',
           opacity: 1, 
           transform: 'none', 
           display: 'flex', 
-          gap: 'clamp(12px, 3vw, 16px)' 
+          gap: 'clamp(12px, 3vw, 16px)',
+          marginTop: '4px'
         }}>
           <a href="https://unstop.com/college-fests/openloop-26-yenepoya-school-of-engineering-and-technology-458231" target="_blank" rel="noopener noreferrer" className="btn-hero primary" style={{ flex: 1, padding: 'clamp(12px, 3vw, 16px) 0', fontSize: 'clamp(13px, 2.5vw, 15px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Register Now</a>
           <a href="https://drive.google.com/file/d/1_IM0WD6zowoyv9nopm2RbnwW2dUYwwBE/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="btn-hero outline" style={{ flex: 1, padding: 'clamp(12px, 3vw, 16px) 0', fontSize: 'clamp(13px, 2.5vw, 15px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Brochure</a>
+        </div>
+
+        <div className="mobile-hero-timer-wrap">
+          <p className="mobile-hero-timer-label">TIME SHOWN FOR 25TH APRIL</p>
+          <p className="mobile-hero-timer-value">{formatEventTime(eventTimeLeft)}</p>
         </div>
       </div>
     </section>
