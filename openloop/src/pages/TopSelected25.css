@@ -181,86 +181,103 @@
   letter-spacing: 0.03em;
 }
 
-.achievements-grid {
+.achievements-highlight-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(12px, 2.1vw, 18px);
+  gap: clamp(10px, 1.6vw, 14px);
+  margin-bottom: 18px;
 }
 
-.achievement-card {
-  --tone: #9aa3af;
-  position: relative;
-  min-height: 150px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  padding: clamp(14px, 2vw, 18px);
-  background: rgba(14, 18, 20, 0.62);
+.achievements-highlight-item {
+  padding: 8px 0;
+  border-top: 1px solid rgba(198, 255, 0, 0.45);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  overflow: hidden;
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  gap: 4px;
 }
 
-.achievement-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 12px;
-  right: 12px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent 0%, var(--tone) 50%, transparent 100%);
-  opacity: 0.9;
+.highlight-number {
+  font-size: clamp(28px, 5vw, 46px);
+  line-height: 1;
+  color: #c6ff00;
 }
 
-.achievement-card:hover {
-  transform: translateY(-4px);
-  border-color: color-mix(in srgb, var(--tone) 45%, rgba(255, 255, 255, 0.15));
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45), 0 0 24px color-mix(in srgb, var(--tone) 18%, transparent);
+.highlight-label {
+  font-size: clamp(11px, 1.2vw, 13px);
+  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.achievement-icon-chip {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+.achievements-body {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.92fr) 1.08fr;
+  gap: clamp(18px, 2.4vw, 28px);
+  align-items: start;
+}
+
+.achievements-story {
+  margin: 0;
+  font-size: clamp(13px, 1.6vw, 16px);
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.achievement-flow-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.achievement-flow-item {
+  --tone: #c6ff00;
+  display: grid;
+  grid-template-columns: 30px minmax(130px, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.achievement-flow-icon {
+  color: var(--tone);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--tone);
-  background: color-mix(in srgb, var(--tone) 14%, rgba(255, 255, 255, 0.02));
-  border: 1px solid color-mix(in srgb, var(--tone) 26%, rgba(255, 255, 255, 0.1));
 }
 
-.achievement-value {
-  margin-top: 14px;
-  font-size: clamp(34px, 4.8vw, 52px);
-  font-weight: 700;
+.achievement-flow-label {
+  font-size: clamp(12px, 1.5vw, 14px);
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.achievement-flow-value {
+  font-size: clamp(20px, 3vw, 32px);
   line-height: 1;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   color: var(--tone);
 }
 
-.achievement-label {
-  margin-top: 8px;
-  font-size: clamp(13px, 1.8vw, 19px);
-  color: rgba(255, 255, 255, 0.78);
-  letter-spacing: 0.02em;
+.achievement-flow-hint {
+  grid-column: 2 / 4;
+  font-size: 12px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.58);
+  margin-top: -2px;
 }
-
-.tone-blue { --tone: #7da2ff; }
-.tone-cyan { --tone: #52ebff; }
-.tone-pink { --tone: #ff6fa9; }
-.tone-gold { --tone: #ffd88a; }
-.tone-lilac { --tone: #d5b7ff; }
-.tone-silver { --tone: #e4ebff; }
 
 @media (max-width: 1100px) {
   .teams-grid {
     grid-template-columns: repeat(4, minmax(160px, 1fr));
   }
 
-  .achievements-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .achievements-body {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -323,23 +340,27 @@
     font-size: clamp(24px, 7.5vw, 32px);
   }
 
-  .achievements-grid {
+  .achievements-highlight-strip {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
   }
 
-  .achievement-card {
-    min-height: 132px;
-    border-radius: 10px;
+  .achievements-body {
+    gap: 12px;
   }
 
-  .achievement-value {
-    font-size: clamp(30px, 9vw, 42px);
+  .achievement-flow-item {
+    grid-template-columns: 28px 1fr auto;
   }
 
-  .achievement-label {
-    font-size: 15px;
+  .achievement-flow-hint {
+    font-size: 11px;
   }
+
+  .achievement-flow-value {
+    font-size: clamp(18px, 7.8vw, 30px);
+  }
+
 }
 
 @media (max-width: 360px) {
