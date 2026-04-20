@@ -287,96 +287,137 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
         </div>
       </nav>
 
-      {/* Top Right Desktop Button */}
-      <Link 
-        to="/top-25" 
-        className="top-25-glow-button"
+      {/* Top Right Desktop Button Container */}
+      <div 
         style={{ 
           position: 'fixed', 
           right: '30px', 
           top: '120px', 
           zIndex: 1000,
-          textDecoration: 'none'
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+          gap: '8px',
+          pointerEvents: 'none'
         }}
       >
-        <span className="button-glitch-layer">SELECTED 25</span>
-        <span className="button-main-layer">TOP SELECTED 25</span>
-        <style>{`
-          .top-25-glow-button {
-            background: #78d724b8;
-            color: #000;
-            font-family: 'Share Tech Mono', monospace;
-            font-weight: 900;
-            font-size: 16px;
-            padding: 12px 30px;
-            border-radius: 4px;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-          }
+        <span style={{ 
+          fontFamily: "'Share Tech Mono', monospace",
+          fontSize: '11px',
+          color: '#C6FF00',
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          opacity: 0.8,
+          textShadow: '0 0 10px rgba(198, 255, 0, 0.5)',
+          marginRight: '4px'
+        }}>
+          // SELECTION_STATUS: ACTIVE
+        </span>
+        <Link 
+          to="/top-25" 
+          className="top-25-glow-button"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          style={{ 
+            textDecoration: 'none',
+            transform: `translate3d(${magneticPos.x}px, ${magneticPos.y}px, 0)`,
+            pointerEvents: 'auto'
+          }}
+        >
+          <span className="button-glitch-layer">SELECTED 25</span>
+          <span className="button-main-layer">TOP SELECTED 25</span>
+          <style>{`
+            .top-25-glow-button {
+              background: #ffffff;
+              color: #000;
+              font-family: 'Share Tech Mono', monospace;
+              font-weight: 900;
+              font-size: 16px;
+              padding: 14px 34px;
+              border-radius: 4px;
+              letter-spacing: 0.15em;
+              text-transform: uppercase;
+              box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+              transition: all 0.1s ease-out;
+              position: relative;
+              overflow: hidden;
+              display: inline-block;
+              border: 1px solid rgba(255, 255, 255, 0.3);
+              animation: static-pulsate 3s infinite ease-in-out;
+            }
 
-          .top-25-glow-button:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 0 40px rgba(198, 255, 0, 0.8);
-            background: #C6FF00;
-            color: #000;
-          }
+            @keyframes static-pulsate {
+              0% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); transform: scale(1); }
+              50% { box-shadow: 0 0 35px rgba(255, 255, 255, 0.6); transform: scale(1.02); }
+              100% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); transform: scale(1); }
+            }
 
-          .top-25-glow-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-              90deg,
-              transparent,
-              rgba(198, 255, 0, 0.4),
-              transparent
-            );
-            transition: 0.5s;
-          }
+            .top-25-glow-button:hover {
+              box-shadow: 0 0 50px rgba(198, 255, 0, 0.9) !important;
+              background: #C6FF00 !important;
+              color: #000 !important;
+              transform: scale(1.15) rotate(-1deg) !important;
+              border-color: #C6FF00;
+            }
 
-          .top-25-glow-button:hover::before {
-            left: 100%;
-            transition: 0.6s;
-          }
+            .top-25-glow-button::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: -100%;
+              width: 100%;
+              height: 100%;
+              background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(198, 255, 0, 0.6),
+                transparent
+              );
+              transition: 0.5s;
+              animation: light-sweep 3s infinite linear;
+            }
 
-          .button-glitch-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #3fc6db;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: 0.2s;
-          }
+            @keyframes light-sweep {
+              0% { left: -100%; }
+              20% { left: 100%; }
+              100% { left: 100%; }
+            }
 
-          .top-25-glow-button:hover .button-glitch-layer {
-            opacity: 1;
-            background: #C6FF00;
-            animation: button-glitch 0.3s infinite;
-          }
+            .button-glitch-layer {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: #ffffff;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              opacity: 0;
+              transition: 0.2s;
+            }
 
-          @keyframes button-glitch {
-            0% { transform: translate(2px, -2px); }
-            25% { transform: translate(-2px, 2px); }
-            50% { transform: translate(2px, 2px); }
-            75% { transform: translate(-2px, -2px); }
-            100% { transform: translate(2px, -2px); }
-          }
-        `}</style>
-      </Link>
+            .top-25-glow-button:hover .button-glitch-layer {
+              opacity: 1;
+              background: #C6FF00;
+              animation: button-glitch 0.2s infinite;
+            }
+
+            @keyframes button-glitch {
+              0% { transform: translate(4px, -4px); clip-path: inset(10% 0 30% 0); }
+              25% { transform: translate(-4px, 4px); clip-path: inset(40% 0 10% 0); }
+              50% { transform: translate(4px, 4px); clip-path: inset(20% 0 60% 0); }
+              75% { transform: translate(-4px, -4px); clip-path: inset(70% 0 5% 0); }
+              100% { transform: translate(4px, -4px); clip-path: inset(10% 0 30% 0); }
+            }
+          `}</style>
+        </Link>
+      </div>
+            
+           
+
+          
+      
 
       <section id="robot-sections">
         {/* PHASE 1: HERO — bottom content only, title is in #hero-title-fixed above */}
