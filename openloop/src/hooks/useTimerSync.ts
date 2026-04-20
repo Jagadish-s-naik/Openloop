@@ -49,13 +49,19 @@ export const useTimerSync = (options: UseTimerSyncOptions = {}) => {
 
   const buildLiveSnapshot = useCallback((base: TimerSnapshot): TimerSnapshot => {
     const now = Date.now();
-    // Use Math.max(0, ...) to ensure event seconds don't go negative if we pass the date
+    // Use floor for consistent ticking
     const eventRemainingSeconds = Math.max(0, Math.floor((EVENT_TARGET_MS - now) / 1000));
 
-    if (base.mode !== 'CHALLENGE' || base.state !== 'RUNNING') {
+    // Determine the active mode: 
+    // Always prefer CHALLENGE if it's explicitly RUNNING on the server/client
+    const isActiveChallenge = base.mode === 'CHALLENGE' && base.state === 'RUNNING';
+
+    if (!isActiveChallenge) {
       return {
-        ...base,
-        eventRemainingSeconds,
+        mode: 'EVENT',
+        state: 'IDLE',
+        remainingSeconds: 24 * 60 * 60,
+        eventRemainingSeconds: eventRemainingSeconds,
       };
     }
 
@@ -82,6 +88,7 @@ export const useTimerSync = (options: UseTimerSyncOptions = {}) => {
   const applyBaseSnapshot = useCallback(
     (next: TimerSnapshot) => {
       baseSnapshotRef.current = next;
+      // Record exactly when we received this snapshot to calculate drift
       baseReceivedAtRef.current = Date.now();
       emitSnapshot(buildLiveSnapshot(next));
     },
@@ -158,10 +165,17 @@ export const useTimerSync = (options: UseTimerSyncOptions = {}) => {
     let animationFrameId: number;
 
     const tick = () => {
-      const base = baseSnapshotRef.current;
-      if (base && isMountedRef.current) {
-        // Update at maximum refresh rate for absolute smoothness
-        setSnapshot(buildLiveSnapshot(base));
+      // Always use the latest base snapshot if available, or a dummy one just for the event timer
+      const base = baseSnapshotRef.current || {
+        mode: 'EVENT',
+        state: 'IDLE',
+        remainingSeconds: 86400,
+        eventRemainingSeconds: 0
+      } as TimerSnapshot;
+
+      if (isMountedRef.current) {
+        // High-frequency update ensures smooth one-second decrements
+        emitSnapshot(buildLiveSnapshot(base));
       }
       animationFrameId = requestAnimationFrame(tick);
     };
@@ -173,7 +187,7 @@ export const useTimerSync = (options: UseTimerSyncOptions = {}) => {
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [buildLiveSnapshot]);
+  }, [buildLiveSnapshot, emitSnapshot]);
 
   // Cleanup on unmount
   useEffect(() => {

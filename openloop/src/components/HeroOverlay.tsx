@@ -38,15 +38,18 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   // Use robust timer sync hook with instant updates
   useTimerSync({
     onUpdate: (snapshot) => {
-      const showChallenge = snapshot.mode === 'CHALLENGE' && snapshot.state === 'RUNNING';
-      setTimerMode(showChallenge ? 'CHALLENGE' : 'EVENT');
-      setTimeLeft(
-        showChallenge
-          ? snapshot.remainingSeconds
-          : snapshot.eventRemainingSeconds
-      );
+      // Logic: Show challenge if it's RUNNING, otherwise ALWAYS show EVENT (April 25)
+      const isChallengeLive = snapshot.mode === 'CHALLENGE' && snapshot.state === 'RUNNING';
+      
+      if (isChallengeLive) {
+        setTimerMode('CHALLENGE');
+        setTimeLeft(snapshot.remainingSeconds);
+      } else {
+        setTimerMode('EVENT');
+        setTimeLeft(snapshot.eventRemainingSeconds);
+      }
     },
-    pollInterval: 500, // More responsive polling
+    pollInterval: 1000, // Frequent polling for global state changes
   });
 
   const glassCardBase: React.CSSProperties = {
