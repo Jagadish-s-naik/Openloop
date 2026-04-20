@@ -328,7 +328,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
           <span className="button-main-layer">TOP SELECTED TEAMS</span>
           <style>{`
             .top-25-glow-button {
-              background: linear-gradient(135deg, #f8ffe0 0%, #d9ff6e 45%, #c6ff00 100%);
+              background: linear-gradient(135deg, #f5f4f4 0%, #d9ff6e 45%, #c6ff00 100%);
               color: #000;
               font-family: 'Share Tech Mono', monospace;
               font-weight: 900;

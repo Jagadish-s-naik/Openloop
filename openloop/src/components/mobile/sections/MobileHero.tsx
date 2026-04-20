@@ -27,7 +27,7 @@ export const MobileHero: React.FC = () => {
         width: '100%',
         paddingLeft: 'clamp(16px, 4vw, 24px)',
         paddingRight: 'clamp(16px, 4vw, 24px)',
-        marginTop: 'clamp(-80px, -10vh, -100px)' 
+        marginTop: 'clamp(-12px, -2vh, 6px)' 
       }}>
         
         
