@@ -160,27 +160,50 @@ export const useTimerSync = (options: UseTimerSyncOptions = {}) => {
     };
   }, [syncFromBackend, pollInterval]);
 
-  // Live ticking from last known snapshot to prevent "stuck" timers
+  // Live ticking from last known snapshot to prevent "stuck" timers using requestAnimationFrame for zero-lag UI
   useEffect(() => {
+    let animationFrameId: number;
+    let lastEventSec = -1;
+    let lastChallengeSec = -1;
+    let lastMode = '';
+    let lastState = '';
+
     const tick = () => {
       // Always use the latest base snapshot if available, or a dummy one just for the event timer
       const base = baseSnapshotRef.current || ({
         mode: 'EVENT',
         state: 'IDLE',
         remainingSeconds: 86400,
-        eventRemainingSeconds: Math.max(0, Math.floor((EVENT_TARGET_MS - Date.now()) / 1000))
+        eventRemainingSeconds: 0
       } as TimerSnapshot);
 
       if (isMountedRef.current) {
-        emitSnapshot(buildLiveSnapshot(base));
+        const live = buildLiveSnapshot(base);
+
+        // Only emit if something meaningful changed to avoid render thrashes
+        const hasChanged =
+          live.eventRemainingSeconds !== lastEventSec ||
+          live.remainingSeconds !== lastChallengeSec ||
+          live.mode !== lastMode ||
+          live.state !== lastState;
+
+        if (hasChanged) {
+          emitSnapshot(live);
+          lastEventSec = live.eventRemainingSeconds;
+          lastChallengeSec = live.remainingSeconds;
+          lastMode = live.mode;
+          lastState = live.state;
+        }
       }
+      animationFrameId = requestAnimationFrame(tick);
     };
 
-    // Use interval instead of requestAnimationFrame for simpler 1fps ticking
-    const intervalId = setInterval(tick, 1000);
+    animationFrameId = requestAnimationFrame(tick);
 
     return () => {
-      clearInterval(intervalId);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
     };
   }, [buildLiveSnapshot, emitSnapshot]);
 
