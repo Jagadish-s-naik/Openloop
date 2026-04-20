@@ -324,8 +324,8 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
             pointerEvents: 'auto'
           }}
         >
-          <span className="button-glitch-layer">SELECTED TEAMS</span>
-          <span className="button-main-layer">TOP SELECTED TEAMS</span>
+          <span className="button-glitch-layer">ShortListed TEAMS</span>
+          <span className="button-main-layer">Short Listed Teams</span>
           <style>{`
             .top-25-glow-button {
               background: linear-gradient(135deg, #f5f4f4 0%, #d9ff6e 45%, #c6ff00 100%);
