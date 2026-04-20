@@ -30,27 +30,16 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
     Math.ceil((new Date('2026-04-25T11:00:00+05:30').getTime() - Date.now()) / 1000)
   );
 
-  // Timer state for hero overlay
-  const [timeLeft, setTimeLeft] = useState(initialEventSeconds);
-  const [timerMode, setTimerMode] = useState<TimerMode>('EVENT');
-  const [hoveredTimerCard, setHoveredTimerCard] = useState<number | null>(null);
-
-  // Use robust timer sync hook with instant updates
-  useTimerSync({
-    onUpdate: (snapshot) => {
-      // Logic: Show challenge if it's RUNNING, otherwise ALWAYS show EVENT (April 25)
-      const isChallengeLive = snapshot.mode === 'CHALLENGE' && snapshot.state === 'RUNNING';
-      
-      if (isChallengeLive) {
-        setTimerMode('CHALLENGE');
-        setTimeLeft(snapshot.remainingSeconds);
-      } else {
-        setTimerMode('EVENT');
-        setTimeLeft(snapshot.eventRemainingSeconds);
-      }
-    },
-    pollInterval: 1000, // Frequent polling for global state changes
+  const { snapshot } = useTimerSync({
+    pollInterval: 1000,
   });
+
+  const timeLeft = snapshot?.mode === 'CHALLENGE' && snapshot.state === 'RUNNING' 
+    ? snapshot.remainingSeconds 
+    : (snapshot?.eventRemainingSeconds ?? initialEventSeconds);
+    
+  const timerMode = (snapshot?.mode === 'CHALLENGE' && snapshot.state === 'RUNNING') ? 'CHALLENGE' : 'EVENT';
+  const [hoveredTimerCard, setHoveredTimerCard] = useState<number | null>(null);
 
   const glassCardBase: React.CSSProperties = {
     display: 'flex',
