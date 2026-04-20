@@ -163,19 +163,37 @@ export const useTimerSync = (options: UseTimerSyncOptions = {}) => {
   // Live ticking from last known snapshot to prevent "stuck" timers using requestAnimationFrame for zero-lag UI
   useEffect(() => {
     let animationFrameId: number;
+    let lastEventSec = -1;
+    let lastChallengeSec = -1;
+    let lastMode = '';
+    let lastState = '';
 
     const tick = () => {
       // Always use the latest base snapshot if available, or a dummy one just for the event timer
-      const base = baseSnapshotRef.current || {
+      const base = baseSnapshotRef.current || ({
         mode: 'EVENT',
         state: 'IDLE',
         remainingSeconds: 86400,
         eventRemainingSeconds: 0
-      } as TimerSnapshot;
+      } as TimerSnapshot);
 
       if (isMountedRef.current) {
-        // High-frequency update ensures smooth one-second decrements
-        emitSnapshot(buildLiveSnapshot(base));
+        const live = buildLiveSnapshot(base);
+        
+        // Only emit if something meaningful changed to avoid render thrashes
+        const hasChanged = 
+          live.eventRemainingSeconds !== lastEventSec || 
+          live.remainingSeconds !== lastChallengeSec ||
+          live.mode !== lastMode ||
+          live.state !== lastState;
+
+        if (hasChanged) {
+          emitSnapshot(live);
+          lastEventSec = live.eventRemainingSeconds;
+          lastChallengeSec = live.remainingSeconds;
+          lastMode = live.mode;
+          lastState = live.state;
+        }
       }
       animationFrameId = requestAnimationFrame(tick);
     };

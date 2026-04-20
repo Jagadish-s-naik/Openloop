@@ -187,7 +187,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
           marginBottom: '12px',
           textAlign: 'center',
         }}>
-          {timerMode === 'CHALLENGE' ? 'CHALLENGE TIMER LIVE' : 'EVENT COUNTDOWN TO APR 25 - 11:00 AM'}
+          {timerMode === 'CHALLENGE' ? 'CHALLENGE TIMER LIVE' : 'COUNTDOWN TO APR 25'}
         </div>
         <div style={{
           display: 'flex',

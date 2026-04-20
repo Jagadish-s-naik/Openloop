@@ -5,7 +5,7 @@ import { safeGetTimerSnapshot } from '../../../utils/timerClient';
 export const MobileHero: React.FC = () => {
   const initialEventSeconds = Math.max(
     0,
-    Math.ceil((new Date('2026-04-25T11:00:00+05:30').getTime() - Date.now()) / 1000)
+    Math.floor((new Date('2026-04-25T11:00:00+05:30').getTime() - Date.now()) / 1000)
   );
 
   const [eventTimeLeft, setEventTimeLeft] = useState(initialEventSeconds);
