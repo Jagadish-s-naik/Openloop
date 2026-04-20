@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  type TimerMode,
-} from '../utils/timerClient';
 import { useTimerSync } from '../hooks/useTimerSync';
 
 interface HeroOverlayProps {
