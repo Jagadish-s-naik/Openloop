@@ -16,28 +16,6 @@ export const MobileHero: React.FC = () => {
         </div>
       </div>
 
-      {/* Top Right Button */}
-      <Link 
-        to="/top-25 " 
-        className="cta-button" 
-        style={{ 
-          position: 'absolute', 
-          right: '20px', 
-          top: '20px', 
-          fontSize: '11px', 
-          padding: '8px 16px',
-          textDecoration: 'none',
-          background: '#C6FF00',
-          color: '#000',
-          fontWeight: 'bold',
-          borderRadius: '4px',
-          zIndex: 100,
-          boxShadow: '0 0 15px rgba(198, 255, 0, 0.3)'
-        }}
-      >
-        TOP 25
-      </Link>
-
       <div style={{ 
         zIndex: 2, 
         display: 'flex', 
@@ -49,8 +27,9 @@ export const MobileHero: React.FC = () => {
         width: '100%',
         paddingLeft: 'clamp(16px, 4vw, 24px)',
         paddingRight: 'clamp(16px, 4vw, 24px)',
-        marginTop: 'clamp(-30px, -5vh, -40px)' 
+        marginTop: 'clamp(-80px, -10vh, -100px)' 
       }}>
+        
         
         {/* Institution Logo */}
         <div style={{
@@ -126,6 +105,29 @@ export const MobileHero: React.FC = () => {
             <span className="num" style={{ fontSize: 'clamp(20px, 5vw, 28px)' }}>₹1.5L</span><span className="lbl" style={{ fontSize: 'clamp(7px, 1.8vw, 10px)' }}>PRIZES</span>
           </div>
         </div>
+
+        <Link 
+          to="/top-25" 
+          className="cta-button" 
+          style={{ 
+            fontSize: 'clamp(11px, 2.5vw, 13px)', 
+            padding: '10px 24px',
+            textDecoration: 'none',
+            background: '#C6FF00',
+            color: '#000',
+            fontWeight: 'bold',
+            borderRadius: '4px',
+            zIndex: 10,
+            marginTop: '10px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 0 15px rgba(198, 255, 0, 0.3)',
+            fontFamily: "'Share Tech Mono', monospace",
+          }}
+        >
+          TOP SELECTED 25
+        </Link>
       </div>
       <div style={{ 
         position: 'absolute', 

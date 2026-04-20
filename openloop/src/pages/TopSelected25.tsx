@@ -73,12 +73,19 @@ export const TopSelected25: React.FC = () => {
           TOP SELECTED 25
         </h1>
 
-        <div style={{
+        <div className="teams-grid" style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-          gap: '20px',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+          gap: 'clamp(10px, 3vw, 20px)',
           width: '100%'
         }}>
+          <style>{`
+            @media (max-width: 480px) {
+              .teams-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+              }
+            }
+          `}</style>
           {teams.map((team) => (
             <div 
               key={team.id}
@@ -86,7 +93,7 @@ export const TopSelected25: React.FC = () => {
                 background: 'rgba(20, 25, 15, 0.6)',
                 border: '1px solid rgba(198, 255, 0, 0.2)',
                 borderRadius: '8px',
-                padding: '24px',
+                padding: 'clamp(16px, 4vw, 24px)',
                 textAlign: 'center',
                 transition: 'all 0.3s ease',
                 backdropFilter: 'blur(10px)',

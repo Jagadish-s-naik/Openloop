@@ -276,12 +276,12 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
 
       {/* Top Right Desktop Button */}
       <Link 
-        to="/TopSelected25" 
+        to="/top-25" 
         className="cta-button" 
         style={{ 
           position: 'fixed', 
           right: '30px', 
-          top: '100px', 
+          top: '30px', 
           fontSize: '14px', 
           padding: '10px 24px',
           textDecoration: 'none',
