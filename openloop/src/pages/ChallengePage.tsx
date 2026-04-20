@@ -274,6 +274,9 @@ export const ChallengePage: React.FC = () => {
                   transition: 'color 0.5s, text-shadow 0.5s',
                   animation: fastForwarded ? 'fastForwardFlash 0.6s' : undefined,
                   maxWidth: '95vw',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
               >
                 {getTimeParts(timeLeft).join(' : ')}
