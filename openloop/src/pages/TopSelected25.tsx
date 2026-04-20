@@ -66,10 +66,14 @@ export const TopSelected25: React.FC = () => {
           {teams.map((team, index) => (
             <article key={team.id} className="team-card-item">
               <div className="team-card-meta">
-                <span className="team-id-pill">{team.id}</span>
+                <div className="team-id-block">
+                  <span className="team-field-label">TEAM ID</span>
+                  <span className="team-id-pill">{team.id}</span>
+                </div>
                 <span className="team-rank-pill">#{String(index + 1).padStart(2, '0')}</span>
               </div>
 
+              <span className="team-field-label team-name-field-label">TEAM NAME</span>
               <div className="team-name-text" title={team.name}>
                 {team.name}
               </div>

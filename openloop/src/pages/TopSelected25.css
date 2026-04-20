@@ -118,6 +118,26 @@
   z-index: 1;
 }
 
+.team-id-block {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-start;
+}
+
+.team-field-label {
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.team-name-field-label {
+  position: relative;
+  z-index: 1;
+  margin-top: 2px;
+}
+
 .team-id-pill,
 .team-rank-pill {
   display: inline-flex;
@@ -125,7 +145,7 @@
   justify-content: center;
   border-radius: 999px;
   padding: 4px 10px;
-  font-size: 11px;
+  font-size: 15px;
   line-height: 1;
   letter-spacing: 0.09em;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -344,6 +364,11 @@
   .team-rank-pill {
     font-size: 10px;
     padding: 4px 8px;
+  }
+
+  .team-field-label {
+    font-size: 8px;
+    letter-spacing: 0.15em;
   }
 
   .team-card-item {
