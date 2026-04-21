@@ -2,11 +2,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import './Preloader.css';
 
-interface PreloaderProps {
-  onComplete: () => void;
+export interface PreloaderProps {
+  onComplete?: () => void;
+  theme?: 'dark' | 'light';
+  duration?: number;
 }
 
-export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
+export const Preloader: React.FC<PreloaderProps> = ({ 
+  onComplete, 
+  theme = 'dark', 
+  duration = 2.0 
+}) => {
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
@@ -17,12 +23,14 @@ export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
-          gsap.to(containerRef.current, {
-            yPercent: -100, // Slide up seamlessly to reveal the website
-            duration: 0.8,
-            ease: "power3.inOut",
-            onComplete: onComplete
-          });
+          if (onComplete) {
+            gsap.to(containerRef.current, {
+              yPercent: -100, // Slide up seamlessly to reveal the website
+              duration: 0.8,
+              ease: "power3.inOut",
+              onComplete: onComplete
+            });
+          }
         }
       });
 
@@ -30,7 +38,7 @@ export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
       const pObj = { p: 0 };
       tl.to(pObj, {
         p: 100,
-        duration: 2.0,
+        duration: duration,
         ease: "power2.inOut",
         onUpdate: () => setProgress(Math.round(pObj.p))
       });
@@ -38,13 +46,13 @@ export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
       // Loader line extending
       gsap.fromTo(lineRef.current, 
         { scaleX: 0 },
-        { scaleX: 1, duration: 2.0, ease: "power2.inOut" }
+        { scaleX: 1, duration: duration, ease: "power2.inOut" }
       );
 
       // Text simple reveal
       gsap.fromTo(textRef.current,
         { opacity: 0, y: 15 },
-        { opacity: 1, y: 0, duration: 1.0, ease: "power2.out" }
+        { opacity: 1, y: 0, duration: Math.min(1.0, duration / 2), ease: "power2.out" }
       );
       
       // Minimal exit
@@ -59,10 +67,10 @@ export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
     });
 
     return () => ctx.revert();
-  }, [onComplete]);
+  }, [onComplete, duration]);
 
   return (
-    <div className="hq-preloader" ref={containerRef}>
+    <div className={`hq-preloader hq-preloader-${theme}`} ref={containerRef}>
       <div className="hq-preloader-content">
         <h1 className="hq-preloader-title" ref={textRef}>
           OPEN<span className="text-accent">LOOP</span>
