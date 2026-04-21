@@ -1,169 +1,181 @@
+/**
+ * timerClient.ts
+ *
+ * Implements the spec exactly:
+ *  - ONE API call on load (+ re-sync every 60s)
+ *  - Client computes remaining = target_timestamp - Date.now() locally via setInterval
+ *  - Clock skew: skew = server_time - Date.now() at fetch time, applied every tick
+ *  - BroadcastChannel for instant same-device cross-tab sync
+ *  - useTimer() hook for React components
+ */
+
 import { useState, useEffect } from 'react';
 
-export type SharedTimerState = 'IDLE' | 'RUNNING' | 'STOPPED';
-export type TimerMode = 'EVENT' | 'CHALLENGE';
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-export interface TimerSnapshot {
+export type TimerMode = 'EVENT' | 'CHALLENGE' | 'CHALLENGE_PAUSED';
+
+export interface TimerData {
+  target_timestamp: number;
+  server_time: number;
   mode: TimerMode;
-  state: SharedTimerState;
-  targetTimestamp: number;
-  serverTime: number;
 }
 
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+export const EVENT_TARGET_MS = new Date('2026-04-25T11:00:00+05:30').getTime();
+export const CHALLENGE_DURATION_MS = 24 * 60 * 60 * 1000;
+
 const API_PATH = '/api/timer';
-const EVENT_TARGET_MS = new Date('2026-04-25T11:00:00+05:30').getTime();
-const SYNC_CHANNEL_NAME = 'openloop-timer-sync';
+const BROADCAST_CHANNEL = 'openloop-timer-v2';
+const RESYNC_INTERVAL_MS = 60_000; // 60 seconds
 
-export const TOTAL_SECONDS = 24 * 60 * 60;
+// ─── Module-level shared state ────────────────────────────────────────────────
+// One fetch, shared across all hook instances in the same tab.
 
-// Global State
-let globalTargetTimestamp = EVENT_TARGET_MS;
-let globalMode: TimerMode = 'EVENT';
-let globalState: SharedTimerState = 'IDLE';
-let globalSkew = 0; // serverTime - localTime
-let listeners: Array<(snapshot: TimerSnapshot) => void> = [];
+let cachedData: TimerData = {
+  target_timestamp: EVENT_TARGET_MS,
+  server_time: Date.now(),
+  mode: 'EVENT',
+};
 
-const broadcast = typeof window !== 'undefined' ? new BroadcastChannel(SYNC_CHANNEL_NAME) : null;
+// Clock skew = server_time - local_time_at_fetch
+let skew = 0;
 
-if (broadcast) {
-  broadcast.onmessage = (event) => {
-    const data = event.data as TimerSnapshot;
-    updateGlobalState(data, false);
+// Subscribers
+type Listener = (data: TimerData) => void;
+let listeners: Set<Listener> = new Set();
+
+// BroadcastChannel for same-device cross-tab sync
+const bc = typeof window !== 'undefined' && 'BroadcastChannel' in window
+  ? new BroadcastChannel(BROADCAST_CHANNEL)
+  : null;
+
+if (bc) {
+  bc.onmessage = (event: MessageEvent<TimerData>) => {
+    applyData(event.data, false); // don't re-broadcast
   };
 }
 
-function updateGlobalState(snapshot: TimerSnapshot, shouldBroadcast = true) {
-  globalTargetTimestamp = snapshot.targetTimestamp;
-  globalMode = snapshot.mode;
-  globalState = snapshot.state;
-  globalSkew = snapshot.serverTime - Date.now();
-
-  if (shouldBroadcast && broadcast) {
-    broadcast.postMessage(snapshot);
-  }
-
-  listeners.forEach(l => l(snapshot));
+function applyData(data: TimerData, broadcast = true) {
+  cachedData = data;
+  // Skew calculated at the moment this data is received
+  skew = data.server_time - Date.now();
+  listeners.forEach(fn => fn(data));
+  if (broadcast && bc) bc.postMessage(data);
 }
 
-export const getTimerSnapshot = async (): Promise<TimerSnapshot> => {
-  const res = await fetch(API_PATH, { method: 'GET', cache: 'no-store' });
-  if (!res.ok) throw new Error(`Timer GET failed: ${res.status}`);
-  const snapshot = await res.json() as TimerSnapshot;
-  updateGlobalState(snapshot, true);
-  return snapshot;
-};
+// ─── API Functions ────────────────────────────────────────────────────────────
 
-export const safeGetTimerSnapshot = async (): Promise<TimerSnapshot> => {
+export async function fetchTimer(): Promise<TimerData> {
+  const res = await fetch(API_PATH, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`GET /api/timer failed: ${res.status}`);
+  const data: TimerData = await res.json();
+  applyData(data, true);
+  return data;
+}
+
+export async function safeFetchTimer(): Promise<TimerData> {
   try {
-    return await getTimerSnapshot();
+    return await fetchTimer();
   } catch {
-    const fallback: TimerSnapshot = {
-      mode: globalMode,
-      state: globalState,
-      targetTimestamp: globalTargetTimestamp,
-      serverTime: Date.now() + globalSkew
-    };
-    return fallback;
+    return cachedData;
   }
-};
+}
 
-const postAction = async (action: 'start' | 'stop' | 'reset' | 'fast-forward'): Promise<TimerSnapshot> => {
+async function postAction(action: string): Promise<TimerData> {
   const res = await fetch(API_PATH, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action }),
+    cache: 'no-store',
   });
+  if (!res.ok) throw new Error(`POST /api/timer failed: ${res.status}`);
+  const data: TimerData = await res.json();
+  applyData(data, true);
+  return data;
+}
 
-  if (!res.ok) throw new Error(`Timer action failed: ${res.status}`);
-  const snapshot = await res.json() as TimerSnapshot;
-  updateGlobalState(snapshot, true);
-  return snapshot;
-};
-
-export const startChallengeTimer = () => postAction('start');
-export const stopChallengeTimer = () => postAction('stop');
-export const resetChallengeTimer = () => postAction('reset');
+export const startChallengeTimer   = () => postAction('start');
+export const stopChallengeTimer    = () => postAction('stop');
+export const resumeChallengeTimer  = () => postAction('resume');
+export const resetChallengeTimer   = () => postAction('reset');
 export const fastForwardChallengeTimer = () => postAction('fast-forward');
 
-/**
- * useTimer Hook
- * 1. Synchronizes with server on mount.
- * 2. Re-syncs every 10 seconds (if active) or 60 seconds (if idle).
- * 3. Provides real-time remaining seconds based on local clock + skew.
- */
-export const useTimer = () => {
-  const [snapshot, setSnapshot] = useState<TimerSnapshot>({
-    mode: globalMode,
-    state: globalState,
-    targetTimestamp: globalTargetTimestamp,
-    serverTime: Date.now() + globalSkew
+// ─── Remaining time calculation ───────────────────────────────────────────────
+
+export function computeRemaining(data: TimerData): number {
+  // Apply skew correction: adjust target by the measured server-client offset
+  const correctedTarget = data.target_timestamp - skew;
+  return Math.max(0, Math.floor((correctedTarget - Date.now()) / 1000));
+}
+
+// ─── Module-level background sync ────────────────────────────────────────────
+// One setInterval at module level — not per hook instance. This is the ONLY
+// place we poll the server.
+
+let bgSyncStarted = false;
+
+function startBackgroundSync() {
+  if (bgSyncStarted || typeof window === 'undefined') return;
+  bgSyncStarted = true;
+
+  // Initial fetch
+  void safeFetchTimer();
+
+  // Re-sync every 60 seconds
+  setInterval(() => {
+    void safeFetchTimer();
+  }, RESYNC_INTERVAL_MS);
+
+  // Re-sync on tab focus
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      void safeFetchTimer();
+    }
   });
 
-  const [remaining, setRemaining] = useState(0);
+  window.addEventListener('focus', () => {
+    void safeFetchTimer();
+  });
+}
+
+// ─── React Hook ──────────────────────────────────────────────────────────────
+
+export function useTimer() {
+  const [data, setData] = useState<TimerData>(cachedData);
+  const [remaining, setRemaining] = useState(() => computeRemaining(cachedData));
 
   useEffect(() => {
-    const handler = (s: TimerSnapshot) => setSnapshot(s);
-    listeners.push(handler);
-
-    // Initial sync on mount
-    void safeGetTimerSnapshot();
-
-    // Smart background re-sync
-    const syncInterval = setInterval(() => {
-      // Poll faster if we are in a challenge, otherwise slower
-      const interval = globalMode === 'CHALLENGE' ? 10000 : 30000;
-      if (Date.now() % interval < 1000) {
-        void safeGetTimerSnapshot();
-      }
-    }, 1000);
-
-    // Re-sync on window focus / visibility change
-    const handleSync = () => {
-      if (document.visibilityState === 'visible') {
-        void safeGetTimerSnapshot();
-      }
-    };
-    window.addEventListener('focus', handleSync);
-    document.addEventListener('visibilitychange', handleSync);
+    // Register listener
+    listeners.add(setData);
+    // Kick off the background sync (idempotent)
+    startBackgroundSync();
 
     return () => {
-      listeners = listeners.filter(l => l !== handler);
-      clearInterval(syncInterval);
-      window.removeEventListener('focus', handleSync);
-      document.removeEventListener('visibilitychange', handleSync);
+      listeners.delete(setData);
     };
   }, []);
 
+  // Local tick — runs entirely in the browser, zero server involvement
   useEffect(() => {
-    // Local ticker (1s)
-    const tick = () => {
-      const now = Date.now();
-      
-      let diffSeconds = 0;
-      if (snapshot.mode === 'EVENT') {
-         // Standard event target
-         diffSeconds = Math.max(0, Math.floor((snapshot.targetTimestamp - (now + globalSkew)) / 1000));
-      } else {
-        if (snapshot.state === 'RUNNING') {
-          // Dynamic remaining calculation using authoritative skew
-          diffSeconds = Math.max(0, Math.floor((snapshot.targetTimestamp - (now + globalSkew)) / 1000));
-        } else {
-          // Fixed remaining time when stopped/idle
-          diffSeconds = Math.max(0, Math.floor((snapshot.targetTimestamp - snapshot.serverTime) / 1000));
-        }
-      }
-      setRemaining(diffSeconds);
-    };
+    const tick = () => setRemaining(computeRemaining(data));
+    tick(); // immediate
 
-    tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, [snapshot]);
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [data]);
+
+  // Helpers
+  const isChallenge = data.mode === 'CHALLENGE';
+  const isPaused    = data.mode === 'CHALLENGE_PAUSED';
 
   return {
-    remaining,
-    mode: snapshot.mode,
-    state: snapshot.state,
-    targetTimestamp: snapshot.targetTimestamp
+    remaining,      // seconds
+    mode: data.mode,
+    isChallenge,
+    isPaused,
+    isEvent: !isChallenge && !isPaused,
+    target_timestamp: data.target_timestamp,
   };
-};
+}

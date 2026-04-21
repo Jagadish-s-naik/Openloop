@@ -24,7 +24,9 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
 
   const handleMouseLeave = () => setMagneticPos({ x: 0, y: 0 });
 
-  const { remaining: timeLeft, mode: timerMode } = useTimer();
+  const { remaining, isChallenge } = useTimer();
+  const timerMode = isChallenge ? 'CHALLENGE' : 'EVENT';
+  const timeLeft  = remaining;
   const [hoveredTimerCard, setHoveredTimerCard] = useState<number | null>(null);
 
   const glassCardBase: React.CSSProperties = {

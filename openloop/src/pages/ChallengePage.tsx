@@ -3,132 +3,117 @@ import gsap from 'gsap';
 import { Square, RotateCcw, FastForward } from 'lucide-react';
 import {
   useTimer,
-  TOTAL_SECONDS,
-  fastForwardChallengeTimer,
-  resetChallengeTimer,
   startChallengeTimer,
   stopChallengeTimer,
+  resumeChallengeTimer,
+  resetChallengeTimer,
+  fastForwardChallengeTimer,
+  CHALLENGE_DURATION_MS,
 } from '../utils/timerClient';
-type TimerState = 'IDLE' | 'COUNTDOWN_321' | 'RUNNING' | 'STOPPED';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type UIState = 'IDLE' | 'COUNTDOWN_321' | 'RUNNING' | 'PAUSED';
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export const ChallengePage: React.FC = () => {
-  const { remaining,  state: serverTimerState } = useTimer();
-  const [localUIState, setLocalUIState] = useState<TimerState | null>(null);
+  const { remaining, mode, isChallenge, isPaused } = useTimer();
+
+  // Local UI-only state for the 3-2-1 splash before the server is notified
+  const [uiPhase, setUiPhase] = useState<UIState>('IDLE');
   const [countdown321, setCountdown321] = useState<number | null>(null);
-  const [timeLeft, setTimeLeft] = useState(TOTAL_SECONDS);
   const [fastForwarded, setFastForwarded] = useState(false);
-  
-  // Unified state: use local override (like 3-2-1) if present, else use server state
-  const currentState = localUIState || (serverTimerState as TimerState);
-  
   const [isCompactViewport, setIsCompactViewport] = useState(false);
-  
+
   const countdownRef = useRef<HTMLDivElement>(null);
   const spotlightRef = useRef<HTMLDivElement>(null);
 
-  // Mouse move for spotlight effect
+  // Derived: what to actually show
+  // While 3-2-1 is playing we stay on COUNTDOWN_321.
+  // Once the server confirms CHALLENGE mode, we move to RUNNING.
+  // If paused on server → PAUSED; otherwise IDLE.
+  const displayState: UIState = (() => {
+    if (uiPhase === 'COUNTDOWN_321') return 'COUNTDOWN_321';
+    if (isChallenge) return 'RUNNING';
+    if (isPaused)    return 'PAUSED';
+    return 'IDLE';
+  })();
+
+  // When the server transitions to CHALLENGE (after our start call), clear the local
+  // countdown phase so the timer display takes over.
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    if (uiPhase === 'COUNTDOWN_321' && isChallenge) {
+      setUiPhase('IDLE');
+      setCountdown321(null);
+    }
+  }, [isChallenge, uiPhase]);
+
+  // ── Viewport ──────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    const update = () =>
+      setIsCompactViewport(window.innerWidth <= 560 || window.innerHeight <= 740);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  // ── Spotlight ─────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
       if (spotlightRef.current) {
         gsap.to(spotlightRef.current, {
-          x: e.clientX,
-          y: e.clientY,
-          duration: 0.5,
-          ease: 'power2.out'
+          x: e.clientX, y: e.clientY,
+          duration: 0.5, ease: 'power2.out',
         });
       }
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', onMove);
+    return () => window.removeEventListener('mousemove', onMove);
   }, []);
 
-  // Compact mode for narrow/short screens to avoid overlap and clipping.
-  useEffect(() => {
-    const updateViewportMode = () => {
-      setIsCompactViewport(window.innerWidth <= 560 || window.innerHeight <= 740);
-    };
+  // ── 3-2-1 Countdown ───────────────────────────────────────────────────────
 
-    updateViewportMode();
-    window.addEventListener('resize', updateViewportMode);
-    return () => window.removeEventListener('resize', updateViewportMode);
-  }, []);
-
-  // Sync timeLeft from global remaining
   useEffect(() => {
-    if (localUIState !== 'COUNTDOWN_321') {
-      setTimeLeft(remaining);
-    }
-  }, [remaining, localUIState]);
+    if (uiPhase !== 'COUNTDOWN_321') return;
 
-  // 3-2-1 Countdown Logic
-  useEffect(() => {
-    if (localUIState === 'COUNTDOWN_321') {
-      let count = 3;
-      setCountdown321(count);
-      
-      const interval = setInterval(() => {
-        count -= 1;
-        if (count > 0) {
-          setCountdown321(count);
-          // Animation for number
-          if (countdownRef.current) {
-            gsap.fromTo(countdownRef.current, 
-              { scale: 0.5, opacity: 0 },
-              { scale: 1.5, opacity: 1, duration: 0.8, ease: 'power2.out' }
-            );
-          }
-        } else {
-          clearInterval(interval);
-          void startChallengeTimer();
-          // We don't null anything here yet; the useEffect below handles the handoff
+    let count = 3;
+    setCountdown321(count);
+
+    const id = setInterval(() => {
+      count -= 1;
+      if (count > 0) {
+        setCountdown321(count);
+        if (countdownRef.current) {
+          gsap.fromTo(countdownRef.current,
+            { scale: 0.5, opacity: 0 },
+            { scale: 1.5, opacity: 1, duration: 0.8, ease: 'power2.out' },
+          );
         }
-      }, 1000);
+      } else {
+        clearInterval(id);
+        setCountdown321(null);
+        // Fire the server call – the useEffect above will clear uiPhase once
+        // the server responds and isChallenge becomes true.
+        void startChallengeTimer();
+      }
+    }, 1000);
 
-      return () => clearInterval(interval);
-    }
-  }, [localUIState]);
+    return () => clearInterval(id);
+  }, [uiPhase]);
 
-  // Handle seamless handoff from local 3-2-1 to global RUNNING state
-  useEffect(() => {
-    if (localUIState === 'COUNTDOWN_321' && serverTimerState === 'RUNNING') {
-      setLocalUIState(null);
-      setCountdown321(null);
-    }
-  }, [serverTimerState, localUIState]);
+  // ── Handlers ──────────────────────────────────────────────────────────────
 
-  const isDimmed = currentState === 'RUNNING';
+  const handleStart = () => setUiPhase('COUNTDOWN_321');
 
-  const handleStart = () => {
-    setTimeLeft(TOTAL_SECONDS);
-    setLocalUIState('COUNTDOWN_321');
-  };
+  const handleStop  = () => { void stopChallengeTimer(); };
+  const handleResume = () => { void resumeChallengeTimer(); };
+  const handleReset = () => { void resetChallengeTimer(); };
 
-  const handleStop = async () => {
-    await stopChallengeTimer();
-  };
-
-  const handleReset = async () => {
-    await resetChallengeTimer();
-  };
-
-  const getTimeParts = (seconds: number) => {
-    const d = Math.floor(seconds / 86400);
-    const h = Math.floor((seconds % 86400) / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    return [d, h, m, s].map((v) => v.toString().padStart(2, '0'));
-  };
-
-  // Timer color logic
-  const getTimerColor = () => {
-    if (timeLeft <= 3600) return '#FF3B30'; // Red for last 1hr
-    if (timeLeft <= 5 * 3600) return '#FFA500'; // Orange for last 5hr
-    return currentState === 'RUNNING' ? '#C6FF00' : '#ffffff';
-  };
-
-  // Fast forward 1 hour
   const handleFastForward = () => {
-    if (currentState === 'RUNNING' && timeLeft > 3600) {
+    if (isChallenge && remaining > 3600) {
       void fastForwardChallengeTimer().then(() => {
         setFastForwarded(true);
         setTimeout(() => setFastForwarded(false), 600);
@@ -136,139 +121,135 @@ export const ChallengePage: React.FC = () => {
     }
   };
 
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  const getTimeParts = (seconds: number) => {
+    const d = Math.floor(seconds / 86400);
+    const h = Math.floor((seconds % 86400) / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return [d, h, m, s].map(v => String(v).padStart(2, '0'));
+  };
+
+  const getTimerColor = () => {
+    if (remaining <= 3600)     return '#FF3B30';
+    if (remaining <= 5 * 3600) return '#FFA500';
+    return isChallenge ? '#C6FF00' : '#ffffff';
+  };
+
+  const isDimmed = displayState === 'RUNNING';
+
+  // ── Render ────────────────────────────────────────────────────────────────
+
   return (
     <div style={containerStyle(isCompactViewport)}>
-      {/* Background Layer */}
+      {/* Background */}
       <div style={{
         ...backgroundStyle,
         opacity: isDimmed ? 0.95 : 0.8,
-        backgroundColor: isDimmed ? '#010400' : '#020600'
+        backgroundColor: isDimmed ? '#010400' : '#020600',
       }} />
 
-      {/* Spotlight Effect */}
-      <div 
+      {/* Spotlight */}
+      <div
         ref={spotlightRef}
         style={{
           ...spotlightStyle,
           display: isCompactViewport ? 'none' : 'block',
           opacity: isDimmed ? 0.4 : 0.1,
-        }} 
+        }}
       />
 
       <div style={contentStyle(isCompactViewport)}>
-        {currentState === 'IDLE' && (
+
+        {/* ── IDLE ── */}
+        {displayState === 'IDLE' && (
           <div style={centerBlockStyle}>
-             <h1
-               style={{
-                 ...titleStyle,
-                 fontSize: isCompactViewport ? 'clamp(24px, 7vw, 34px)' : titleStyle.fontSize,
-                 letterSpacing: isCompactViewport ? '0.05em' : titleStyle.letterSpacing,
-                 marginBottom: isCompactViewport ? 'clamp(16px, 5vw, 24px)' : titleStyle.marginBottom,
-               }}
-             >
-               24 HOUR CHALLENGE
-             </h1>
-             <button 
-                onClick={handleStart}
-                style={primaryButtonStyle}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = '0 0 30px #C6FF00';
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = '0 0 15px rgba(198, 255, 0, 0.4)';
-                    e.currentTarget.style.transform = 'scale(1)';
-                }}
-             >
-               START
-             </button>
+            <h1 style={{
+              ...titleStyle,
+              fontSize: isCompactViewport ? 'clamp(24px, 7vw, 34px)' : titleStyle.fontSize,
+              letterSpacing: isCompactViewport ? '0.05em' : titleStyle.letterSpacing,
+              marginBottom: isCompactViewport ? 'clamp(16px, 5vw, 24px)' : titleStyle.marginBottom,
+            }}>
+              24 HOUR CHALLENGE
+            </h1>
+            <button
+              onClick={handleStart}
+              style={primaryButtonStyle}
+              onMouseEnter={e => {
+                e.currentTarget.style.boxShadow = '0 0 30px #C6FF00';
+                e.currentTarget.style.transform = 'scale(1.05)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.boxShadow = '0 0 15px rgba(198, 255, 0, 0.4)';
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+            >
+              START
+            </button>
           </div>
         )}
 
-        {currentState === 'COUNTDOWN_321' && (
+        {/* ── 3-2-1 ── */}
+        {displayState === 'COUNTDOWN_321' && (
           <div ref={countdownRef} style={countdownNumberStyle}>
             {countdown321}
           </div>
         )}
 
-        {(currentState === 'RUNNING' || currentState === 'STOPPED') && (
+        {/* ── RUNNING ── */}
+        {displayState === 'RUNNING' && (
           <div style={centerBlockStyle}>
             {isCompactViewport ? (
-              // Mobile: 2x2 Grid Layout
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 'clamp(12px, 3vw, 20px)',
-                  textAlign: 'center',
-                  animation: fastForwarded ? 'fastForwardFlash 0.6s' : undefined,
-                }}
-              >
-                {getTimeParts(timeLeft).map((part, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: 'clamp(4px, 1.5vw, 8px)',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: 'clamp(10px, 2.5vw, 14px)',
-                        color: getTimerColor(),
-                        opacity: 0.7,
-                        letterSpacing: '0.05em',
-                        textTransform: 'uppercase',
-                      }}
-                    >
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: 'clamp(12px, 3vw, 20px)',
+                textAlign: 'center',
+                animation: fastForwarded ? 'fastForwardFlash 0.6s' : undefined,
+              }}>
+                {getTimeParts(remaining).map((part, idx) => (
+                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'clamp(4px, 1.5vw, 8px)' }}>
+                    <span style={{ fontSize: 'clamp(10px, 2.5vw, 14px)', color: getTimerColor(), opacity: 0.7, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                       {['Days', 'Hours', 'Minutes', 'Seconds'][idx]}
                     </span>
-                    <span
-                      style={{
-                        fontSize: 'clamp(32px, 10vw, 56px)',
-                        fontFamily: 'Share Tech Mono, monospace',
-                        fontWeight: 'bold',
-                        textShadow: currentState === 'RUNNING' ? `0 0 30px ${getTimerColor()}` : 'none',
-                        color: getTimerColor(),
-                        transition: 'color 0.5s, text-shadow 0.5s',
-                        lineHeight: 1,
-                      }}
-                    >
+                    <span style={{
+                      fontSize: 'clamp(32px, 10vw, 56px)',
+                      fontFamily: 'Share Tech Mono, monospace',
+                      fontWeight: 'bold',
+                      textShadow: `0 0 30px ${getTimerColor()}`,
+                      color: getTimerColor(),
+                      transition: 'color 0.5s, text-shadow 0.5s',
+                      lineHeight: 1,
+                    }}>
                       {part}
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              // Desktop: Single Line
-              <div
-                style={{
-                  ...timerTextStyle,
-                  textShadow: currentState === 'RUNNING' ? `0 0 30px ${getTimerColor()}` : 'none',
-                  color: getTimerColor(),
-                  transition: 'color 0.5s, text-shadow 0.5s',
-                  animation: fastForwarded ? 'fastForwardFlash 0.6s' : undefined,
-                  maxWidth: '95vw',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {getTimeParts(timeLeft).join(' : ')}
+              <div style={{
+                ...timerTextStyle,
+                textShadow: `0 0 30px ${getTimerColor()}`,
+                color: getTimerColor(),
+                transition: 'color 0.5s, text-shadow 0.5s',
+                animation: fastForwarded ? 'fastForwardFlash 0.6s' : undefined,
+                maxWidth: '95vw',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}>
+                {getTimeParts(remaining).join(' : ')}
               </div>
             )}
-            {/* Fast Forward Button (only show if more than 1hr left and running) */}
-            {currentState === 'RUNNING' && timeLeft > 3600 && (
+
+            {remaining > 3600 && (
               <button
                 onClick={handleFastForward}
                 style={{
                   ...secondaryButtonStyle,
                   marginTop: 'clamp(18px, 4vw, 32px)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
+                  display: 'flex', alignItems: 'center', gap: 8,
                   backgroundColor: '#222',
                   border: '1px solid #FFA500',
                   color: '#FFA500',
@@ -287,33 +268,39 @@ export const ChallengePage: React.FC = () => {
             )}
           </div>
         )}
+
+        {/* ── PAUSED ── */}
+        {displayState === 'PAUSED' && (
+          <div style={centerBlockStyle}>
+            <div style={{ ...timerTextStyle, color: '#888', maxWidth: '95vw' }}>
+              {getTimeParts(remaining).join(' : ')}
+            </div>
+            <p style={{ fontFamily: 'Share Tech Mono, monospace', color: 'rgba(255,255,255,0.5)', marginTop: 16 }}>
+              PAUSED
+            </p>
+            <button onClick={handleResume} style={{ ...primaryButtonStyle, marginTop: 24 }}>
+              RESUME
+            </button>
+          </div>
+        )}
+
       </div>
 
-      {/* Secret Control Icons in Corners */}
-      {(currentState === 'RUNNING' || currentState === 'STOPPED') && (
+      {/* ── Secret controls ── */}
+      {(displayState === 'RUNNING' || displayState === 'PAUSED') && (
         <>
-          <div 
-            onClick={handleStop}
-            style={secretIconStyle('bottom', 'right')}
-            title="S"
-          >
+          <div onClick={handleStop} style={secretIconStyle('bottom', 'right')} title="Stop">
             <Square size={8} />
           </div>
-
-          {currentState === 'STOPPED' && (
-            <div 
-              onClick={handleReset}
-              style={secretIconStyle('bottom', 'left')}
-              title="R"
-            >
+          {displayState === 'PAUSED' && (
+            <div onClick={handleReset} style={secretIconStyle('bottom', 'left')} title="Reset">
               <RotateCcw size={8} />
             </div>
           )}
         </>
       )}
 
-
-      {/* Decorative HUD elements */}
+      {/* ── HUD corners ── */}
       {!isCompactViewport && (
         <>
           <div style={cornerHUDStyle('top', 'left')} />
@@ -321,7 +308,7 @@ export const ChallengePage: React.FC = () => {
           <div style={cornerHUDStyle('bottom', 'left')} />
           <div style={cornerHUDStyle('bottom', 'right')} />
           <div style={systemLabelStyle}>
-            SYSTEM STATUS: {currentState} // LINK_SECURE
+            SYSTEM STATUS: {displayState} // LINK_SECURE
           </div>
         </>
       )}
@@ -329,8 +316,9 @@ export const ChallengePage: React.FC = () => {
   );
 };
 
-// Styles
-const containerStyle = (isCompactViewport: boolean): React.CSSProperties => ({
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
+const containerStyle = (compact: boolean): React.CSSProperties => ({
   width: '100%',
   minHeight: '100svh',
   backgroundColor: '#020600',
@@ -338,7 +326,7 @@ const containerStyle = (isCompactViewport: boolean): React.CSSProperties => ({
   justifyContent: 'center',
   alignItems: 'center',
   overflowX: 'hidden',
-  overflowY: isCompactViewport ? 'auto' : 'hidden',
+  overflowY: compact ? 'auto' : 'hidden',
   position: 'relative',
   color: '#fff',
   fontFamily: 'Inter, sans-serif',
@@ -366,7 +354,7 @@ const spotlightStyle: React.CSSProperties = {
   top: 0,
 };
 
-const contentStyle = (isCompactViewport: boolean): React.CSSProperties => ({
+const contentStyle = (compact: boolean): React.CSSProperties => ({
   position: 'relative',
   zIndex: 10,
   display: 'flex',
@@ -374,8 +362,8 @@ const contentStyle = (isCompactViewport: boolean): React.CSSProperties => ({
   alignItems: 'center',
   justifyContent: 'center',
   width: 'min(96vw, 1200px)',
-  minHeight: isCompactViewport ? '100svh' : undefined,
-  padding: isCompactViewport
+  minHeight: compact ? '100svh' : undefined,
+  padding: compact
     ? 'clamp(18px, 5vw, 28px) clamp(12px, 4vw, 18px) clamp(16px, 5vw, 26px)'
     : 'clamp(16px, 4vw, 40px)',
 });
@@ -464,41 +452,48 @@ const secretIconStyle = (v: 'top' | 'bottom', h: 'left' | 'right'): React.CSSPro
 });
 
 const cornerHUDStyle = (v: 'top' | 'bottom', h: 'left' | 'right'): React.CSSProperties => ({
-    position: 'absolute',
-    [v]: 'clamp(16px, 3.6vw, 40px)',
-    [h]: 'clamp(16px, 3.6vw, 40px)',
-    width: 'clamp(20px, 3vw, 30px)',
-    height: 'clamp(20px, 3vw, 30px)',
-    borderTop: v === 'top' ? '2px solid #C6FF00' : 'none',
-    borderBottom: v === 'bottom' ? '2px solid #C6FF00' : 'none',
-    borderLeft: h === 'left' ? '2px solid #C6FF00' : 'none',
-    borderRight: h === 'right' ? '2px solid #C6FF00' : 'none',
-    zIndex: 20,
-    opacity: 0.5,
+  position: 'absolute',
+  [v]: 'clamp(16px, 3.6vw, 40px)',
+  [h]: 'clamp(16px, 3.6vw, 40px)',
+  width: 'clamp(20px, 3vw, 30px)',
+  height: 'clamp(20px, 3vw, 30px)',
+  borderTop: v === 'top' ? '2px solid #C6FF00' : 'none',
+  borderBottom: v === 'bottom' ? '2px solid #C6FF00' : 'none',
+  borderLeft: h === 'left' ? '2px solid #C6FF00' : 'none',
+  borderRight: h === 'right' ? '2px solid #C6FF00' : 'none',
+  zIndex: 20,
+  opacity: 0.5,
 });
 
 const systemLabelStyle: React.CSSProperties = {
-    position: 'absolute',
+  position: 'absolute',
   bottom: 'clamp(14px, 4vw, 40px)',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    fontFamily: 'Share Tech Mono, monospace',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  fontFamily: 'Share Tech Mono, monospace',
   fontSize: 'clamp(9px, 2.2vw, 12px)',
-    color: 'rgba(198, 255, 0, 0.6)',
+  color: 'rgba(198, 255, 0, 0.6)',
   letterSpacing: 'clamp(0.8px, 0.4vw, 2px)',
-    zIndex: 20,
+  zIndex: 20,
   textAlign: 'center',
   width: 'min(92vw, 560px)',
 };
 
-
-// Keyframes for fast forward flash
-const styleSheet = document.createElement('style');
-styleSheet.innerHTML = `
-@keyframes fastForwardFlash {
-  0% { filter: brightness(1.5) drop-shadow(0 0 10px #FFA500); }
-  100% { filter: none; }
-}`;
-document.head.appendChild(styleSheet);
+// Keyframe injection (once)
+if (typeof document !== 'undefined' && !document.getElementById('challenge-kf')) {
+  const s = document.createElement('style');
+  s.id = 'challenge-kf';
+  s.innerHTML = `
+    @keyframes fastForwardFlash {
+      0%   { filter: brightness(1.5) drop-shadow(0 0 10px #FFA500); }
+      100% { filter: none; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: none; }
+    }
+  `;
+  document.head.appendChild(s);
+}
 
 export default ChallengePage;

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTimer } from '../../../utils/timerClient';
 
 export const MobileHero: React.FC = () => {
-  const { remaining: eventTimeLeft, mode } = useTimer();
+  const { remaining: eventTimeLeft, isChallenge } = useTimer();
 
   const formatEventTime = (seconds: number): string => {
     const clamped = Math.max(0, seconds);
@@ -130,7 +130,7 @@ export const MobileHero: React.FC = () => {
 
         <div className="mobile-hero-timer-wrap">
           <p className="mobile-hero-timer-label">
-            {mode === 'CHALLENGE' ? 'CHALLENGE TIMER LIVE' : 'TIME SHOWN FOR 25TH APRIL'}
+            {isChallenge ? 'CHALLENGE TIMER LIVE' : 'TIME SHOWN FOR 25TH APRIL'}
           </p>
           <p className="mobile-hero-timer-value">{formatEventTime(eventTimeLeft)}</p>
         </div>
