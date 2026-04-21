@@ -12,7 +12,7 @@ import {
 type TimerState = 'IDLE' | 'COUNTDOWN_321' | 'RUNNING' | 'STOPPED';
 
 export const ChallengePage: React.FC = () => {
-  const { remaining, mode, state: serverTimerState } = useTimer();
+  const { remaining,  state: serverTimerState } = useTimer();
   const [localUIState, setLocalUIState] = useState<TimerState | null>(null);
   const [countdown321, setCountdown321] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState(TOTAL_SECONDS);
