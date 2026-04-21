@@ -71,11 +71,11 @@
 }
 
 .hq-preloader-light .hq-preloader-bar-bg {
-  background: rgba(0, 0, 0, 0.1);
+  background: #000000;
 }
 
 .hq-preloader-light .hq-preloader-bar-fill {
-  background: #000;
+  background: #c6ff00;
   box-shadow: none;
 }
 

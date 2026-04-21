@@ -10,7 +10,7 @@ export default defineConfig({
         target: 'http://localhost:3000',
         changeOrigin: true,
         configure: (proxy, _options) => {
-          proxy.on('error', (err, req, res) => {
+          proxy.on('error', (_err, _req, res) => {
             // Silence the ECONNREFUSED error in the terminal when Vercel is not running locally.
             // Our frontend timerClient already handles the fallback gracefully.
             if ('writeHead' in res) {
