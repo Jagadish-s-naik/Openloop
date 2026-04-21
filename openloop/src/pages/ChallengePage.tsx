@@ -17,7 +17,7 @@ type UIState = 'IDLE' | 'COUNTDOWN_321' | 'RUNNING' | 'PAUSED';
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const ChallengePage: React.FC = () => {
-  const { remaining, isChallenge, isPaused } = useTimer();
+  const { remaining, isChallenge, isPaused, pausedRemaining } = useTimer();
 
   // Local UI-only state for the 3-2-1 splash before the server is notified
   const [uiPhase, setUiPhase] = useState<UIState>('IDLE');
@@ -38,6 +38,8 @@ export const ChallengePage: React.FC = () => {
     if (isPaused)    return 'PAUSED';
     return 'IDLE';
   })();
+
+  const activeRemaining = isPaused ? (pausedRemaining || 0) : remaining;
 
   // When the server transitions to CHALLENGE (after our start call), clear the local
   // countdown phase so the timer display takes over.
@@ -112,7 +114,7 @@ export const ChallengePage: React.FC = () => {
   const handleReset = () => { void resetChallengeTimer(); };
 
   const handleFastForward = () => {
-    if (isChallenge && remaining > 3600) {
+    if (isChallenge && activeRemaining > 3600) {
       void fastForwardChallengeTimer().then(() => {
         setFastForwarded(true);
         setTimeout(() => setFastForwarded(false), 600);
@@ -131,8 +133,9 @@ export const ChallengePage: React.FC = () => {
   };
 
   const getTimerColor = () => {
-    if (remaining <= 3600)     return '#FF3B30';
-    if (remaining <= 5 * 3600) return '#FFA500';
+    const val = isPaused ? (pausedRemaining || 0) : remaining;
+    if (val <= 3600)     return '#FF3B30';
+    if (val <= 5 * 3600) return '#FFA500';
     return isChallenge ? '#C6FF00' : '#ffffff';
   };
 
@@ -207,7 +210,7 @@ export const ChallengePage: React.FC = () => {
                 textAlign: 'center',
                 animation: fastForwarded ? 'fastForwardFlash 0.6s' : undefined,
               }}>
-                {getTimeParts(remaining).map((part, idx) => (
+                {getTimeParts(activeRemaining).map((part, idx) => (
                   <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'clamp(4px, 1.5vw, 8px)' }}>
                     <span style={{ fontSize: 'clamp(10px, 2.5vw, 14px)', color: getTimerColor(), opacity: 0.7, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                       {['Days', 'Hours', 'Minutes', 'Seconds'][idx]}
@@ -238,11 +241,11 @@ export const ChallengePage: React.FC = () => {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
               }}>
-                {getTimeParts(remaining).join(' : ')}
+                {getTimeParts(activeRemaining).join(' : ')}
               </div>
             )}
 
-            {remaining > 3600 && (
+            {activeRemaining > 3600 && (
               <button
                 onClick={handleFastForward}
                 style={{
@@ -272,7 +275,7 @@ export const ChallengePage: React.FC = () => {
         {displayState === 'PAUSED' && (
           <div style={centerBlockStyle}>
             <div style={{ ...timerTextStyle, color: '#888', maxWidth: '95vw' }}>
-              {getTimeParts(remaining).join(' : ')}
+              {getTimeParts(activeRemaining).join(' : ')}
             </div>
             <p style={{ fontFamily: 'Share Tech Mono, monospace', color: 'rgba(255,255,255,0.5)', marginTop: 16 }}>
               PAUSED

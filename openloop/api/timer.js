@@ -79,7 +79,8 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const state = await loadState();
     return res.status(200).json({
-      target_timestamp: state.target_timestamp,
+      target_timestamp: state.mode === 'CHALLENGE_PAUSED' ? EVENT_TARGET_MS : state.target_timestamp,
+      paused_remaining_ms: state.mode === 'CHALLENGE_PAUSED' ? state.remaining_ms : null,
       server_time: Date.now(),
       mode: state.mode,
     });
@@ -98,16 +99,20 @@ export default async function handler(req, res) {
         mode: 'CHALLENGE',
         target_timestamp: now + CHALLENGE_DURATION_MS,
       };
-    } else if (action === 'stop') {
-      // Freeze: store remaining as a past-epoch trick isn't needed.
-      // We set mode EVENT so hero reverts, and mark a stopped snapshot.
-      // But we need to keep the remaining time. We store target_timestamp
-      // as-is and a "paused_at" so resume works properly.
+    } else if (action === 'stop' || action === 'suspend') {
+      // User says "if i stop it want to go to the 25th april countdown"
+      // But "if i resume it want to show again... from that timing only"
+      // So we store the progress in CHALLENGE_PAUSED but the PUBLIC mode
+      // returned for Hero (if we want it to show Event) needs to be shifted.
+      
+      // Let's refine: 
+      // 'stop' -> Switch to CHALLENGE_PAUSED internally. 
+      // The client will decide what to show based on the mode.
       if (state.mode === 'CHALLENGE') {
         const remaining = Math.max(0, state.target_timestamp - now);
         state = {
           mode: 'CHALLENGE_PAUSED',
-          target_timestamp: state.target_timestamp, // keep for reference
+          target_timestamp: now + remaining,
           remaining_ms: remaining,
         };
       }
@@ -116,6 +121,12 @@ export default async function handler(req, res) {
         state = {
           mode: 'CHALLENGE',
           target_timestamp: now + (state.remaining_ms ?? CHALLENGE_DURATION_MS),
+        };
+      } else if (state.mode === 'EVENT') {
+        // If they resume from event, just start a new challenge
+        state = {
+          mode: 'CHALLENGE',
+          target_timestamp: now + CHALLENGE_DURATION_MS,
         };
       }
     } else if (action === 'reset') {
@@ -135,9 +146,10 @@ export default async function handler(req, res) {
     await saveState(state);
 
     return res.status(200).json({
-      target_timestamp: state.mode === 'CHALLENGE_PAUSED'
-        ? now + (state.remaining_ms ?? 0)   // show remaining for paused
+      target_timestamp: state.mode === 'CHALLENGE_PAUSED' 
+        ? EVENT_TARGET_MS  // Hero will see Event target
         : state.target_timestamp,
+      paused_remaining_ms: state.mode === 'CHALLENGE_PAUSED' ? state.remaining_ms : null,
       server_time: now,
       mode: state.mode,
     });
