@@ -1,32 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { safeGetTimerSnapshot } from '../../../utils/timerClient';
+import { useTimer } from '../../../utils/timerClient';
 
 export const MobileHero: React.FC = () => {
-  const initialEventSeconds = Math.max(
-    0,
-    Math.ceil((new Date('2026-04-25T11:00:00+05:30').getTime() - Date.now()) / 1000)
-  );
-
-  const [eventTimeLeft, setEventTimeLeft] = useState(initialEventSeconds);
-
-  useEffect(() => {
-    let active = true;
-
-    const sync = async () => {
-      const snapshot = await safeGetTimerSnapshot();
-      if (!active) return;
-      setEventTimeLeft(snapshot.eventRemainingSeconds);
-    };
-
-    void sync();
-    const interval = window.setInterval(sync, 1000);
-
-    return () => {
-      active = false;
-      clearInterval(interval);
-    };
-  }, []);
+  const { remaining: eventTimeLeft, mode } = useTimer();
 
   const formatEventTime = (seconds: number): string => {
     const clamped = Math.max(0, seconds);
@@ -152,7 +129,9 @@ export const MobileHero: React.FC = () => {
         </div>
 
         <div className="mobile-hero-timer-wrap">
-          <p className="mobile-hero-timer-label">TIME SHOWN FOR 25TH APRIL</p>
+          <p className="mobile-hero-timer-label">
+            {mode === 'CHALLENGE' ? 'CHALLENGE TIMER LIVE' : 'TIME SHOWN FOR 25TH APRIL'}
+          </p>
           <p className="mobile-hero-timer-value">{formatEventTime(eventTimeLeft)}</p>
         </div>
 

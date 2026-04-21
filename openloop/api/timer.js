@@ -11,8 +11,7 @@ const eventRemainingSeconds = () => clamp(Math.ceil((EVENT_TARGET_MS - Date.now(
 const defaultState = () => ({
   mode: 'EVENT',
   state: 'IDLE',
-  remainingSeconds: TOTAL_SECONDS,
-  endAtMs: null,
+  targetTimestamp: EVENT_TARGET_MS,
   updatedAt: Date.now(),
 });
 
@@ -58,8 +57,7 @@ const loadState = async () => {
     return {
       mode: parsed.mode === 'CHALLENGE' ? 'CHALLENGE' : 'EVENT',
       state: parsed.state === 'RUNNING' || parsed.state === 'STOPPED' ? parsed.state : 'IDLE',
-      remainingSeconds: clamp(isFiniteNumber(parsed.remainingSeconds) ? parsed.remainingSeconds : TOTAL_SECONDS, 0, TOTAL_SECONDS),
-      endAtMs: isFiniteNumber(parsed.endAtMs) ? parsed.endAtMs : null,
+      targetTimestamp: isFiniteNumber(parsed.targetTimestamp) ? parsed.targetTimestamp : (parsed.mode === 'CHALLENGE' ? Date.now() + TOTAL_SECONDS * 1000 : EVENT_TARGET_MS),
       updatedAt: isFiniteNumber(parsed.updatedAt) ? parsed.updatedAt : Date.now(),
     };
   } catch {
@@ -85,40 +83,26 @@ const normalizeState = (state) => {
       ...defaultState(),
       mode: 'EVENT',
       state: 'IDLE',
-      updatedAt: Date.now(),
-    };
-  }
-
-  if (state.state !== 'RUNNING' || !isFiniteNumber(state.endAtMs)) {
-    return {
-      ...state,
-      mode: 'CHALLENGE',
-      state: state.state === 'STOPPED' ? 'STOPPED' : 'IDLE',
-      endAtMs: null,
-      remainingSeconds: clamp(state.remainingSeconds, 0, TOTAL_SECONDS),
+      targetTimestamp: EVENT_TARGET_MS,
       updatedAt: Date.now(),
     };
   }
 
   const now = Date.now();
-  const remaining = clamp(Math.ceil((state.endAtMs - now) / 1000), 0, TOTAL_SECONDS);
-
-  if (remaining <= 0) {
-    return {
-      ...state,
-      mode: 'CHALLENGE',
-      state: 'STOPPED',
-      remainingSeconds: 0,
-      endAtMs: null,
-      updatedAt: now,
-    };
+  if (state.state === 'RUNNING') {
+    const remaining = state.targetTimestamp - now;
+    if (remaining <= 0) {
+      return {
+        ...state,
+        state: 'STOPPED',
+        targetTimestamp: now,
+        updatedAt: now,
+      };
+    }
   }
 
   return {
     ...state,
-    mode: 'CHALLENGE',
-    state: 'RUNNING',
-    remainingSeconds: remaining,
     updatedAt: now,
   };
 };
@@ -126,8 +110,8 @@ const normalizeState = (state) => {
 const toSnapshot = (state) => ({
   mode: state.mode,
   state: state.state,
-  remainingSeconds: state.remainingSeconds,
-  eventRemainingSeconds: eventRemainingSeconds(),
+  targetTimestamp: state.targetTimestamp,
+  serverTime: Date.now(),
 });
 
 export default async function handler(req, res) {
@@ -148,47 +132,40 @@ export default async function handler(req, res) {
     let next = current;
 
     if (action === 'start') {
-      const startFrom =
-        current.mode === 'CHALLENGE' && current.state === 'STOPPED' && current.remainingSeconds > 0
-          ? current.remainingSeconds
-          : TOTAL_SECONDS;
+      const startFromMs =
+        current.mode === 'CHALLENGE' && current.state === 'STOPPED' && (current.targetTimestamp - Date.now()) > 0
+          ? (current.targetTimestamp - Date.now())
+          : TOTAL_SECONDS * 1000;
 
       next = {
         mode: 'CHALLENGE',
         state: 'RUNNING',
-        remainingSeconds: startFrom,
-        endAtMs: Date.now() + startFrom * 1000,
+        targetTimestamp: Date.now() + startFromMs,
         updatedAt: Date.now(),
       };
     } else if (action === 'stop') {
-      const pausedRemaining =
-        current.mode === 'CHALLENGE' && current.state === 'RUNNING' && isFiniteNumber(current.endAtMs)
-          ? clamp(Math.ceil((current.endAtMs - Date.now()) / 1000), 0, TOTAL_SECONDS)
-          : clamp(current.remainingSeconds, 0, TOTAL_SECONDS);
+      const now = Date.now();
+      const remainingAtStop = current.state === 'RUNNING' ? Math.max(0, current.targetTimestamp - now) : (current.targetTimestamp - now);
 
       next = {
         mode: 'CHALLENGE',
         state: 'STOPPED',
-        remainingSeconds: pausedRemaining,
-        endAtMs: null,
-        updatedAt: Date.now(),
+        targetTimestamp: now + remainingAtStop,
+        updatedAt: now,
       };
     } else if (action === 'reset') {
       next = {
-        ...defaultState(),
         mode: 'EVENT',
         state: 'IDLE',
+        targetTimestamp: EVENT_TARGET_MS,
         updatedAt: Date.now(),
       };
     } else if (action === 'fast-forward') {
-      if (current.mode === 'CHALLENGE' && current.state === 'RUNNING' && isFiniteNumber(current.endAtMs)) {
-        const endAtMs = Math.max(Date.now(), current.endAtMs - 3600 * 1000);
-        const remaining = clamp(Math.ceil((endAtMs - Date.now()) / 1000), 0, TOTAL_SECONDS);
+      if (current.mode === 'CHALLENGE' && current.state === 'RUNNING') {
+        const nextTarget = current.targetTimestamp - 3600 * 1000;
         next = {
           ...current,
-          state: remaining === 0 ? 'STOPPED' : 'RUNNING',
-          remainingSeconds: remaining,
-          endAtMs: remaining === 0 ? null : endAtMs,
+          targetTimestamp: nextTarget,
           updatedAt: Date.now(),
         };
       }

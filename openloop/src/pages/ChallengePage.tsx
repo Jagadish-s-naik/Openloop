@@ -2,23 +2,25 @@ import React, { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { Square, RotateCcw, FastForward } from 'lucide-react';
 import {
+  useTimer,
   TOTAL_SECONDS,
   fastForwardChallengeTimer,
   resetChallengeTimer,
-  safeGetTimerSnapshot,
   startChallengeTimer,
   stopChallengeTimer,
 } from '../utils/timerClient';
-
 type TimerState = 'IDLE' | 'COUNTDOWN_321' | 'RUNNING' | 'STOPPED';
 
 export const ChallengePage: React.FC = () => {
-  const [state, setState] = useState<TimerState>('IDLE');
+  const { remaining, mode, state: serverTimerState } = useTimer();
+  const [localUIState, setLocalUIState] = useState<TimerState | null>(null);
   const [countdown321, setCountdown321] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState(TOTAL_SECONDS);
-  const [isDimmed, setIsDimmed] = useState(false);
-  // For fast-forward animation feedback
   const [fastForwarded, setFastForwarded] = useState(false);
+  
+  // Unified state: use local override (like 3-2-1) if present, else use server state
+  const currentState = localUIState || (serverTimerState as TimerState);
+  
   const [isCompactViewport, setIsCompactViewport] = useState(false);
   
   const countdownRef = useRef<HTMLDivElement>(null);
@@ -51,9 +53,16 @@ export const ChallengePage: React.FC = () => {
     return () => window.removeEventListener('resize', updateViewportMode);
   }, []);
 
+  // Sync timeLeft from global remaining
+  useEffect(() => {
+    if (localUIState !== 'COUNTDOWN_321') {
+      setTimeLeft(remaining);
+    }
+  }, [remaining, localUIState]);
+
   // 3-2-1 Countdown Logic
   useEffect(() => {
-    if (state === 'COUNTDOWN_321') {
+    if (localUIState === 'COUNTDOWN_321') {
       let count = 3;
       setCountdown321(count);
       
@@ -71,65 +80,29 @@ export const ChallengePage: React.FC = () => {
         } else {
           clearInterval(interval);
           setCountdown321(null);
-          void startChallengeTimer().then((snapshot) => {
-            setState(snapshot.state as TimerState);
-            setTimeLeft(snapshot.remainingSeconds);
-            setIsDimmed(true);
+          void startChallengeTimer().then(() => {
+            setLocalUIState(null);
           });
         }
       }, 1000);
 
       return () => clearInterval(interval);
     }
-  }, [state]);
+  }, [localUIState]);
 
-  // Keep challenge page synced with shared backend timer state.
-  useEffect(() => {
-    let active = true;
-
-    const sync = async () => {
-      if (state === 'COUNTDOWN_321') return;
-
-      const snapshot = await safeGetTimerSnapshot();
-      if (!active) return;
-
-      if (snapshot.mode === 'CHALLENGE') {
-        setTimeLeft(snapshot.remainingSeconds);
-        setState(snapshot.state as TimerState);
-      } else {
-        setTimeLeft(TOTAL_SECONDS);
-        setState('IDLE');
-      }
-    };
-
-    void sync();
-    const interval = window.setInterval(sync, 1000);
-
-    return () => {
-      active = false;
-      clearInterval(interval);
-    };
-  }, [state]);
-
-  useEffect(() => {
-    setIsDimmed(state === 'RUNNING');
-  }, [state]);
+  const isDimmed = currentState === 'RUNNING';
 
   const handleStart = () => {
     setTimeLeft(TOTAL_SECONDS);
-    setState('COUNTDOWN_321');
+    setLocalUIState('COUNTDOWN_321');
   };
 
   const handleStop = async () => {
-    const snapshot = await stopChallengeTimer();
-    setState(snapshot.state as TimerState);
-    setTimeLeft(snapshot.remainingSeconds);
+    await stopChallengeTimer();
   };
 
   const handleReset = async () => {
-    const snapshot = await resetChallengeTimer();
-    setState(snapshot.state as TimerState);
-    setTimeLeft(snapshot.remainingSeconds);
+    await resetChallengeTimer();
   };
 
   const getTimeParts = (seconds: number) => {
@@ -144,15 +117,13 @@ export const ChallengePage: React.FC = () => {
   const getTimerColor = () => {
     if (timeLeft <= 3600) return '#FF3B30'; // Red for last 1hr
     if (timeLeft <= 5 * 3600) return '#FFA500'; // Orange for last 5hr
-    return state === 'RUNNING' ? '#C6FF00' : '#ffffff';
+    return currentState === 'RUNNING' ? '#C6FF00' : '#ffffff';
   };
 
   // Fast forward 1 hour
   const handleFastForward = () => {
-    if (state === 'RUNNING' && timeLeft > 3600) {
-      void fastForwardChallengeTimer().then((snapshot) => {
-        setTimeLeft(snapshot.remainingSeconds);
-        setState(snapshot.state as TimerState);
+    if (currentState === 'RUNNING' && timeLeft > 3600) {
+      void fastForwardChallengeTimer().then(() => {
         setFastForwarded(true);
         setTimeout(() => setFastForwarded(false), 600);
       });
@@ -179,7 +150,7 @@ export const ChallengePage: React.FC = () => {
       />
 
       <div style={contentStyle(isCompactViewport)}>
-        {state === 'IDLE' && (
+        {currentState === 'IDLE' && (
           <div style={centerBlockStyle}>
              <h1
                style={{
@@ -208,13 +179,13 @@ export const ChallengePage: React.FC = () => {
           </div>
         )}
 
-        {state === 'COUNTDOWN_321' && (
+        {currentState === 'COUNTDOWN_321' && (
           <div ref={countdownRef} style={countdownNumberStyle}>
             {countdown321}
           </div>
         )}
 
-        {(state === 'RUNNING' || state === 'STOPPED') && (
+        {(currentState === 'RUNNING' || currentState === 'STOPPED') && (
           <div style={centerBlockStyle}>
             {isCompactViewport ? (
               // Mobile: 2x2 Grid Layout
@@ -253,7 +224,7 @@ export const ChallengePage: React.FC = () => {
                         fontSize: 'clamp(32px, 10vw, 56px)',
                         fontFamily: 'Share Tech Mono, monospace',
                         fontWeight: 'bold',
-                        textShadow: state === 'RUNNING' ? `0 0 30px ${getTimerColor()}` : 'none',
+                        textShadow: currentState === 'RUNNING' ? `0 0 30px ${getTimerColor()}` : 'none',
                         color: getTimerColor(),
                         transition: 'color 0.5s, text-shadow 0.5s',
                         lineHeight: 1,
@@ -269,7 +240,7 @@ export const ChallengePage: React.FC = () => {
               <div
                 style={{
                   ...timerTextStyle,
-                  textShadow: state === 'RUNNING' ? `0 0 30px ${getTimerColor()}` : 'none',
+                  textShadow: currentState === 'RUNNING' ? `0 0 30px ${getTimerColor()}` : 'none',
                   color: getTimerColor(),
                   transition: 'color 0.5s, text-shadow 0.5s',
                   animation: fastForwarded ? 'fastForwardFlash 0.6s' : undefined,
@@ -283,7 +254,7 @@ export const ChallengePage: React.FC = () => {
               </div>
             )}
             {/* Fast Forward Button (only show if more than 1hr left and running) */}
-            {state === 'RUNNING' && timeLeft > 3600 && (
+            {currentState === 'RUNNING' && timeLeft > 3600 && (
               <button
                 onClick={handleFastForward}
                 style={{
@@ -313,7 +284,7 @@ export const ChallengePage: React.FC = () => {
       </div>
 
       {/* Secret Control Icons in Corners */}
-      {(state === 'RUNNING' || state === 'STOPPED') && (
+      {(currentState === 'RUNNING' || currentState === 'STOPPED') && (
         <>
           <div 
             onClick={handleStop}
@@ -323,7 +294,7 @@ export const ChallengePage: React.FC = () => {
             <Square size={8} />
           </div>
 
-          {state === 'STOPPED' && (
+          {currentState === 'STOPPED' && (
             <div 
               onClick={handleReset}
               style={secretIconStyle('bottom', 'left')}
@@ -344,7 +315,7 @@ export const ChallengePage: React.FC = () => {
           <div style={cornerHUDStyle('bottom', 'left')} />
           <div style={cornerHUDStyle('bottom', 'right')} />
           <div style={systemLabelStyle}>
-            SYSTEM STATUS: {state} // LINK_SECURE
+            SYSTEM STATUS: {currentState} // LINK_SECURE
           </div>
         </>
       )}
