@@ -8,7 +8,6 @@ import {
   resumeChallengeTimer,
   resetChallengeTimer,
   fastForwardChallengeTimer,
-  CHALLENGE_DURATION_MS,
 } from '../utils/timerClient';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -18,7 +17,7 @@ type UIState = 'IDLE' | 'COUNTDOWN_321' | 'RUNNING' | 'PAUSED';
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const ChallengePage: React.FC = () => {
-  const { remaining, mode, isChallenge, isPaused } = useTimer();
+  const { remaining, isChallenge, isPaused } = useTimer();
 
   // Local UI-only state for the 3-2-1 splash before the server is notified
   const [uiPhase, setUiPhase] = useState<UIState>('IDLE');

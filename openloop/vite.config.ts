@@ -9,8 +9,16 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
-        // If vercel dev is not running, requests will fail gracefully
-        // and the timerClient fallback kicks in automatically.
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, req, res) => {
+            // Silence the ECONNREFUSED error in the terminal when Vercel is not running locally.
+            // Our frontend timerClient already handles the fallback gracefully.
+            if ('writeHead' in res) {
+              res.writeHead(500, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Proxy backend not running' }));
+            }
+          });
+        }
       }
     }
   },
