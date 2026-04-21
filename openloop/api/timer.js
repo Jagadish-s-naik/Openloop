@@ -1,207 +1,147 @@
-const TOTAL_SECONDS = 24 * 60 * 60;
+/**
+ * /api/timer
+ *
+ * Spec:
+ *   GET /api/timer
+ *     → { target_timestamp: number, server_time: number, mode: 'EVENT'|'CHALLENGE' }
+ *
+ *   POST /api/timer  { action: 'start' | 'stop' | 'reset' | 'fast-forward' }
+ *     → same shape, updated
+ *
+ * The server NEVER ticks. It stores only target_timestamp.
+ * Clients compute remaining = target_timestamp - Date.now() locally.
+ */
+
 const EVENT_TARGET_MS = new Date('2026-04-25T11:00:00+05:30').getTime();
-const TIMER_KEY = 'openloop:timer:state:v1';
+const CHALLENGE_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
+const STORE_KEY = 'openloop:timer:v2';
 
-const isFiniteNumber = (v) => typeof v === 'number' && Number.isFinite(v);
-
-const clamp = (v, min, max) => Math.min(max, Math.max(min, Math.floor(v)));
-
-const eventRemainingSeconds = () => clamp(Math.ceil((EVENT_TARGET_MS - Date.now()) / 1000), 0, 365 * 24 * 60 * 60);
-
-const defaultState = () => ({
-  mode: 'EVENT',
-  state: 'IDLE',
-  remainingSeconds: TOTAL_SECONDS,
-  endAtMs: null,
-  updatedAt: Date.now(),
-});
-
-const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
+// ─── Redis helpers (Upstash REST) ────────────────────────────────────────────
+const upstashUrl   = process.env.UPSTASH_REDIS_REST_URL;
 const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
-const memoryStoreKey = '__OPENLOOP_TIMER_STATE__';
+const MEM_KEY      = '__OPENLOOP_TIMER_V2__';
 
-const canUseRedis = () => Boolean(upstashUrl && upstashToken);
+const canRedis = () => Boolean(upstashUrl && upstashToken);
 
-const upstashFetch = async (path, options = {}) => {
-  const res = await fetch(`${upstashUrl}${path}`, {
-    ...options,
+async function redisGet() {
+  const res = await fetch(`${upstashUrl}/get/${STORE_KEY}`, {
+    headers: { Authorization: `Bearer ${upstashToken}` },
+    cache: 'no-store',
+  });
+  const j = await res.json();
+  return j?.result ?? null;
+}
+
+async function redisSet(value) {
+  await fetch(`${upstashUrl}/set/${STORE_KEY}`, {
+    method: 'POST',
     headers: {
       Authorization: `Bearer ${upstashToken}`,
       'Content-Type': 'application/json',
-      ...(options.headers || {}),
     },
+    body: JSON.stringify({ value }),
     cache: 'no-store',
   });
+}
 
-  if (!res.ok) {
-    throw new Error(`Upstash request failed: ${res.status}`);
-  }
-
-  return res.json();
-};
-
-const loadState = async () => {
-  if (!canUseRedis()) {
-    const memoryState = globalThis[memoryStoreKey];
-    return memoryState || defaultState();
-  }
-
-  const data = await upstashFetch(`/get/${TIMER_KEY}`);
-  const raw = data?.result;
-
-  if (!raw) {
-    return defaultState();
-  }
-
+// ─── Persistence: Redis (prod) or in-process memory (dev) ────────────────────
+async function loadState() {
   try {
-    const parsed = JSON.parse(raw);
-    return {
-      mode: parsed.mode === 'CHALLENGE' ? 'CHALLENGE' : 'EVENT',
-      state: parsed.state === 'RUNNING' || parsed.state === 'STOPPED' ? parsed.state : 'IDLE',
-      remainingSeconds: clamp(isFiniteNumber(parsed.remainingSeconds) ? parsed.remainingSeconds : TOTAL_SECONDS, 0, TOTAL_SECONDS),
-      endAtMs: isFiniteNumber(parsed.endAtMs) ? parsed.endAtMs : null,
-      updatedAt: isFiniteNumber(parsed.updatedAt) ? parsed.updatedAt : Date.now(),
-    };
+    if (canRedis()) {
+      const raw = await redisGet();
+      if (raw) return JSON.parse(raw);
+    } else {
+      if (globalThis[MEM_KEY]) return globalThis[MEM_KEY];
+    }
   } catch {
-    return defaultState();
+    // fall through to default
   }
-};
+  return { mode: 'EVENT', target_timestamp: EVENT_TARGET_MS };
+}
 
-const saveState = async (state) => {
-  if (!canUseRedis()) {
-    globalThis[memoryStoreKey] = state;
-    return;
-  }
-
-  await upstashFetch('/set', {
-    method: 'POST',
-    body: JSON.stringify([TIMER_KEY, JSON.stringify(state)]),
-  });
-};
-
-const normalizeState = (state) => {
-  if (state.mode !== 'CHALLENGE') {
-    return {
-      ...defaultState(),
-      mode: 'EVENT',
-      state: 'IDLE',
-      updatedAt: Date.now(),
-    };
-  }
-
-  if (state.state !== 'RUNNING' || !isFiniteNumber(state.endAtMs)) {
-    return {
-      ...state,
-      mode: 'CHALLENGE',
-      state: state.state === 'STOPPED' ? 'STOPPED' : 'IDLE',
-      endAtMs: null,
-      remainingSeconds: clamp(state.remainingSeconds, 0, TOTAL_SECONDS),
-      updatedAt: Date.now(),
-    };
-  }
-
-  const remaining = clamp(Math.ceil((state.endAtMs - Date.now()) / 1000), 0, TOTAL_SECONDS);
-
-  if (remaining === 0) {
-    return {
-      ...state,
-      mode: 'CHALLENGE',
-      state: 'STOPPED',
-      remainingSeconds: 0,
-      endAtMs: null,
-      updatedAt: Date.now(),
-    };
-  }
-
-  return {
-    ...state,
-    mode: 'CHALLENGE',
-    state: 'RUNNING',
-    remainingSeconds: remaining,
-    updatedAt: Date.now(),
-  };
-};
-
-const toSnapshot = (state) => ({
-  mode: state.mode,
-  state: state.state,
-  remainingSeconds: state.remainingSeconds,
-  eventRemainingSeconds: eventRemainingSeconds(),
-});
-
-export default async function handler(req, res) {
+async function saveState(state) {
   try {
-    if (req.method === 'GET') {
-      const current = normalizeState(await loadState());
-      await saveState(current);
-      return res.status(200).json(toSnapshot(current));
+    if (canRedis()) {
+      await redisSet(JSON.stringify(state));
+    } else {
+      globalThis[MEM_KEY] = state;
     }
+  } catch {
+    // best-effort
+  }
+}
 
-    if (req.method !== 'POST') {
-      return res.status(405).json({ error: 'Method not allowed' });
-    }
+// ─── Handler ─────────────────────────────────────────────────────────────────
+export default async function handler(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
 
-    const action = req.body?.action;
-    const current = normalizeState(await loadState());
+  // ── GET: return current state ──────────────────────────────────────────────
+  if (req.method === 'GET') {
+    const state = await loadState();
+    return res.status(200).json({
+      target_timestamp: state.target_timestamp,
+      server_time: Date.now(),
+      mode: state.mode,
+    });
+  }
 
-    let next = current;
+  // ── POST: mutate state ─────────────────────────────────────────────────────
+  if (req.method === 'POST') {
+    const { action } = req.body ?? {};
+    const now = Date.now();
+
+    let state = await loadState();
 
     if (action === 'start') {
-      const startFrom =
-        current.mode === 'CHALLENGE' && current.state === 'STOPPED' && current.remainingSeconds > 0
-          ? current.remainingSeconds
-          : TOTAL_SECONDS;
-
-      next = {
+      // Always reset to a fresh 24h window from now
+      state = {
         mode: 'CHALLENGE',
-        state: 'RUNNING',
-        remainingSeconds: startFrom,
-        endAtMs: Date.now() + startFrom * 1000,
-        updatedAt: Date.now(),
+        target_timestamp: now + CHALLENGE_DURATION_MS,
       };
     } else if (action === 'stop') {
-      const pausedRemaining =
-        current.mode === 'CHALLENGE' && current.state === 'RUNNING' && isFiniteNumber(current.endAtMs)
-          ? clamp(Math.ceil((current.endAtMs - Date.now()) / 1000), 0, TOTAL_SECONDS)
-          : clamp(current.remainingSeconds, 0, TOTAL_SECONDS);
-
-      next = {
-        mode: 'CHALLENGE',
-        state: 'STOPPED',
-        remainingSeconds: pausedRemaining,
-        endAtMs: null,
-        updatedAt: Date.now(),
-      };
+      // Freeze: store remaining as a past-epoch trick isn't needed.
+      // We set mode EVENT so hero reverts, and mark a stopped snapshot.
+      // But we need to keep the remaining time. We store target_timestamp
+      // as-is and a "paused_at" so resume works properly.
+      if (state.mode === 'CHALLENGE') {
+        const remaining = Math.max(0, state.target_timestamp - now);
+        state = {
+          mode: 'CHALLENGE_PAUSED',
+          target_timestamp: state.target_timestamp, // keep for reference
+          remaining_ms: remaining,
+        };
+      }
+    } else if (action === 'resume') {
+      if (state.mode === 'CHALLENGE_PAUSED') {
+        state = {
+          mode: 'CHALLENGE',
+          target_timestamp: now + (state.remaining_ms ?? CHALLENGE_DURATION_MS),
+        };
+      }
     } else if (action === 'reset') {
-      next = {
-        ...defaultState(),
-        mode: 'EVENT',
-        state: 'IDLE',
-        updatedAt: Date.now(),
-      };
+      state = { mode: 'EVENT', target_timestamp: EVENT_TARGET_MS };
     } else if (action === 'fast-forward') {
-      if (current.mode === 'CHALLENGE' && current.state === 'RUNNING' && isFiniteNumber(current.endAtMs)) {
-        const endAtMs = Math.max(Date.now(), current.endAtMs - 3600 * 1000);
-        const remaining = clamp(Math.ceil((endAtMs - Date.now()) / 1000), 0, TOTAL_SECONDS);
-        next = {
-          ...current,
-          state: remaining === 0 ? 'STOPPED' : 'RUNNING',
-          remainingSeconds: remaining,
-          endAtMs: remaining === 0 ? null : endAtMs,
-          updatedAt: Date.now(),
+      // Move target 1 hour closer
+      if (state.mode === 'CHALLENGE') {
+        state = {
+          ...state,
+          target_timestamp: Math.max(now, state.target_timestamp - 3_600_000),
         };
       }
     } else {
-      return res.status(400).json({ error: 'Unsupported action' });
+      return res.status(400).json({ error: 'Unknown action' });
     }
 
-    next = normalizeState(next);
-    await saveState(next);
-    return res.status(200).json(toSnapshot(next));
-  } catch (error) {
-    return res.status(500).json({
-      error: 'Timer service error',
-      message: error instanceof Error ? error.message : 'Unknown error',
+    await saveState(state);
+
+    return res.status(200).json({
+      target_timestamp: state.mode === 'CHALLENGE_PAUSED'
+        ? now + (state.remaining_ms ?? 0)   // show remaining for paused
+        : state.target_timestamp,
+      server_time: now,
+      mode: state.mode,
     });
   }
+
+  return res.status(405).json({ error: 'Method not allowed' });
 }

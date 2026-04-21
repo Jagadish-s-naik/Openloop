@@ -108,6 +108,7 @@ export const MobileNav: React.FC = () => {
             <Link
               key={i}
               to={item.path}
+              ref={el => { linksRef.current[i] = el; }}
               onClick={() => { toggleMenu(); }}
               className="mobile-nav-link"
               style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none' }}

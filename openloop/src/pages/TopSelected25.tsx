@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Building2, Gauge, Map, MapPin, Users, UsersRound } from 'lucide-react';
 import './TopSelected25.css';
 
 export const TopSelected25: React.FC = () => {
@@ -34,6 +34,15 @@ export const TopSelected25: React.FC = () => {
     { id: 'OL25', name: 'Kindle' },
   ];
 
+  const achievements = [
+    { value: '300+', label: 'Total participants', hint: 'Makers who joined OpenLoop', tone: '#7da2ff', icon: Users },
+    { value: '100+', label: 'Total teams', hint: 'Strong collaborative entries', tone: '#52ebff', icon: UsersRound },
+    { value: '100+', label: 'Total colleges', hint: 'Campuses represented', tone: '#ff6fa9', icon: Building2 },
+    { value: '14+', label: 'Total states', hint: 'Regional spread across India', tone: '#ffd88a', icon: Map },
+    { value: '58+', label: 'Total cities', hint: 'Urban and semi-urban participation', tone: '#d5b7ff', icon: MapPin },
+    { value: '70%', label: 'Completion rate', hint: 'Teams that shipped end-to-end', tone: '#e4ebff', icon: Gauge },
+  ];
+
   return (
     <div className="selected-page">
       {/* Background decoration */}
@@ -54,22 +63,80 @@ export const TopSelected25: React.FC = () => {
         <p className="selected-subtitle">Official shortlisted teams with Team ID and Team Name</p>
 
         <div className="teams-grid">
-          {teams.map((team) => (
+          {teams.map((team, index) => (
             <article key={team.id} className="team-card-item">
-              <div className="team-id-label">TEAM ID</div>
-              <div className="team-id-text">
-                {team.id}
+              <div className="team-card-meta">
+                <div className="team-id-block">
+                  <span className="team-field-label">TEAM ID</span>
+                  <span className="team-id-pill">{team.id}</span>
+                </div>
+                <span className="team-rank-pill">#{String(index + 1).padStart(2, '0')}</span>
               </div>
 
-              <div className="team-name-label">TEAM NAME</div>
+              <span className="team-field-label team-name-field-label">TEAM NAME</span>
               <div className="team-name-text" title={team.name}>
                 {team.name}
+              </div>
+
+              <div className="team-card-foot">
+                <span className="team-tag">SHORTLISTED TEAM</span>
               </div>
 
               <div className="team-card-corner" />
             </article>
           ))}
         </div>
+
+        <section className="achievements-section" aria-labelledby="registration-stats-title">
+          <div className="achievements-head">
+            <p className="achievements-kicker">HACKATHON ACHIEVEMENTS</p>
+            <h2 id="registration-stats-title" className="achievements-title">Registration Stats</h2>
+            <p className="achievements-subtitle">These numbers highlight the reach and impact of OpenLoop.</p>
+          </div>
+
+          <div className="achievements-highlight-strip">
+            <div className="achievements-highlight-item">
+              <span className="highlight-number">300+</span>
+              
+              <span className="highlight-label">Participants</span>
+            </div>
+            <div className="achievements-highlight-item">
+              <span className="highlight-number">120+</span>
+              <span className="highlight-label">Teams</span>
+            </div>
+            <div className="achievements-highlight-item">
+              <span className="highlight-number">100+</span>
+              <span className="highlight-label">Colleges</span>
+            </div>
+          </div>
+
+          <div className="achievements-body">
+            <p className="achievements-story">
+              OpenLoop attracted a strong multi-city, multi-campus community. With teams coming from 14 states and 58 cities,
+              the event built a wide innovation network beyond a single region.
+            </p>
+
+            <ul className="achievement-flow-list" aria-label="Detailed registration statistics">
+              {achievements.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <li
+                    key={item.label}
+                    className="achievement-flow-item"
+                    style={{ '--tone': item.tone } as React.CSSProperties}
+                  >
+                    <span className="achievement-flow-icon">
+                      <Icon size={16} />
+                    </span>
+                    <span className="achievement-flow-label">{item.label}</span>
+                    <span className="achievement-flow-value">{item.value}</span>
+                    <span className="achievement-flow-hint">{item.hint}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
       </div>
     </div>
   );

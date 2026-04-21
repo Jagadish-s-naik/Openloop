@@ -60,6 +60,33 @@
   text-transform: uppercase;
 }
 
+/* Light Theme */
+.hq-preloader-light {
+  background-color: #ffffff;
+  color: #050505;
+}
+
+.hq-preloader-light .hq-preloader-title {
+  text-shadow: none;
+}
+
+.hq-preloader-light .hq-preloader-bar-bg {
+  background: #000000;
+}
+
+.hq-preloader-light .hq-preloader-bar-fill {
+  background: #c6ff00;
+  box-shadow: none;
+}
+
+.hq-preloader-light .text-accent {
+  color: #000;
+}
+
+.hq-preloader-light .hq-preloader-sub {
+  color: rgba(0, 0, 0, 0.5);
+}
+
 /* Mobile Adjustments */
 @media (max-width: 768px) {
   .hq-preloader-title {

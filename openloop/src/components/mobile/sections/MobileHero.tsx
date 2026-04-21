@@ -1,9 +1,31 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTimer } from '../../../utils/timerClient';
 
 export const MobileHero: React.FC = () => {
+  const { remaining: eventTimeLeft, isChallenge } = useTimer();
+
+  const formatEventTime = (seconds: number): string => {
+    const clamped = Math.max(0, seconds);
+    const days = Math.floor(clamped / 86400);
+    const hours = Math.floor((clamped % 86400) / 3600);
+    const minutes = Math.floor((clamped % 3600) / 60);
+    const secs = clamped % 60;
+    return `${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+
   return (
-    <section id="hero" style={{ justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
+    <section
+      id="hero"
+      style={{
+        minHeight: '100svh',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: '10px',
+        paddingTop: '72px',
+        paddingBottom: '22px',
+      }}
+    >
       <div className="hero-cyber-grid-wrap">
         <div className="cyber-grid-plane" />
         <div className="cyber-grid-glow" />
@@ -22,12 +44,12 @@ export const MobileHero: React.FC = () => {
         flexDirection: 'column', 
         alignItems: 'center', 
         justifyContent: 'center',
-        gap: 'clamp(16px, 4vw, 24px)', 
+        gap: 'clamp(8px, 2.4vw, 14px)', 
         textAlign: 'center', 
         width: '100%',
         paddingLeft: 'clamp(16px, 4vw, 24px)',
         paddingRight: 'clamp(16px, 4vw, 24px)',
-        marginTop: 'clamp(-12px, -2vh, 6px)' 
+        marginTop: '0' 
       }}>
         
         
@@ -37,7 +59,7 @@ export const MobileHero: React.FC = () => {
           justifyContent: 'center',
           flexDirection:"column",
           width: '100%',
-          marginBottom: 'clamp(4px, 1vw, 12px)',
+          marginBottom: 'clamp(0px, 0.5vw, 6px)',
         }}>
           <div style={{
             borderRadius: '10px',
@@ -51,7 +73,7 @@ export const MobileHero: React.FC = () => {
               src="/yset.svg"
               alt="Yenepoya School of Engineering & Technology"
               style={{
-                height: 'clamp(35px, 10vw, 54px)',
+                height: 'clamp(30px, 8.5vw, 44px)',
                 width: 'auto',
                 maxWidth: '90%',
                 objectFit: 'contain',
@@ -69,10 +91,10 @@ export const MobileHero: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-          <span className="hero-title" style={{ opacity: 1, transform: 'none', display: 'block', fontSize: 'clamp(36px, 13vw, 84px)', lineHeight: 'clamp(0.9, 1vw, 1.2)' }}>
+          <span className="hero-title" style={{ opacity: 1, transform: 'none', display: 'block', fontSize: 'clamp(31px, 11vw, 64px)', lineHeight: '1' }}>
             <span style={{ backgroundImage: "linear-gradient(to bottom, #d9ed91, #8cef56)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", whiteSpace: 'nowrap' }}>OPEN LOOP</span>
           </span>
-          <span className="hero-year" style={{ opacity: 1, transform: 'none', display: 'block', marginTop: 'clamp(-6px, -1vw, -4px)', fontSize: 'clamp(20px, 7vw, 42px)', letterSpacing: '0.3em' }}>
+          <span className="hero-year" style={{ opacity: 1, transform: 'none', display: 'block', marginTop: 'clamp(-4px, -0.6vw, -2px)', fontSize: 'clamp(18px, 5.8vw, 34px)', letterSpacing: '0.24em' }}>
             2026
           </span>
         </div>
@@ -80,7 +102,7 @@ export const MobileHero: React.FC = () => {
         <div style={{ 
           background: 'rgba(198, 255, 0, 0.05)', 
           border: '1px solid rgba(198, 255, 0, 0.3)', 
-          padding: 'clamp(10px, 2vw, 14px) clamp(16px, 4vw, 28px)', 
+          padding: 'clamp(8px, 1.7vw, 12px) clamp(14px, 3.4vw, 22px)', 
           borderRadius: '4px',
           boxShadow: '0 4px 20px rgba(198, 255, 0, 0.1)',
           maxWidth: '90%'
@@ -90,20 +112,27 @@ export const MobileHero: React.FC = () => {
           </p>
         </div>
 
-        <p className="hero-sub" style={{ opacity: 1, transform: 'none', maxWidth: '95%', margin: '0 auto', fontSize: 'clamp(13px, 3vw, 16px)', lineHeight: '1.6', paddingLeft: '8px', paddingRight: '8px' }}>
+        <p className="hero-sub" style={{ opacity: 1, transform: 'none', maxWidth: '95%', margin: '0 auto', fontSize: 'clamp(12px, 2.6vw, 15px)', lineHeight: '1.5', paddingLeft: '8px', paddingRight: '8px' }}>
           24 hours. One chance.<br/>Redefine what's possible.
         </p>
 
-        <div className="hero-stats" style={{ opacity: 1, transform: 'none', justifyContent: 'center', flexWrap: 'wrap', gap: 'clamp(20px, 6vw, 32px)', margin: 'clamp(6px, 2vw, 12px) 0', width: '100%' }}>
+        <div className="hero-stats" style={{ opacity: 1, transform: 'none', justifyContent: 'center', flexWrap: 'wrap', gap: 'clamp(14px, 4.8vw, 24px)', margin: 'clamp(2px, 1vw, 8px) 0', width: '100%' }}>
           <div className="stat" style={{ alignItems: 'center' }}>
-            <span className="num" style={{ fontSize: 'clamp(20px, 5vw, 28px)' }}>20+</span><span className="lbl" style={{ fontSize: 'clamp(7px, 1.8vw, 10px)' }}>TEAMS</span>
+            <span className="num" style={{ fontSize: 'clamp(20px, 4.8vw, 25px)' }}>20+</span><span className="lbl" style={{ fontSize: 'clamp(7px, 1.7vw, 9px)' }}>TEAMS</span>
           </div>
           <div className="stat" style={{ alignItems: 'center' }}>
-            <span className="num" style={{ fontSize: 'clamp(20px, 5vw, 28px)' }}>24H</span><span className="lbl" style={{ fontSize: 'clamp(7px, 1.8vw, 10px)' }}>DURATION</span>
+            <span className="num" style={{ fontSize: 'clamp(20px, 4.8vw, 25px)' }}>24H</span><span className="lbl" style={{ fontSize: 'clamp(7px, 1.7vw, 9px)' }}>DURATION</span>
           </div>
           <div className="stat" style={{ alignItems: 'center' }}>
-            <span className="num" style={{ fontSize: 'clamp(20px, 5vw, 28px)' }}>₹1.5L</span><span className="lbl" style={{ fontSize: 'clamp(7px, 1.8vw, 10px)' }}>PRIZES</span>
+            <span className="num" style={{ fontSize: 'clamp(20px, 4.8vw, 25px)' }}>₹1.5L</span><span className="lbl" style={{ fontSize: 'clamp(7px, 1.7vw, 9px)' }}>PRIZES</span>
           </div>
+        </div>
+
+        <div className="mobile-hero-timer-wrap">
+          <p className="mobile-hero-timer-label">
+            {isChallenge ? 'CHALLENGE TIMER LIVE' : 'TIME SHOWN FOR 25TH APRIL'}
+          </p>
+          <p className="mobile-hero-timer-value">{formatEventTime(eventTimeLeft)}</p>
         </div>
 
         <Link 
@@ -111,7 +140,7 @@ export const MobileHero: React.FC = () => {
           className="top-25-mobile-button"
         >
           <span className="btn-shine"></span>
-          <span className="btn-text">TOP SELECTED 25</span>
+          <span className="btn-text">SHORTLISTED 25 TEAMS</span>
           <style>{`
             .top-25-mobile-button {
               position: relative;
@@ -119,9 +148,9 @@ export const MobileHero: React.FC = () => {
               color: #000;
               font-family: 'Share Tech Mono', monospace;
               font-weight: 950;
-              font-size: 15px;
-              padding: 14px 32px;
-              margin-top: 15px;
+              font-size: 13px;
+              padding: 12px 24px;
+              margin-top: 4px;
               border-radius: 6px;
               letter-spacing: 0.1em;
               text-transform: uppercase;
@@ -162,27 +191,15 @@ export const MobileHero: React.FC = () => {
             }
           `}</style>
         </Link>
-      </div>
-      <div style={{ 
-        position: 'absolute', 
-        bottom: 'clamp(20px, 4vh, 60px)',
-        left: '0', 
-        right: '0', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        gap: '24px',
-        zIndex: 5,
-        paddingLeft: 'clamp(16px, 4vw, 24px)',
-        paddingRight: 'clamp(16px, 4vw, 24px)'
-      }}>
+
         <div className="hero-buttons" style={{ 
           width: '100%',
-          maxWidth: '400px',
+          maxWidth: '420px',
           opacity: 1, 
           transform: 'none', 
           display: 'flex', 
-          gap: 'clamp(12px, 3vw, 16px)' 
+          gap: 'clamp(12px, 3vw, 16px)',
+          marginTop: '4px'
         }}>
           <a href="https://unstop.com/college-fests/openloop-26-yenepoya-school-of-engineering-and-technology-458231" target="_blank" rel="noopener noreferrer" className="btn-hero primary" style={{ flex: 1, padding: 'clamp(12px, 3vw, 16px) 0', fontSize: 'clamp(13px, 2.5vw, 15px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Register Now</a>
           <a href="https://drive.google.com/file/d/1_IM0WD6zowoyv9nopm2RbnwW2dUYwwBE/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="btn-hero outline" style={{ flex: 1, padding: 'clamp(12px, 3vw, 16px) 0', fontSize: 'clamp(13px, 2.5vw, 15px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Brochure</a>
