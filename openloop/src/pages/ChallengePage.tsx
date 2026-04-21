@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { Square, RotateCcw, FastForward } from 'lucide-react';
+import { Square, RotateCcw, Play } from 'lucide-react';
 import {
   useTimer,
   startChallengeTimer,
   stopChallengeTimer,
   resumeChallengeTimer,
   resetChallengeTimer,
-  fastForwardChallengeTimer,
 } from '../utils/timerClient';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -22,7 +21,6 @@ export const ChallengePage: React.FC = () => {
   // Local UI-only state for the 3-2-1 splash before the server is notified
   const [uiPhase, setUiPhase] = useState<UIState>('IDLE');
   const [countdown321, setCountdown321] = useState<number | null>(null);
-  const [fastForwarded, setFastForwarded] = useState(false);
   const [isCompactViewport, setIsCompactViewport] = useState(false);
 
   const countdownRef = useRef<HTMLDivElement>(null);
@@ -113,15 +111,6 @@ export const ChallengePage: React.FC = () => {
   const handleResume = () => { void resumeChallengeTimer(); };
   const handleReset = () => { void resetChallengeTimer(); };
 
-  const handleFastForward = () => {
-    if (isChallenge && activeRemaining > 3600) {
-      void fastForwardChallengeTimer().then(() => {
-        setFastForwarded(true);
-        setTimeout(() => setFastForwarded(false), 600);
-      });
-    }
-  };
-
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   const getTimeParts = (seconds: number) => {
@@ -208,7 +197,6 @@ export const ChallengePage: React.FC = () => {
                 gridTemplateColumns: '1fr 1fr',
                 gap: 'clamp(12px, 3vw, 20px)',
                 textAlign: 'center',
-                animation: fastForwarded ? 'fastForwardFlash 0.6s' : undefined,
               }}>
                 {getTimeParts(activeRemaining).map((part, idx) => (
                   <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'clamp(4px, 1.5vw, 8px)' }}>
@@ -235,7 +223,6 @@ export const ChallengePage: React.FC = () => {
                 textShadow: `0 0 30px ${getTimerColor()}`,
                 color: getTimerColor(),
                 transition: 'color 0.5s, text-shadow 0.5s',
-                animation: fastForwarded ? 'fastForwardFlash 0.6s' : undefined,
                 maxWidth: '95vw',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
@@ -243,30 +230,6 @@ export const ChallengePage: React.FC = () => {
               }}>
                 {getTimeParts(activeRemaining).join(' : ')}
               </div>
-            )}
-
-            {activeRemaining > 3600 && (
-              <button
-                onClick={handleFastForward}
-                style={{
-                  ...secondaryButtonStyle,
-                  marginTop: 'clamp(18px, 4vw, 32px)',
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  backgroundColor: '#222',
-                  border: '1px solid #FFA500',
-                  color: '#FFA500',
-                  boxShadow: '0 0 10px rgba(255,165,0,0.2)',
-                  fontWeight: 'bold',
-                  fontSize: 'clamp(12px, 3vw, 18px)',
-                  cursor: 'pointer',
-                  opacity: 0.85,
-                  transition: 'all 0.2s',
-                }}
-                title="Fast forward 1 hour"
-              >
-                <FastForward size={18} />
-                Fast Forward 1hr
-              </button>
             )}
           </div>
         )}
@@ -280,9 +243,6 @@ export const ChallengePage: React.FC = () => {
             <p style={{ fontFamily: 'Share Tech Mono, monospace', color: 'rgba(255,255,255,0.5)', marginTop: 16 }}>
               PAUSED
             </p>
-            <button onClick={handleResume} style={{ ...primaryButtonStyle, marginTop: 24 }}>
-              RESUME
-            </button>
           </div>
         )}
 
@@ -291,9 +251,15 @@ export const ChallengePage: React.FC = () => {
       {/* ── Secret controls ── */}
       {(displayState === 'RUNNING' || displayState === 'PAUSED') && (
         <>
-          <div onClick={handleStop} style={secretIconStyle('bottom', 'right')} title="Stop">
-            <Square size={8} />
-          </div>
+          {displayState === 'RUNNING' ? (
+            <div onClick={handleStop} style={secretIconStyle('bottom', 'right')} title="Stop">
+              <Square size={8} />
+            </div>
+          ) : (
+            <div onClick={handleResume} style={secretIconStyle('top', 'right')} title="Resume">
+              <Play size={8} />
+            </div>
+          )}
           {displayState === 'PAUSED' && (
             <div onClick={handleReset} style={secretIconStyle('bottom', 'left')} title="Reset">
               <RotateCcw size={8} />
@@ -422,20 +388,6 @@ const timerTextStyle: React.CSSProperties = {
   lineHeight: 1.06,
   textAlign: 'center',
   wordBreak: 'break-word',
-};
-
-const secondaryButtonStyle: React.CSSProperties = {
-  padding: 'clamp(10px, 2.4vw, 12px) clamp(18px, 4.6vw, 40px)',
-  fontSize: 'clamp(12px, 3vw, 16px)',
-  fontFamily: 'Share Tech Mono, monospace',
-  backgroundColor: 'transparent',
-  color: '#fff',
-  border: '1px solid rgba(255, 255, 255, 0.3)',
-  borderRadius: '4px',
-  cursor: 'pointer',
-  transition: 'all 0.3s ease',
-  letterSpacing: 'clamp(1px, 0.4vw, 2px)',
-  textTransform: 'uppercase',
 };
 
 const secretIconStyle = (v: 'top' | 'bottom', h: 'left' | 'right'): React.CSSProperties => ({
