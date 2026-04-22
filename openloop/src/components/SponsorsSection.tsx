@@ -14,7 +14,6 @@ const SPONSORS: Sponsor[] = [
   { name: "UnStop", tier: "Gold", logoImg: "/sponsors/image.png" },
   { name: "DK24", tier: "Gold", logoImg: "/sponsors/dk_24.png" },
   { name: "NXT WAVE", tier: "Gold", logoImg: "/sponsors/nxt_wave.png" },
-  { name: "Kalvium", tier: "Gold", logoImg: "/sponsors/kalvium.webp" },
   { name: "XYZ", tier: "Gold", logoImg: "/sponsors/xyz.webp" }, 
 ];
  
