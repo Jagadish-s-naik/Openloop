@@ -12,7 +12,7 @@ export default defineConfig({
         ws: true,
         rewrite: (path) => path,
         configure: (proxy, _options) => {
-          proxy.on('error', (err, _req, res) => {
+          proxy.on('error', (err: any, _req, res) => {
             // Check if it's a connection refused error
             if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
               if (res && 'writeHead' in res) {
