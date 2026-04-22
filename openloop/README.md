@@ -1,73 +1,83 @@
-# React + TypeScript + Vite
+# ⚡ OPEN LOOP 2026
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Open Loop 2026** is a premium, immersive hackathon landing page built for the Yenepoya School of Engineering & Technology. It features high-fidelity 3D graphics, intricate GSAP animations, and a real-time synchronized timer system.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ Tech Stack
 
-## React Compiler
+### Frontend
+- **Framework:** React 19 + TypeScript
+- **3D Graphics:** Three.js, React Three Fiber (R3F), Drei, Post-processing
+- **Animations:** GSAP 3 (ScrollTrigger), Lenis (Smooth Scroll)
+- **Routing:** React Router v7
+- **Icons:** Lucide React
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Backend & Deployment
+- **Platform:** Vercel (SPA with dynamic rewrites)
+- **API:** Node.js Serverless Functions (`/api/timer`)
+- **Database:** Upstash Redis (For real-time timer persistence)
+- **Dev Environment:** Vite 8 with intelligent error-masking proxy
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## ✨ Key Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 🤖 High-Fidelity 3D Hero
+- **Interactive Robot:** Custom glTF model ("Damaged Helmet") with dynamic camera rigging.
+- **Scroll-Linked Animations:** Robot rotation, scale, and position are seamlessly mapped to scroll progress using GSAP.
+- **Mouse Parallax:** Subtle 3D movement reacting to desktop cursor position.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 🕒 Advanced Timer System
+- **Dual Modes:** Pre-event countdown (Fixed: April 25, 2026) and 24-hour Challenge mode.
+- **Cross-Tab Sync:** Uses `BroadcastChannel` and REST API to ensure the timer is identical across every tab and device.
+- **State Persistence:** Upstash Redis backend ensures the challenge timer remains accurate even after page refreshes.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 📜 3D Timeline & Interactive Sections
+- **11-Event Schedule:** A 3D-rendered timeline mapping the journey from setup to the closing ceremony.
+- **Innovation Tracks:** Four distinct themes (Learning, Healthcare, FinTech, Open Innovation) with staggered card reveals.
+- **Magnetic UI:** Interactive elements with physics-based hover effects.
+
+### 📱 Perfect Mobile Experience
+- **Dedicated Components:** Not just responsive CSS—completely separate `MobileLayout` and `MobileNav` for touch-optimized performance.
+- **Dynamic Viewport Height:** Uses `svh` units to prevent layout jumps caused by mobile browser toolbars.
+
+---
+
+## 🏗️ Project Architecture
+
+```text
+src/
+├── components/
+│   ├── HeroScene.tsx         # 3D Robot & lighting environment
+│   ├── LoaderScene.tsx       # 3000-particle swarm effect
+│   ├── Timeline3D.tsx        # Scroll-synced schedule events
+│   ├── desktop/              # Desktop-specific layouts
+│   └── mobile/               # Mobile-specific sections & nav
+├── pages/
+│   ├── ChallengePage.tsx     # 24H hackathon timer dashboard
+│   ├── TopSelected25.tsx     # Team rankings & event statistics
+│   └── CrewMembers.tsx       # Team showcase (17+ members)
+├── hooks/
+│   ├── useScrollProgress.ts  # Normalizes [0,1] scroll state
+│   └── useIsMobile.ts        # Intelligent viewport detection
+└── utils/
+    └── timerClient.ts        # Global timer state & skew correction
+api/
+└── timer.js                  # Vercel Serverless Redis handler
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🎨 Design Philosophy
+- **Primary Theme:** Neon Green (`#C6FF00`) on Deep Void Black (`#020600`).
+- **Typography:** *Share Tech Mono* for a technical, high-precision aesthetic.
+- **Performance:** Lazy-loaded 3D assets and split vendor chunks (Three.js/GSAP) for fast initial paint.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+## 🚀 Live Environment
+- **URL Configuration:** Handled via `vercel.json` with SPA routing.
+- **API Endpoints:** Real-time state management at `/api/timer`.
+- **Shortlisted Teams:** Stats tracking for 300+ participants, 100+ colleges, and 14+ states.
+
