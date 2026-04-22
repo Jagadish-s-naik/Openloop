@@ -91,12 +91,19 @@ export function computeRemaining(data: TimerData): number {
 async function _apiGet(): Promise<TimerData | null> {
   // Simple check to avoid proxy errors in local dev when Vercel isn't running
   if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    // Only attempt real fetch if we can reasonably expect the server to be there
-    // For now, we allow the error but handle it silently to avoid UI noise
+    // We check if the server is likely there by looking at a global or just trying it
   }
   
   try {
-    const res = await fetch(API_PATH, { cache: 'no-store' });
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 2000); // Short timeout for local dev
+
+    const res = await fetch(API_PATH, { 
+      cache: 'no-store',
+      signal: controller.signal 
+    });
+    clearTimeout(id);
+
     if (!res.ok) return null;
     return (await res.json()) as TimerData;
   } catch (err) {
