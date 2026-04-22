@@ -13,8 +13,9 @@
 #mobile-root {
   background: var(--bg-void);
   color: var(--white);
-  min-height: 100vh;
+  min-height: 100svh;
   overflow-x: hidden;
+  position: relative;
 }
 
 /* Loader Styles */
@@ -169,11 +170,11 @@
 
 /* Hero Section */
 #hero {
-  min-height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 80px min(24px, 6vw) 40px;
+  justify-content: center;
+  padding: 64px min(24px, 6vw) 20px;
   position: relative;
   overflow: hidden;
   background: var(--bg-void);
@@ -349,9 +350,9 @@
 }
 
 .mobile-hero-timer-value {
-  margin: 0;
+  margin-bottom: 20px;
   font-family: 'Audiowide', sans-serif;
-  font-size: clamp(24px, 7.6vw, 36px);
+  font-size: clamp(28px, 7.6vw, 36px);
   line-height: 1.1;
   letter-spacing: 0.1em;
   color: #ffffff;

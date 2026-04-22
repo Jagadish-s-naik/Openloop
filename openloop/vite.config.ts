@@ -9,13 +9,20 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path,
         configure: (proxy, _options) => {
-          proxy.on('error', (_err, _req, res) => {
-            // Silence the ECONNREFUSED error in the terminal when Vercel is not running locally.
-            // Our frontend timerClient already handles the fallback gracefully.
-            if ('writeHead' in res) {
-              res.writeHead(500, { 'Content-Type': 'application/json' });
-              res.end(JSON.stringify({ error: 'Proxy backend not running' }));
+          proxy.on('error', (err: any, _req, res) => {
+            // Check if it's a connection refused error
+            if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
+              if (res && 'writeHead' in res) {
+                res.writeHead(502, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ 
+                  error: 'Proxy backend not running', 
+                  message: 'Local development server not detected. Using client-side fallback.' 
+                }));
+              }
+              return; // Prevent Vite from logging the error to terminal
             }
           });
         }

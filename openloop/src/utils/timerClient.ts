@@ -19,6 +19,7 @@ export interface TimerData {
   target_timestamp: number;
   server_time: number;
   mode: TimerMode;
+  paused_remaining_ms?: number | null;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -69,16 +70,18 @@ function _apply(data: TimerData, broadcast = true) {
 // ─── Remaining time calculation ───────────────────────────────────────────────
 
 export function computeRemaining(data: TimerData): number {
-  // If the timer is paused, the server returns target_timestamp = server_time + remaining
-  // This means the remaining time is simply target_timestamp - server_time.
-  // We do not want it to keep ticking against Date.now()!
-  if (data.mode === 'CHALLENGE_PAUSED') {
-    return Math.max(0, Math.floor((data.target_timestamp - data.server_time) / 1000));
-  }
+  // If we are in ChallengePage, we might want to show the paused time.
+  // BUT the Hero Section should show the event target if mode is CHALLENGE_PAUSED.
+  // The logic in api/timer.js already returns EVENT_TARGET_MS as target_timestamp
+  // when mode is CHALLENGE_PAUSED.
 
-  // Otherwise, timer is running.
-  // Apply skew: if server clock is ahead of local clock, skew > 0
-  // correctedNow is the "true" current time
+  // If we have paused_remaining_ms and we're NOT in the hero (who just uses target_timestamp),
+  // we can use it. However, computeRemaining is generic.
+  
+  // Logic: 
+  // 1. If mode is CHALLENGE_PAUSED, computeRemaining returns the EVENT countdown.
+  // 2. We'll add a new property to useTimer to get the paused challenge time specifically.
+
   const correctedNow = Date.now() + skew;
   return Math.max(0, Math.floor((data.target_timestamp - correctedNow) / 1000));
 }
@@ -86,11 +89,25 @@ export function computeRemaining(data: TimerData): number {
 // ─── API helpers (with local fallbacks) ──────────────────────────────────────
 
 async function _apiGet(): Promise<TimerData | null> {
+  // Simple check to avoid proxy errors in local dev when Vercel isn't running
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    // We check if the server is likely there by looking at a global or just trying it
+  }
+  
   try {
-    const res = await fetch(API_PATH, { cache: 'no-store' });
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 2000); // Short timeout for local dev
+
+    const res = await fetch(API_PATH, { 
+      cache: 'no-store',
+      signal: controller.signal 
+    });
+    clearTimeout(id);
+
     if (!res.ok) return null;
     return (await res.json()) as TimerData;
-  } catch {
+  } catch (err) {
+    // Silently fail and use client fallback
     return null;
   }
 }
@@ -105,7 +122,8 @@ async function _apiPost(action: string): Promise<TimerData | null> {
     });
     if (!res.ok) return null;
     return (await res.json()) as TimerData;
-  } catch {
+  } catch (err) {
+    // Silently fail and use client fallback
     return null;
   }
 }
@@ -137,11 +155,15 @@ export async function startChallengeTimer(): Promise<void> {
 
 export async function stopChallengeTimer(): Promise<void> {
   const now = Date.now();
-  const remaining = Math.max(0, cachedData.target_timestamp - now - skew * 1000);
+  // Guess remaining
+  const correctedNow = now + skew;
+  const remaining = Math.max(0, cachedData.target_timestamp - correctedNow);
+  
   const optimistic: TimerData = {
     mode: 'CHALLENGE_PAUSED',
-    target_timestamp: now + remaining,
+    target_timestamp: EVENT_TARGET_MS,
     server_time: now,
+    paused_remaining_ms: remaining,
   };
   _apply(optimistic, true);
 
@@ -151,8 +173,8 @@ export async function stopChallengeTimer(): Promise<void> {
 
 export async function resumeChallengeTimer(): Promise<void> {
   const now = Date.now();
-  // Compute leftover time from paused snapshot
-  const remaining = Math.max(0, cachedData.target_timestamp - now);
+  // Use stored paused time if available
+  const remaining = cachedData.paused_remaining_ms || CHALLENGE_DURATION_MS;
   const optimistic: TimerData = {
     mode: 'CHALLENGE',
     target_timestamp: now + remaining,
@@ -241,5 +263,6 @@ export function useTimer() {
     isChallenge: data.mode === 'CHALLENGE',
     isPaused:    data.mode === 'CHALLENGE_PAUSED',
     isEvent:     data.mode === 'EVENT',
+    pausedRemaining: data.paused_remaining_ms ? Math.floor(data.paused_remaining_ms / 1000) : 0,
   };
 }
