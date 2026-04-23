@@ -155,11 +155,14 @@ export async function startChallengeTimer(): Promise<void> {
 
 export async function stopChallengeTimer(): Promise<void> {
   const now = Date.now();
+  const correctedNow = now + skew;
+  const remaining = Math.max(0, cachedData.target_timestamp - correctedNow);
   
   const optimistic: TimerData = {
-    mode: 'EVENT',
+    mode: 'CHALLENGE_PAUSED',
     target_timestamp: EVENT_TARGET_MS,
     server_time: now,
+    paused_remaining_ms: remaining,
   };
   _apply(optimistic, true);
 

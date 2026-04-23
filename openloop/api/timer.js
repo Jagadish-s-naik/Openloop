@@ -105,11 +105,14 @@ export default async function handler(req, res) {
         target_timestamp: now + CHALLENGE_DURATION_MS,
       };
     } else if (action === 'stop' || action === 'suspend') {
-      // User requested: "if i stop there it want to return to normal 25th april timer"
-      state = {
-        mode: 'EVENT',
-        target_timestamp: EVENT_TARGET_MS,
-      };
+      if (state.mode === 'CHALLENGE') {
+        const remaining = Math.max(0, state.target_timestamp - now);
+        state = {
+          mode: 'CHALLENGE_PAUSED',
+          target_timestamp: now + remaining,
+          remaining_ms: remaining,
+        };
+      }
     } else if (action === 'resume') {
       if (state.mode === 'CHALLENGE_PAUSED') {
         state = {
