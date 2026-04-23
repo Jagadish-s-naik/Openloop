@@ -79,7 +79,7 @@ export const Preloader: React.FC<PreloaderProps> = ({
           <div className="hq-preloader-bar-fill" ref={lineRef}></div>
         </div>
         <div className="hq-preloader-sub" ref={subTextRef}>
-          LOADING SYSTEM... {progress}%
+          LOADING ... {progress}%
         </div>
       </div>
     </div>

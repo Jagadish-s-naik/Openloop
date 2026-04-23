@@ -46,17 +46,22 @@ async function redisSet(value) {
 
 // ─── Persistence: Redis (prod) or in-process memory (dev) ────────────────────
 async function loadState() {
+  let state = null;
   try {
     if (canRedis()) {
       const raw = await redisGet();
-      if (raw) return JSON.parse(raw);
+      if (raw) state = JSON.parse(raw);
     } else {
-      if (globalThis[MEM_KEY]) return globalThis[MEM_KEY];
+      if (globalThis[MEM_KEY]) state = globalThis[MEM_KEY];
     }
   } catch {
     // fall through to default
   }
-  return { mode: 'EVENT', target_timestamp: EVENT_TARGET_MS };
+  
+  if (!state || typeof state.target_timestamp !== 'number' || isNaN(state.target_timestamp)) {
+    return { mode: 'EVENT', target_timestamp: EVENT_TARGET_MS };
+  }
+  return state;
 }
 
 async function saveState(state) {
@@ -100,22 +105,11 @@ export default async function handler(req, res) {
         target_timestamp: now + CHALLENGE_DURATION_MS,
       };
     } else if (action === 'stop' || action === 'suspend') {
-      // User says "if i stop it want to go to the 25th april countdown"
-      // But "if i resume it want to show again... from that timing only"
-      // So we store the progress in CHALLENGE_PAUSED but the PUBLIC mode
-      // returned for Hero (if we want it to show Event) needs to be shifted.
-      
-      // Let's refine: 
-      // 'stop' -> Switch to CHALLENGE_PAUSED internally. 
-      // The client will decide what to show based on the mode.
-      if (state.mode === 'CHALLENGE') {
-        const remaining = Math.max(0, state.target_timestamp - now);
-        state = {
-          mode: 'CHALLENGE_PAUSED',
-          target_timestamp: now + remaining,
-          remaining_ms: remaining,
-        };
-      }
+      // User requested: "if i stop there it want to return to normal 25th april timer"
+      state = {
+        mode: 'EVENT',
+        target_timestamp: EVENT_TARGET_MS,
+      };
     } else if (action === 'resume') {
       if (state.mode === 'CHALLENGE_PAUSED') {
         state = {
