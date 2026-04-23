@@ -35,11 +35,11 @@ export const TopSelected25: React.FC = () => {
   ];
 
   const achievements = [
-    { value: '300+', label: 'Total participants', hint: 'Makers who joined OpenLoop', tone: '#7da2ff', icon: Users },
-    { value: '100+', label: 'Total teams', hint: 'Strong collaborative entries', tone: '#52ebff', icon: UsersRound },
-    { value: '100+', label: 'Total colleges', hint: 'Campuses represented', tone: '#ff6fa9', icon: Building2 },
-    { value: '14+', label: 'Total states', hint: 'Regional spread across India', tone: '#ffd88a', icon: Map },
-    { value: '58+', label: 'Total cities', hint: 'Urban and semi-urban participation', tone: '#d5b7ff', icon: MapPin },
+    { value: '309', label: 'Total participants', hint: 'Makers who joined OpenLoop', tone: '#7da2ff', icon: Users },
+    { value: '121', label: 'Total teams', hint: 'Strong collaborative entries', tone: '#52ebff', icon: UsersRound },
+    { value: '109', label: 'Total colleges', hint: 'Campuses represented', tone: '#ff6fa9', icon: Building2 },
+    { value: '14', label: 'Total states', hint: 'Regional spread across India', tone: '#ffd88a', icon: Map },
+    { value: '58', label: 'Total cities', hint: 'Urban and semi-urban participation', tone: '#d5b7ff', icon: MapPin },
     { value: '70%', label: 'Completion rate', hint: 'Teams that shipped end-to-end', tone: '#e4ebff', icon: Gauge },
   ];
 
