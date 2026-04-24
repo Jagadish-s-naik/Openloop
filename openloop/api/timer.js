@@ -25,24 +25,36 @@ const MEM_KEY      = '__OPENLOOP_TIMER_V2__';
 const canRedis = () => Boolean(upstashUrl && upstashToken);
 
 async function redisGet() {
-  const res = await fetch(`${upstashUrl}/get/${STORE_KEY}`, {
-    headers: { Authorization: `Bearer ${upstashToken}` },
-    cache: 'no-store',
-  });
-  const j = await res.json();
-  return j?.result ?? null;
+  try {
+    const res = await fetch(upstashUrl, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${upstashToken}` },
+      body: JSON.stringify(['GET', STORE_KEY]),
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    const j = await res.json();
+    return j?.result ?? null;
+  } catch (e) {
+    console.error('[Redis] GET failed:', e);
+    return null;
+  }
 }
 
 async function redisSet(value) {
-  await fetch(`${upstashUrl}/set/${STORE_KEY}`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${upstashToken}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ value }),
-    cache: 'no-store',
-  });
+  try {
+    const res = await fetch(upstashUrl, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${upstashToken}` },
+      body: JSON.stringify(['SET', STORE_KEY, value]),
+      cache: 'no-store',
+    });
+    if (!res.ok) {
+      console.error('[Redis] SET failed with status:', res.status);
+    }
+  } catch (e) {
+    console.error('[Redis] SET error:', e);
+  }
 }
 
 // ─── Persistence: Redis (prod) or in-process memory (dev) ────────────────────
@@ -51,15 +63,27 @@ async function loadState() {
   try {
     if (canRedis()) {
       const raw = await redisGet();
-      if (raw) state = JSON.parse(raw);
-    } else {
-      if (globalThis[MEM_KEY]) state = globalThis[MEM_KEY];
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // Strict validation: must have mode and a valid number for target_timestamp
+        if (parsed && typeof parsed.target_timestamp === 'number' && !isNaN(parsed.target_timestamp)) {
+          state = parsed;
+          console.log(`[Timer] Loaded state from Redis: ${state.mode}, Target: ${state.target_timestamp}`);
+        }
+      }
     }
-  } catch {
-    // fall through to default
+    
+    // Memory fallback if Redis failed but we have a warm container
+    if (!state && globalThis[MEM_KEY]) {
+      state = globalThis[MEM_KEY];
+      console.log(`[Timer] Redis failed, using memory fallback: ${state.mode}`);
+    }
+  } catch (e) {
+    console.error('[Timer] Error loading state:', e);
   }
   
-  if (!state || typeof state.target_timestamp !== 'number' || isNaN(state.target_timestamp)) {
+  if (!state) {
+    console.log('[Timer] No state found, defaulting to EVENT mode');
     return { mode: 'EVENT', target_timestamp: EVENT_TARGET_MS };
   }
   return state;

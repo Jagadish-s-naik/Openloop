@@ -66,8 +66,14 @@ if (bc) {
 // ─── Core state application ───────────────────────────────────────────────────
 
 function _apply(data: TimerData, broadcast = true) {
+  const newSkew = data.server_time - Date.now();
+  // Only update skew if it's a significant change (>200ms) 
+  // to prevent the timer from "stuttering" due to network jitter
+  if (!_synced || Math.abs(newSkew - skew) > 200) {
+    skew = newSkew;
+  }
+  
   cachedData = data;
-  skew = data.server_time - Date.now();
   listeners.forEach(fn => fn(data));
   if (broadcast && bc) bc.postMessage(data);
 }
@@ -254,21 +260,46 @@ export function useTimer() {
     syncListeners.add(setSynced);
     // Kick off background sync (idempotent)
     _startBgSync();
+    
+    // Fallback: if we haven't synced in 4 seconds, just show the local state
+    // so the UI doesn't hang on "SYNCING..."
+    const timeout = setTimeout(() => {
+      if (!_synced) {
+        _synced = true;
+        setSynced(true);
+      }
+    }, 4000);
+
     // If already synced from another component, update immediately
-    if (_synced) setSynced(true);
+    if (_synced) {
+      setSynced(true);
+      clearTimeout(timeout);
+    }
+    
     return () => {
       listeners.delete(setData);
       syncListeners.delete(setSynced);
+      clearTimeout(timeout);
     };
   }, []);
 
-  // Local tick: runs every second, entirely in the browser
+  // Local tick: runs every second, precisely synchronized to the turn of the second
   useEffect(() => {
-    const tick = () => setRemaining(computeRemaining(data));
-    tick(); // immediate first tick
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, [data]); // re-run when data changes (new target received)
+    let timeoutId: ReturnType<typeof setTimeout>;
+    
+    const tick = () => {
+      setRemaining(computeRemaining(data));
+      
+      // Calculate how many ms until the next second starts
+      // This ensures the timer flips EXACTLY when the second changes
+      const now = Date.now() + skew;
+      const delay = 1000 - (now % 1000);
+      timeoutId = setTimeout(tick, delay);
+    };
+
+    tick(); 
+    return () => clearTimeout(timeoutId);
+  }, [data]); 
 
   return {
     remaining,                            // seconds (ticks locally every 1s)
