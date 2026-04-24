@@ -25,24 +25,33 @@ const MEM_KEY      = '__OPENLOOP_TIMER_V2__';
 const canRedis = () => Boolean(upstashUrl && upstashToken);
 
 async function redisGet() {
-  const res = await fetch(`${upstashUrl}/get/${STORE_KEY}`, {
-    headers: { Authorization: `Bearer ${upstashToken}` },
-    cache: 'no-store',
-  });
-  const j = await res.json();
-  return j?.result ?? null;
+  try {
+    const res = await fetch(`${upstashUrl}/get/${STORE_KEY}`, {
+      headers: { Authorization: `Bearer ${upstashToken}` },
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    const j = await res.json();
+    return j?.result ?? null;
+  } catch (e) {
+    console.error('Redis GET error:', e);
+    return null;
+  }
 }
 
 async function redisSet(value) {
-  await fetch(`${upstashUrl}/set/${STORE_KEY}`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${upstashToken}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ value }),
-    cache: 'no-store',
-  });
+  try {
+    await fetch(`${upstashUrl}/set/${STORE_KEY}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${upstashToken}`,
+      },
+      body: value, // Send raw JSON string directly to Upstash
+      cache: 'no-store',
+    });
+  } catch (e) {
+    console.error('Redis SET error:', e);
+  }
 }
 
 // ─── Persistence: Redis (prod) or in-process memory (dev) ────────────────────

@@ -254,11 +254,26 @@ export function useTimer() {
     syncListeners.add(setSynced);
     // Kick off background sync (idempotent)
     _startBgSync();
+    
+    // Fallback: if we haven't synced in 4 seconds, just show the local state
+    // so the UI doesn't hang on "SYNCING..."
+    const timeout = setTimeout(() => {
+      if (!_synced) {
+        _synced = true;
+        setSynced(true);
+      }
+    }, 4000);
+
     // If already synced from another component, update immediately
-    if (_synced) setSynced(true);
+    if (_synced) {
+      setSynced(true);
+      clearTimeout(timeout);
+    }
+    
     return () => {
       listeners.delete(setData);
       syncListeners.delete(setSynced);
+      clearTimeout(timeout);
     };
   }, []);
 
