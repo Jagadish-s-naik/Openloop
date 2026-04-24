@@ -223,7 +223,7 @@ export const ChallengePage: React.FC = () => {
                 textShadow: `0 0 30px ${getTimerColor()}`,
                 color: getTimerColor(),
                 transition: 'color 0.5s, text-shadow 0.5s',
-                maxWidth: '95vw',
+                maxWidth: '98vw',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -237,7 +237,14 @@ export const ChallengePage: React.FC = () => {
         {/* ── PAUSED ── */}
         {displayState === 'PAUSED' && (
           <div style={centerBlockStyle}>
-            <div style={{ ...timerTextStyle, color: '#888', maxWidth: '95vw' }}>
+            <div style={{
+              ...timerTextStyle,
+              color: '#888',
+              maxWidth: '110vw',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}>
               {getTimeParts(activeRemaining).join(' : ')}
             </div>
             <p style={{ fontFamily: 'Share Tech Mono, monospace', color: 'rgba(255,255,255,0.5)', marginTop: 16 }}>
