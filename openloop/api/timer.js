@@ -26,31 +26,34 @@ const canRedis = () => Boolean(upstashUrl && upstashToken);
 
 async function redisGet() {
   try {
-    const res = await fetch(`${upstashUrl}/get/${STORE_KEY}`, {
+    const res = await fetch(upstashUrl, {
+      method: 'POST',
       headers: { Authorization: `Bearer ${upstashToken}` },
+      body: JSON.stringify(['GET', STORE_KEY]),
       cache: 'no-store',
     });
     if (!res.ok) return null;
     const j = await res.json();
     return j?.result ?? null;
   } catch (e) {
-    console.error('Redis GET error:', e);
+    console.error('[Redis] GET failed:', e);
     return null;
   }
 }
 
 async function redisSet(value) {
   try {
-    await fetch(`${upstashUrl}/set/${STORE_KEY}`, {
+    const res = await fetch(upstashUrl, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${upstashToken}`,
-      },
-      body: value, // Send raw JSON string directly to Upstash
+      headers: { Authorization: `Bearer ${upstashToken}` },
+      body: JSON.stringify(['SET', STORE_KEY, value]),
       cache: 'no-store',
     });
+    if (!res.ok) {
+      console.error('[Redis] SET failed with status:', res.status);
+    }
   } catch (e) {
-    console.error('Redis SET error:', e);
+    console.error('[Redis] SET error:', e);
   }
 }
 
