@@ -18,7 +18,7 @@ export const TopSelected25: React.FC = () => {
     { id: 'OL09', name: 'System Crash' },
     { id: 'OL10', name: 'Evo' },
     { id: 'OL11', name: 'SquidWardDevs' },
-    
+    { id: 'OL12', name: 'Code Ninjas'},
     { id: 'OL13', name: 'Dot&Key' },
     { id: 'OL14', name: 'ZenithAI' },
     { id: 'OL15', name: 'rohan' },
@@ -37,7 +37,7 @@ export const TopSelected25: React.FC = () => {
   const achievements = [
     { value: '309', label: 'Total participants', hint: 'Makers who joined OpenLoop', tone: '#7da2ff', icon: Users },
     { value: '121', label: 'Total teams', hint: 'Strong collaborative entries', tone: '#52ebff', icon: UsersRound },
-    { value: '109', label: 'Total colleges', hint: 'Campuses represented', tone: '#ff6fa9', icon: Building2 },
+    { value: '109', label: 'Total colleges', hint: 'Campuses represented', tone: '#eb2675', icon: Building2 },
     { value: '14', label: 'Total states', hint: 'Regional spread across India', tone: '#ffd88a', icon: Map },
     { value: '58', label: 'Total cities', hint: 'Urban and semi-urban participation', tone: '#d5b7ff', icon: MapPin },
     { value: '70%', label: 'Completion rate', hint: 'Teams that shipped end-to-end', tone: '#e4ebff', icon: Gauge },
