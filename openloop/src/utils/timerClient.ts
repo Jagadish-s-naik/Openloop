@@ -101,7 +101,7 @@ async function _apiGet(): Promise<TimerData | null> {
   
   try {
     const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), 2000); // Short timeout for local dev
+    const id = setTimeout(() => controller.abort(), 8000); // Increased for production cold starts
 
     const res = await fetch(API_PATH, { 
       cache: 'no-store',
