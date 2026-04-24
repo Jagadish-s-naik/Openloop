@@ -42,8 +42,12 @@ let cachedData: TimerData = {
 // clock skew: server_time - local_time_at_fetch
 let skew = 0;
 
+// True once we've received at least one successful API response
+let _synced = false;
+
 type Listener = (data: TimerData) => void;
 const listeners = new Set<Listener>();
+const syncListeners = new Set<(s: boolean) => void>();
 
 // ─── BroadcastChannel ─────────────────────────────────────────────────────────
 
@@ -135,6 +139,10 @@ export async function fetchTimer(): Promise<void> {
   const data = await _apiGet();
   if (data) {
     _apply(data, true);
+    if (!_synced) {
+      _synced = true;
+      syncListeners.forEach(fn => fn(true));
+    }
   }
   // If API failed: keep cachedData, timer ticks from it — that's fine
 }
@@ -238,14 +246,19 @@ function _startBgSync() {
 export function useTimer() {
   const [data, setData] = useState<TimerData>(cachedData);
   const [remaining, setRemaining] = useState(() => computeRemaining(cachedData));
+  const [synced, setSynced] = useState(_synced);
 
   useEffect(() => {
     // Subscribe to any future state updates
     listeners.add(setData);
+    syncListeners.add(setSynced);
     // Kick off background sync (idempotent)
     _startBgSync();
+    // If already synced from another component, update immediately
+    if (_synced) setSynced(true);
     return () => {
       listeners.delete(setData);
+      syncListeners.delete(setSynced);
     };
   }, []);
 
@@ -264,5 +277,6 @@ export function useTimer() {
     isPaused:    data.mode === 'CHALLENGE_PAUSED',
     isEvent:     data.mode === 'EVENT',
     pausedRemaining: data.paused_remaining_ms ? Math.floor(data.paused_remaining_ms / 1000) : 0,
+    synced,                               // true once first API response received
   };
 }

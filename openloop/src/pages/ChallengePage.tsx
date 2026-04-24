@@ -16,7 +16,7 @@ type UIState = 'IDLE' | 'COUNTDOWN_321' | 'RUNNING' | 'PAUSED';
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const ChallengePage: React.FC = () => {
-  const { remaining, isChallenge, isPaused, pausedRemaining } = useTimer();
+  const { remaining, isChallenge, isPaused, pausedRemaining, synced } = useTimer();
 
   // Local UI-only state for the 3-2-1 splash before the server is notified
   const [uiPhase, setUiPhase] = useState<UIState>('IDLE');
@@ -36,6 +36,10 @@ export const ChallengePage: React.FC = () => {
     if (isPaused)    return 'PAUSED';
     return 'IDLE';
   })();
+
+  // While we haven't synced with the server yet, don't show IDLE (START button)
+  // to prevent the flicker when reopening the page with a running timer
+  const showLoading = !synced && displayState === 'IDLE';
 
   const activeRemaining = isPaused ? (pausedRemaining || 0) : remaining;
 
@@ -154,7 +158,7 @@ export const ChallengePage: React.FC = () => {
       <div style={contentStyle(isCompactViewport)}>
 
         {/* ── IDLE ── */}
-        {displayState === 'IDLE' && (
+        {displayState === 'IDLE' && !showLoading && (
           <div style={centerBlockStyle}>
             <h1 style={{
               ...titleStyle,
@@ -178,6 +182,21 @@ export const ChallengePage: React.FC = () => {
             >
               START
             </button>
+          </div>
+        )}
+
+        {/* ── SYNCING WITH SERVER ── */}
+        {showLoading && (
+          <div style={centerBlockStyle}>
+            <div style={{
+              fontFamily: 'Share Tech Mono, monospace',
+              fontSize: 'clamp(14px, 3vw, 18px)',
+              color: 'rgba(198, 255, 0, 0.7)',
+              letterSpacing: '0.15em',
+              animation: 'fadeIn 0.5s ease-out',
+            }}>
+              SYNCING...
+            </div>
           </div>
         )}
 
