@@ -128,10 +128,17 @@
 .team-card-item .light {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
+  background:
+  radial-gradient(
     circle at var(--x, 50%) var(--y, 50%),
-    rgba(255, 255, 255, 0.18),
-    transparent 40%
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(198, 255, 0, 0.15) 20%,
+    transparent 60%
+  ),
+  radial-gradient(
+    circle at var(--x, 50%) var(--y, 50%),
+    rgba(219, 234, 165, 0.25),
+    transparent 70%
   );
   opacity: 0;
   transition: opacity 0.2s;
@@ -164,8 +171,12 @@
 }
 
 @keyframes holo {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
+  0% { border:2px solid #89d61a; }
+  50%{
+    border:2px solid #c8ff00;
+  }
+  100% { border: 2px solid #c6ff00; }
+  
 }
 .team-card-meta {
   display: flex;

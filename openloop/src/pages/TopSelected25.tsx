@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Building2, Gauge, Map, MapPin, Users, UsersRound, X, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -53,7 +53,7 @@ const TeamCard: React.FC<{ team: any; index: number; onClick: (team: any) => voi
       <div className="team-card-body">
         <div className='team-card-photo'>
           <div className="photo-placeholder">
-             <ExternalLink size={20} />
+             <ExternalLink size={10} />
           </div>
           <h2 className='team-card-photo-para'>Click for Details</h2>
         </div>
