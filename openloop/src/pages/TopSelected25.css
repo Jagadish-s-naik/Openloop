@@ -88,9 +88,12 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 12px;
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+
+  transform-style: preserve-3d;
+  transition: transform 0.2s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
+/* Grid overlay */
 .team-card-item::before {
   content: '';
   position: absolute;
@@ -109,7 +112,7 @@
   position: absolute;
   inset: -1px;
   border-radius: 14px;
-  background: linear-gradient(120deg, transparent, #dde7ba2f, transparent);
+  background: linear-gradient(120deg, transparent, transparent, #d9e4af4d, transparent, transparent);
   opacity: 0;
   transition: opacity 0.3s;
   filter: blur(8px);
@@ -119,6 +122,8 @@
 .team-card-item:hover::after {
   opacity: 1;
 }
+
+/* ✨ Cursor light reflection */
 .team-card-item .light {
   position: absolute;
   inset: 0;
@@ -134,6 +139,23 @@
 
 .team-card-item:hover .light {
   opacity: 1;
+}
+
+/* Hover main effect */
+.team-card-item:hover {
+  border-color: #c6ff00;
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 14px 30px rgba(198, 255, 0, 0.18);
+}
+
+/* Optional holographic shimmer */
+.team-card-item:hover {
+  animation: holo 3s linear infinite;
+}
+
+@keyframes holo {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
 }
 .team-card-meta {
   display: flex;
