@@ -158,10 +158,10 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
         }}>
           <div style={{
             fontFamily: 'Share Tech Mono, monospace',
-            fontSize: '12px',
+            fontSize: 'clamp(12px, 1.5vw, 18px)',
             letterSpacing: '0.4em',
             color: '#C6FF00',
-            marginBottom: '16px',
+            marginBottom: '4rem',
             opacity: 0.8,
             textShadow: '0 0 10px rgba(198, 255, 0, 0.5)',
           }}>
@@ -181,7 +181,11 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
               transform: hoveredBadge ? 'scale(1.02)' : 'scale(1)',
               boxShadow: hoveredBadge ? '0 0 40px rgba(198, 255, 0, 0.15)' : 'none',
               position: 'relative',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection:'column',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
             {/* Animated background line */}
