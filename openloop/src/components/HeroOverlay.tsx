@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  useTimer,
-} from '../utils/timerClient';
+import { VideoSection } from './VideoSection';
+import { WinnersSection } from './WinnersSection';
+import { clamp } from '../utils/math';
 
 interface HeroOverlayProps {
   scrollProgress: number;
@@ -24,10 +24,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
 
   const handleMouseLeave = () => setMagneticPos({ x: 0, y: 0 });
 
-  const { remaining, isChallenge } = useTimer();
-  const timerMode = isChallenge ? 'CHALLENGE' : 'EVENT';
-  const timeLeft  = remaining;
-  const [hoveredTimerCard, setHoveredTimerCard] = useState<number | null>(null);
+  const [hoveredBadge, setHoveredBadge] = useState(false);
 
   const glassCardBase: React.CSSProperties = {
     display: 'flex',
@@ -69,20 +66,14 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   };
 
 
-  // Format time for boxes
-  const getTimeParts = (seconds: number) => {
-    const d = Math.floor(seconds / 86400);
-    const h = Math.floor((seconds % 86400) / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    return [d, h, m, s].map((v) => v.toString().padStart(2, '0'));
-  };
 
   const NAV_ITEMS = [
     { label: 'Core', target: 0.08 },
-    { label: 'About', target: 0.21 },
-    { label: 'Themes', target: 0.46 },
-    { label: 'Timeline', target: 0.59 },
+    { label: 'About', target: 0.18 },
+    { label: 'Video', target: 0.32 },
+    { label: 'Winners', target: 0.48 },
+    { label: 'Themes', target: 0.62 },
+    { label: 'Timeline', target: 0.75 },
     { label: 'Sponsors', target: 0.90 },
     { label: 'Get in Touch', target: 0.95 },
   ];
@@ -146,7 +137,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
           </div>
         </div>
 
-        <h1 className="hero-main-title" style={{ position: 'relative', zIndex: 2,marginBottom: '30px',}}>
+        <h1 className="hero-main-title" style={{ position: 'relative', zIndex: 2, marginBottom: '0px', }}>
           <span className="title-word" style={{ color: '#ffffff' }}>OPEN</span>
           <span className="title-spacer" />
           <span className="title-word" style={{
@@ -156,52 +147,79 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
           }}>LOOP</span>
         </h1>
         
-        {/* TIMER BOXES */}
-        <div style={{
-          fontFamily: 'Share Tech Mono, monospace',
-          fontSize: '12px',
-          letterSpacing: '0.18em',
-          color: 'rgba(255,255,255,0.7)',
-          marginBottom: '12px',
-          textAlign: 'center',
-        }}>
-          {timerMode === 'CHALLENGE' ? 'CHALLENGE TIMER LIVE' : 'EVENT COUNTDOWN TO APR 25 - 11:00 AM'}
-        </div>
+        {/* MISSION ACCOMPLISHED BANNER */}
         <div style={{
           display: 'flex',
-          justifyContent: 'center',
+          flexDirection: 'column',
           alignItems: 'center',
-          gap: '18px',
-          marginTop: '18px',
-          marginBottom: '0',
+          marginTop: '20px',
           position: 'relative',
           zIndex: 2,
         }}>
-          {['DAY', 'HOUR', 'MIN', 'SEC'].map((label, i) => {
-            const [d, h, m, s] = getTimeParts(timeLeft);
-            const val = [d, h, m, s][i];
-            return (
-              <div
-                key={label}
-                style={{
-                  ...glassCardBase,
-                  ...(hoveredTimerCard === i ? glassCardHover : {}),
-                }}
-                onMouseEnter={() => setHoveredTimerCard(i)}
-                onMouseLeave={() => setHoveredTimerCard(null)}
-              >
-                <span>{val}</span>
-                <span style={{
-                  fontSize: 'clamp(10px, 1vw, 14px)',
-                  color: '#fff',
-                  opacity: 0.7,
-                  marginTop: 2,
-                  fontWeight: 400,
-                  letterSpacing: '0.08em',
-                }}>{label}</span>
-              </div>
-            );
-          })}
+          <div style={{
+            fontFamily: 'Share Tech Mono, monospace',
+            fontSize: '12px',
+            letterSpacing: '0.4em',
+            color: '#C6FF00',
+            marginBottom: '16px',
+            opacity: 0.8,
+            textShadow: '0 0 10px rgba(198, 255, 0, 0.5)',
+          }}>
+            // HACKATHON_STATUS: CONCLUDED
+          </div>
+          
+          <div 
+            onMouseEnter={() => setHoveredBadge(true)}
+            onMouseLeave={() => setHoveredBadge(false)}
+            style={{
+              padding: '24px 60px',
+              background: 'rgba(20, 25, 15, 0.45)',
+              backdropFilter: 'blur(12px)',
+              border: `1px solid ${hoveredBadge ? '#C6FF00' : 'rgba(198, 255, 0, 0.3)'}`,
+              borderRadius: '2px',
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: hoveredBadge ? 'scale(1.02)' : 'scale(1)',
+              boxShadow: hoveredBadge ? '0 0 40px rgba(198, 255, 0, 0.15)' : 'none',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+          >
+            {/* Animated background line */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: hoveredBadge ? '100%' : '-100%',
+              width: '100%',
+              height: '100%',
+              background: 'linear-gradient(90deg, transparent, rgba(198, 255, 0, 0.1), transparent)',
+              transition: 'left 0.8s ease-in-out'
+            }} />
+
+            <div style={{
+              fontFamily: 'Share Tech Mono, monospace',
+              fontSize: 'clamp(24px, 3vw, 42px)',
+              color: '#fff',
+              fontWeight: 800,
+              letterSpacing: '0.2em',
+              textAlign: 'center'
+            }}>
+              MISSION <span style={{ color: '#C6FF00' }}>SUCCESSFUL</span>
+            </div>
+            
+            <div style={{
+              marginTop: '8px',
+              fontFamily: 'Share Tech Mono, monospace',
+              fontSize: '14px',
+              color: 'rgba(255,255,255,0.6)',
+              letterSpacing: '0.15em'
+            }}>
+              25 - 26 APRIL 2026 • THANK YOU FOR BUILDING
+            </div>
+
+            {/* Corner Accents */}
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '10px', height: '10px', borderTop: '2px solid #C6FF00', borderLeft: '2px solid #C6FF00' }} />
+            <div style={{ position: 'absolute', bottom: 0, right: 0, width: '10px', height: '10px', borderBottom: '2px solid #C6FF00', borderRight: '2px solid #C6FF00' }} />
+          </div>
         </div>
       </div>
 
@@ -441,6 +459,20 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
               </div>
               <div className="hud-label" style={{ marginTop: '2rem', color: '#C6FF00' }}>STATUS: PROFILE_LOCK_ACTIVE</div>
             </div>
+          </div>
+        </div>
+
+        {/* PHASE 3: VIDEO SHOWCASE */}
+        <div id="video-section" className="section-overlay" style={{ opacity: 0, padding: '10vh 5vw' }}>
+          <div style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}>
+            <VideoSection scrollProgress={clamp((p - 0.26) / (0.38 - 0.26), 0, 1)} />
+          </div>
+        </div>
+
+        {/* PHASE 4: WINNERS SECTION */}
+        <div id="winners-section" className="section-overlay" style={{ opacity: 0 }}>
+          <div style={{ width: '100%', pointerEvents: 'auto' }}>
+             <WinnersSection scrollProgress={clamp((p - 0.40) / (0.55 - 0.40), 0, 1)} />
           </div>
         </div>
 

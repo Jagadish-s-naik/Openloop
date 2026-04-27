@@ -14,6 +14,8 @@ import { MobileTimeline } from './sections/MobileTimeline';
 import { MobileSponsors } from './sections/MobileSponsors';
 import { MobileTeam } from './sections/MobileTeam';
 import { MobileFooter } from './sections/MobileFooter';
+import { VideoSection } from '../VideoSection';
+import { WinnersSection } from '../WinnersSection';
 
 export default function MobileLayout() {
   useEffect(() => {
@@ -52,6 +54,12 @@ export default function MobileLayout() {
       <main>
         <MobileHero />
         <MobileAbout scrollTo={scrollToSection} />
+        <div style={{ padding: '40px 15px' }}>
+          <VideoSection scrollProgress={1} />
+        </div>
+        <div style={{ padding: '40px 0' }}>
+          <WinnersSection scrollProgress={1} />
+        </div>
         <MobileThemesSection />
         <MobileTimeline />
         <MobileSponsors />
