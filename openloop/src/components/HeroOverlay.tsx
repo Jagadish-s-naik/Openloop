@@ -25,7 +25,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   const handleMouseLeave = () => setMagneticPos({ x: 0, y: 0 });
 
   const [hoveredBadge, setHoveredBadge] = useState(false);
-
+{/*
   const glassCardBase: React.CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
@@ -65,7 +65,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
     `,
   };
 
-
+*/}
 
   const NAV_ITEMS = [
     { label: 'Core', target: 0.08 },
