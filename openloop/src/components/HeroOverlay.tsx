@@ -69,12 +69,12 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
 
   const NAV_ITEMS = [
     { label: 'Core', target: 0.06 },
-    { label: 'About', target: 0.18 },
-    { label: 'Video', target: 0.37 },
+    { label: 'About', target: 0.19 },
+    { label: 'Video', target: 0.38 },
     { label: 'Winners', target: 0.57 },
-    { label: 'Themes', target: 0.71 },
-    { label: 'Timeline', target: 0.84 },
-    { label: 'Sponsors', target: 0.92 },
+    { label: 'Themes', target: 0.70 },
+    { label: 'Timeline', target: 0.83 },
+    { label: 'Sponsors', target: 0.91 },
     { label: 'Get in Touch', target: 0.95 },
   ];
 
@@ -87,15 +87,15 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   };
 
   // Active state helpers matching DesktopLayout ranges
-  const isAboutActive = p >= 0.12 && p <= 0.25;
-  const isContactActive = p >= 0.94 && p <= 0.97;
+  const isAboutActive = p >= 0.13 && p <= 0.26;
+  const isContactActive = p >= 0.93 && p <= 0.97;
 
   // Fade the permanent hero title out once the user scrolls past the hero phase
   useEffect(() => {
     const titleEl = document.getElementById('hero-title-fixed');
     if (!titleEl) return;
     // Start fading at p=0.06, fully gone by p=0.12
-    const fade = 1 - Math.min(1, Math.max(0, (p - 0.06) / 0.06));
+    const fade = 1 - Math.min(1, Math.max(0, (p - 0.07) / 0.06));
     titleEl.style.opacity = String(fade);
   }, [p]);
 
@@ -469,14 +469,14 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
         {/* PHASE 3: VIDEO SHOWCASE */}
         <div id="video-section" className="section-overlay" style={{ opacity: 0, padding: 0 }}>
           <div style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}>
-            <VideoSection scrollProgress={clamp((p - 0.25) / (0.50 - 0.25), 0, 1)} />
+            <VideoSection scrollProgress={clamp((p - 0.26) / (0.50 - 0.26), 0, 1)} />
           </div>
         </div>
 
         {/* PHASE 4: WINNERS SECTION */}
         <div id="winners-section" className="section-overlay" style={{ opacity: 0 }}>
           <div style={{ width: '100%', pointerEvents: 'auto' }}>
-             <WinnersSection scrollProgress={clamp((p - 0.50) / (0.65 - 0.50), 0, 1)} />
+             <WinnersSection scrollProgress={clamp((p - 0.50) / (0.64 - 0.50), 0, 1)} />
           </div>
         </div>
 

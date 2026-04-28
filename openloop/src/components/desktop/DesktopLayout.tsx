@@ -86,7 +86,7 @@ export default function DesktopLayout() {
     const setupTimeout = setTimeout(() => {
 
       lenis = new Lenis({
-        duration: 1.2,
+        duration: 1.4,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
 
@@ -104,7 +104,7 @@ export default function DesktopLayout() {
           trigger: '.app-root',
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 2,
+          scrub: 3,
           onUpdate: (self) => {
             const p = self.progress;
             robotProgressRef.current = p;
@@ -112,14 +112,14 @@ export default function DesktopLayout() {
             // NON-MERGING GAPPED RANGES
             // Sections now have clear 1-2% gaps between their ends and the next start.
             const ranges = [
-              { name: 'HERO',     start: 0.00, end: 0.12, id: '#s1-hero' },
-              { name: 'ABOUT',    start: 0.12, end: 0.25, id: '#s2-about' },
-              { name: 'VIDEO',    start: 0.25, end: 0.50, id: '#video-section' },
-              { name: 'WINNERS',  start: 0.50, end: 0.65, id: '#winners-section' },
-              { name: 'THEMES',   start: 0.65, end: 0.78, id: '#theme-section' },
-              { name: 'TIMELINE', start: 0.78, end: 0.90, id: '#s4-timeline' },
-              { name: 'SPONSORS', start: 0.90, end: 0.94, id: '#sponsors-section' },
-              { name: 'CONTACT',  start: 0.94, end: 0.97, id: '#contact-section' },
+              { name: 'HERO',     start: 0.00, end: 0.13, id: '#s1-hero' },
+              { name: 'ABOUT',    start: 0.13, end: 0.26, id: '#s2-about' },
+              { name: 'VIDEO',    start: 0.26, end: 0.50, id: '#video-section' },
+              { name: 'WINNERS',  start: 0.50, end: 0.64, id: '#winners-section' },
+              { name: 'THEMES',   start: 0.64, end: 0.77, id: '#theme-section' },
+              { name: 'TIMELINE', start: 0.77, end: 0.89, id: '#s4-timeline' },
+              { name: 'SPONSORS', start: 0.89, end: 0.93, id: '#sponsors-section' },
+              { name: 'CONTACT',  start: 0.93, end: 0.97, id: '#contact-section' },
               { name: 'FOOTER',   start: 0.97, end: 1.00, id: '#footer-section' },
             ];
 
@@ -135,15 +135,21 @@ export default function DesktopLayout() {
               let op = 0;
 
               if (range.name === 'HERO') {
-                // Hold full opacity; only start fading when nearing the end
-                op = lp <= 0.70 ? 1 : clamp((1 - lp) / 0.30, 0, 1);
+                // Hero: hold full opacity until 75%, then smooth fade
+                op = lp <= 0.75 ? 1 : clamp((1 - lp) / 0.25, 0, 1);
+              } else if (range.name === 'VIDEO') {
+                // Video: quick 8% ramp-in, long hold, quick 8% ramp-out
+                const ramp = 0.08;
+                if (lp < ramp)        op = lp / ramp;
+                else if (lp < 1 - ramp) op = 1;
+                else                  op = (1 - lp) / ramp;
               } else if (range.name === 'FOOTER') {
                 // Footer rises in and stays
                 const ramp = 0.5;
                 op = lp < ramp ? lp / ramp : 1;
               } else {
-                // Faster fader ramp so it hits 0 opacity fully within its own boundaries
-                const ramp = 0.10;
+                // 15% ramp for smooth feel — holds at full opacity through the middle
+                const ramp = 0.15;
                 if (lp < ramp)        op = lp / ramp;
                 else if (lp < 1 - ramp) op = 1;
                 else                  op = (1 - lp) / ramp;
@@ -184,8 +190,8 @@ export default function DesktopLayout() {
       <div 
         className="canvas-container"
         style={{
-          opacity: (rawScroll > 0.24 && rawScroll < 0.51) ? 0 : 1,
-          transition: 'opacity 0.6s ease-in-out'
+          opacity: (rawScroll > 0.25 && rawScroll < 0.50) ? 0 : 1,
+          transition: 'opacity 0.8s ease-in-out'
         }}
       >
         <Canvas
