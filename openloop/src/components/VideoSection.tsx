@@ -5,8 +5,9 @@ interface VideoSectionProps {
 }
 
 export const VideoSection: React.FC<VideoSectionProps> = ({ scrollProgress }) => {
-  // Use a high-quality placeholder tech video if no video is provided yet
-  const videoUrl = "https://drive.google.com/uc?export=download&id=1HUNI2VwnPBLttZvExE8HCk5LlG9taS8b";
+  // Video is served from the public folder
+  const videoSrc = "/loop.mp4";
+  const fallbackUrl = "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-circuit-board-1616-large.mp4";
 
   return (
     <div style={{
@@ -14,10 +15,7 @@ export const VideoSection: React.FC<VideoSectionProps> = ({ scrollProgress }) =>
       height: '100%',
       position: 'relative',
       overflow: 'hidden',
-      borderRadius: '0',
-      border: 'none',
-      boxShadow: 'none',
-      
+      background: '#000',
     }}>
       <video
         autoPlay
@@ -28,12 +26,14 @@ export const VideoSection: React.FC<VideoSectionProps> = ({ scrollProgress }) =>
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          opacity: 0.9,
+          opacity: 0.92,
           transition: 'transform 0.5s ease-out',
-          transform: `scale(${1 + scrollProgress * 0.1})`
+          transform: `scale(${1 + scrollProgress * 0.08})`
         }}
       >
-        <source src={videoUrl} type="video/mp4" />
+        <source src={videoSrc} type="video/quicktime" />
+        <source src={videoSrc} type="video/mp4" />
+        <source src={fallbackUrl} type="video/mp4" />
       </video>
 
       {/* Overlays */}
