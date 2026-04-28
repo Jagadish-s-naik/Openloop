@@ -13,6 +13,7 @@ import { LoaderScene } from '../LoaderScene';
 import { SponsorsSection } from '../SponsorsSection';
 import { ThemesSection } from '../ThemesSection';
 import { FooterSection } from '../FooterSection';
+import { TelemetryHUD } from '../TelemetryHUD';
 import { useMousePosition } from '../../hooks/useMousePosition';
 import { lerp, clamp } from '../../utils/math';
 import Lenis from 'lenis';
@@ -113,9 +114,9 @@ export default function DesktopLayout() {
             const ranges = [
               { name: 'HERO',     start: 0.00, end: 0.12, id: '#s1-hero' },
               { name: 'ABOUT',    start: 0.14, end: 0.24, id: '#s2-about' },
-              { name: 'VIDEO',    start: 0.26, end: 0.38, id: '#video-section' },
-              { name: 'WINNERS',  start: 0.40, end: 0.55, id: '#winners-section' },
-              { name: 'THEMES',   start: 0.57, end: 0.70, id: '#theme-section' },
+              { name: 'VIDEO',    start: 0.26, end: 0.40, id: '#video-section' },
+              { name: 'WINNERS',  start: 0.40, end: 0.58, id: '#winners-section' },
+              { name:  'THEMES',   start: 0.57, end: 0.70, id: '#theme-section' },
               { name: 'TIMELINE', start: 0.72, end: 0.86, id: '#s4-timeline' },
               { name: 'SPONSORS', start: 0.88, end: 0.92, id: '#sponsors-section' },
               { name: 'CONTACT',  start: 0.94, end: 0.97, id: '#contact-section' },
@@ -225,6 +226,7 @@ export default function DesktopLayout() {
           <ThemesSection scrollProgress={rawScroll} />
           <SponsorsSection scrollProgress={rawScroll} />
           <FooterSection scrollVal={rawScroll} />
+          <TelemetryHUD scrollProgress={rawScroll} />
         </div>
       )}
     </div>
