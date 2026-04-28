@@ -114,12 +114,12 @@ export default function DesktopLayout() {
             const ranges = [
               { name: 'HERO',     start: 0.00, end: 0.12, id: '#s1-hero' },
               { name: 'ABOUT',    start: 0.12, end: 0.25, id: '#s2-about' },
-              { name: 'VIDEO',    start: 0.25, end: 0.40, id: '#video-section' },
-              { name: 'WINNERS',  start: 0.40, end: 0.55, id: '#winners-section' },
-              { name: 'THEMES',   start: 0.55, end: 0.70, id: '#theme-section' },
-              { name: 'TIMELINE', start: 0.70, end: 0.85, id: '#s4-timeline' },
-              { name: 'SPONSORS', start: 0.85, end: 0.93, id: '#sponsors-section' },
-              { name: 'CONTACT',  start: 0.93, end: 0.97, id: '#contact-section' },
+              { name: 'VIDEO',    start: 0.25, end: 0.50, id: '#video-section' },
+              { name: 'WINNERS',  start: 0.50, end: 0.65, id: '#winners-section' },
+              { name: 'THEMES',   start: 0.65, end: 0.78, id: '#theme-section' },
+              { name: 'TIMELINE', start: 0.78, end: 0.90, id: '#s4-timeline' },
+              { name: 'SPONSORS', start: 0.90, end: 0.94, id: '#sponsors-section' },
+              { name: 'CONTACT',  start: 0.94, end: 0.97, id: '#contact-section' },
               { name: 'FOOTER',   start: 0.97, end: 1.00, id: '#footer-section' },
             ];
 
@@ -184,9 +184,8 @@ export default function DesktopLayout() {
       <div 
         className="canvas-container"
         style={{
-          // Removed fade out at very end so robot stays visible in footer
-          opacity: 1,
-          transition: 'opacity 0.3s ease-out'
+          opacity: (rawScroll > 0.24 && rawScroll < 0.51) ? 0 : 1,
+          transition: 'opacity 0.6s ease-in-out'
         }}
       >
         <Canvas

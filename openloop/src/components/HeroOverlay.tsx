@@ -70,11 +70,11 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
   const NAV_ITEMS = [
     { label: 'Core', target: 0.06 },
     { label: 'About', target: 0.18 },
-    { label: 'Video', target: 0.32 },
-    { label: 'Winners', target: 0.47 },
-    { label: 'Themes', target: 0.62 },
-    { label: 'Timeline', target: 0.77 },
-    { label: 'Sponsors', target: 0.89 },
+    { label: 'Video', target: 0.37 },
+    { label: 'Winners', target: 0.57 },
+    { label: 'Themes', target: 0.71 },
+    { label: 'Timeline', target: 0.84 },
+    { label: 'Sponsors', target: 0.92 },
     { label: 'Get in Touch', target: 0.95 },
   ];
 
@@ -88,7 +88,7 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
 
   // Active state helpers matching DesktopLayout ranges
   const isAboutActive = p >= 0.12 && p <= 0.25;
-  const isContactActive = p >= 0.93 && p <= 0.97;
+  const isContactActive = p >= 0.94 && p <= 0.97;
 
   // Fade the permanent hero title out once the user scrolls past the hero phase
   useEffect(() => {
@@ -467,16 +467,16 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
         </div>
 
         {/* PHASE 3: VIDEO SHOWCASE */}
-        <div id="video-section" className="section-overlay" style={{ opacity: 0, padding: '10vh 5vw' }}>
+        <div id="video-section" className="section-overlay" style={{ opacity: 0, padding: 0 }}>
           <div style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}>
-            <VideoSection scrollProgress={clamp((p - 0.25) / (0.40 - 0.25), 0, 1)} />
+            <VideoSection scrollProgress={clamp((p - 0.25) / (0.50 - 0.25), 0, 1)} />
           </div>
         </div>
 
         {/* PHASE 4: WINNERS SECTION */}
         <div id="winners-section" className="section-overlay" style={{ opacity: 0 }}>
           <div style={{ width: '100%', pointerEvents: 'auto' }}>
-             <WinnersSection scrollProgress={clamp((p - 0.40) / (0.55 - 0.40), 0, 1)} />
+             <WinnersSection scrollProgress={clamp((p - 0.50) / (0.65 - 0.50), 0, 1)} />
           </div>
         </div>
 

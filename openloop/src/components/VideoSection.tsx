@@ -6,7 +6,7 @@ interface VideoSectionProps {
 
 export const VideoSection: React.FC<VideoSectionProps> = ({ scrollProgress }) => {
   // Use a high-quality placeholder tech video if no video is provided yet
-  const videoUrl = "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-circuit-board-1616-large.mp4";
+  const videoUrl = "https://drive.google.com/uc?export=download&id=1HUNI2VwnPBLttZvExE8HCk5LlG9taS8b";
 
   return (
     <div style={{
@@ -14,10 +14,10 @@ export const VideoSection: React.FC<VideoSectionProps> = ({ scrollProgress }) =>
       height: '100%',
       position: 'relative',
       overflow: 'hidden',
-      borderRadius: '24px',
-      border: '1px solid rgba(198, 255, 0, 0.2)',
-      boxShadow: '0 0 40px rgba(198, 255, 0, 0.1)',
-      background: '#000'
+      borderRadius: '0',
+      border: 'none',
+      boxShadow: 'none',
+      
     }}>
       <video
         autoPlay
@@ -28,7 +28,7 @@ export const VideoSection: React.FC<VideoSectionProps> = ({ scrollProgress }) =>
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          opacity: 0.6,
+          opacity: 0.9,
           transition: 'transform 0.5s ease-out',
           transform: `scale(${1 + scrollProgress * 0.1})`
         }}
@@ -40,7 +40,7 @@ export const VideoSection: React.FC<VideoSectionProps> = ({ scrollProgress }) =>
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: 'linear-gradient(to bottom, rgba(0,0,0,0.4), transparent, rgba(0,0,0,0.6))',
+        background: 'linear-gradient(to bottom, transparent, transparent, transparent)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
