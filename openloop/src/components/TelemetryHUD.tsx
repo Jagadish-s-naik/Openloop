@@ -1,5 +1,5 @@
 import React from 'react';
-import { clamp } from '../utils/math';
+
 
 interface TelemetryHUDProps {
   scrollProgress: number;

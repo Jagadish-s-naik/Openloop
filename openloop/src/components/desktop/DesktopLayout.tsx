@@ -113,14 +113,14 @@ export default function DesktopLayout() {
             // Sections now have clear 1-2% gaps between their ends and the next start.
             const ranges = [
               { name: 'HERO',     start: 0.00, end: 0.12, id: '#s1-hero' },
-              { name: 'ABOUT',    start: 0.14, end: 0.24, id: '#s2-about' },
-              { name: 'VIDEO',    start: 0.26, end: 0.40, id: '#video-section' },
-              { name: 'WINNERS',  start: 0.40, end: 0.58, id: '#winners-section' },
-              { name:  'THEMES',   start: 0.57, end: 0.70, id: '#theme-section' },
-              { name: 'TIMELINE', start: 0.72, end: 0.86, id: '#s4-timeline' },
-              { name: 'SPONSORS', start: 0.88, end: 0.92, id: '#sponsors-section' },
-              { name: 'CONTACT',  start: 0.94, end: 0.97, id: '#contact-section' },
-              { name: 'FOOTER',   start: 0.98, end: 1.00, id: '#footer-section' },
+              { name: 'ABOUT',    start: 0.12, end: 0.25, id: '#s2-about' },
+              { name: 'VIDEO',    start: 0.25, end: 0.40, id: '#video-section' },
+              { name: 'WINNERS',  start: 0.40, end: 0.55, id: '#winners-section' },
+              { name: 'THEMES',   start: 0.55, end: 0.70, id: '#theme-section' },
+              { name: 'TIMELINE', start: 0.70, end: 0.85, id: '#s4-timeline' },
+              { name: 'SPONSORS', start: 0.85, end: 0.93, id: '#sponsors-section' },
+              { name: 'CONTACT',  start: 0.93, end: 0.97, id: '#contact-section' },
+              { name: 'FOOTER',   start: 0.97, end: 1.00, id: '#footer-section' },
             ];
 
             // Debug HUD
