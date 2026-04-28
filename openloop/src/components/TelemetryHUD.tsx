@@ -16,15 +16,15 @@ export const TelemetryHUD: React.FC<TelemetryHUDProps> = ({ scrollProgress }) =>
   let status = 'SYSTEM_READY';
   let statusColor = '#C6FF00';
   
-  if (p > 0.01 && p <= 0.2) {
+  if (p > 0.01 && p <= 0.12) {
     status = 'LIFT_OFF_ACTIVE';
-  } else if (p > 0.2 && p <= 0.4) {
+  } else if (p > 0.12 && p <= 0.25) {
     status = 'ASCENDING_PHASE';
-  } else if (p > 0.4 && p <= 0.7) {
+  } else if (p > 0.25 && p <= 0.70) {
     status = 'CRUISING_SPEED';
-  } else if (p > 0.7 && p <= 0.92) {
+  } else if (p > 0.70 && p <= 0.93) {
     status = 'STABLE_ORBIT';
-  } else if (p > 0.92) {
+  } else if (p > 0.93) {
     status = 'RE_ENTRY_INIT';
     statusColor = '#FF4D4D'; // Red alert for re-entry/footer
   }

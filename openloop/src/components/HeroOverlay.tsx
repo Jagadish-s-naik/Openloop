@@ -467,12 +467,14 @@ export const HeroOverlay: React.FC<HeroOverlayProps> = ({ scrollProgress }) => {
         </div>
 
         {/* PHASE 3: VIDEO SHOWCASE */}
+        <div id="video-section" className="section-overlay" style={{ opacity: 0, padding: '10vh 5vw' }}>
           <div style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}>
             <VideoSection scrollProgress={clamp((p - 0.25) / (0.40 - 0.25), 0, 1)} />
           </div>
         </div>
 
         {/* PHASE 4: WINNERS SECTION */}
+        <div id="winners-section" className="section-overlay" style={{ opacity: 0 }}>
           <div style={{ width: '100%', pointerEvents: 'auto' }}>
              <WinnersSection scrollProgress={clamp((p - 0.40) / (0.55 - 0.40), 0, 1)} />
           </div>
