@@ -14,6 +14,8 @@ import { MobileTimeline } from './sections/MobileTimeline';
 import { MobileSponsors } from './sections/MobileSponsors';
 import { MobileTeam } from './sections/MobileTeam';
 import { MobileFooter } from './sections/MobileFooter';
+import { VideoSection } from '../VideoSection';
+import { WinnersSection } from '../WinnersSection';
 
 export default function MobileLayout() {
   useEffect(() => {
@@ -52,6 +54,18 @@ export default function MobileLayout() {
       <main>
         <MobileHero />
         <MobileAbout scrollTo={scrollToSection} />
+        {/* Video Section — shared component, mobile-aware */}
+        <div style={{
+          width: '100%',
+          height: '100svh',
+          minHeight: '480px',
+          position: 'relative',
+        }}>
+          <VideoSection scrollProgress={1} isMobile={true} />
+        </div>
+        <div style={{ padding: '40px 0' }}>
+          <WinnersSection scrollProgress={1} />
+        </div>
         <MobileThemesSection />
         <MobileTimeline />
         <MobileSponsors />
