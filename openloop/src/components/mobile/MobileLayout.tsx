@@ -54,8 +54,14 @@ export default function MobileLayout() {
       <main>
         <MobileHero />
         <MobileAbout scrollTo={scrollToSection} />
-        <div style={{ padding: '40px 15px' }}>
-          <VideoSection scrollProgress={1} />
+        {/* Video Section — shared component, mobile-aware */}
+        <div style={{
+          width: '100%',
+          height: '100svh',
+          minHeight: '480px',
+          position: 'relative',
+        }}>
+          <VideoSection scrollProgress={1} isMobile={true} />
         </div>
         <div style={{ padding: '40px 0' }}>
           <WinnersSection scrollProgress={1} />
