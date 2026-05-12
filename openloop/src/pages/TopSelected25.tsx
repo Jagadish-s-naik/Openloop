@@ -1,10 +1,76 @@
-import React from 'react';
+import React, { useState, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Building2, Gauge, Map, MapPin, Users, UsersRound } from 'lucide-react';
+import { ArrowLeft, Building2, Gauge, Map, MapPin, Users, UsersRound, X, ExternalLink } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import './TopSelected25.css';
+
+const TeamCard: React.FC<{ team: any; index: number; onClick: (team: any) => void }> = ({ team, index, onClick }) => {
+  const cardRef = useRef<HTMLElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = (y - centerY) / 10;
+    const rotateY = (centerX - x) / 10;
+
+    cardRef.current.style.setProperty('--rotateX', `${rotateX}deg`);
+    cardRef.current.style.setProperty('--rotateY', `${rotateY}deg`);
+    cardRef.current.style.setProperty('--x', `${(x / rect.width) * 100}%`);
+    cardRef.current.style.setProperty('--y', `${(y / rect.height) * 100}%`);
+  };
+
+  const handleMouseLeave = () => {
+    if (!cardRef.current) return;
+    cardRef.current.style.setProperty('--rotateX', `0deg`);
+    cardRef.current.style.setProperty('--rotateY', `0deg`);
+  };
+
+  return (
+    <article 
+      ref={cardRef}
+      className="team-card-item"
+      onClick={() => onClick({ ...team, rank: index + 1 })}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      role="button"
+      tabIndex={0}
+    >
+      <div className="light" />
+      <div className="team-card-meta">
+        <div className="team-id-block">
+          <span className="team-field-label">TEAM ID</span>
+          <span className="team-id-pill">{team.id}</span>
+        </div>
+        <span className="team-rank-pill">#{String(index + 1).padStart(2, '0')}</span>
+      </div>
+
+      <div className="team-card-body">
+        <div className='team-card-photo'>
+          <div className="photo-placeholder">
+             <ExternalLink size={15} />
+          </div>
+          <h2 className='team-card-photo-para'>Click for Details</h2>
+        </div>
+        
+      </div>
+
+      <div className="team-card-foot">
+        <span className="team-tag">SHORTLISTED TEAM</span>
+      </div>
+      <div className="team-card-corner" />
+    </article>
+  );
+};
 
 export const TopSelected25: React.FC = () => {
   const navigate = useNavigate();
+  const [selectedTeam, setSelectedTeam] = useState<any>(null);
 
   const teams = [
     { id: 'OL01', name: 'Alt F4' },
@@ -64,28 +130,51 @@ export const TopSelected25: React.FC = () => {
 
         <div className="teams-grid">
           {teams.map((team, index) => (
-            <article key={team.id} className="team-card-item">
-              <div className="team-card-meta">
-                <div className="team-id-block">
-                  <span className="team-field-label">TEAM ID</span>
-                  <span className="team-id-pill">{team.id}</span>
-                </div>
-                <span className="team-rank-pill">#{String(index + 1).padStart(2, '0')}</span>
-              </div>
-
-              <span className="team-field-label team-name-field-label">TEAM NAME</span>
-              <div className="team-name-text" title={team.name}>
-                {team.name}
-              </div>
-
-              <div className="team-card-foot">
-                <span className="team-tag">SHORTLISTED TEAM</span>
-              </div>
-
-              <div className="team-card-corner" />
-            </article>
+            <TeamCard 
+              key={team.id} 
+              team={team} 
+              index={index} 
+              onClick={setSelectedTeam} 
+            />
           ))}
         </div>
+
+        <AnimatePresence>
+          {selectedTeam && (
+            <div className="team-modal-overlay" onClick={() => setSelectedTeam(null)}>
+              <motion.div 
+                className="team-modal-content"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button className="modal-close-btn" onClick={() => setSelectedTeam(null)}>
+                  <X size={24} />
+                </button>
+
+                <div className="modal-photo-box">
+                  <img 
+                    src={`https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop`} 
+                    alt={selectedTeam.name}
+                    className="modal-large-photo"
+                  />
+                  <div className="modal-photo-overlay" />
+                  <div className="modal-id-badge">{selectedTeam.id}</div>
+                </div>
+
+                <div className="modal-info-box">
+                  <div className="modal-label">TEAM NAME</div>
+                  <h2 className="modal-team-name">{selectedTeam.name}</h2>                  
+                </div>
+
+                <div className="modal-footer">
+                  <div className="modal-status-pill">OFFICIAL SHORTLISTED TEAM</div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
         <section className="achievements-section" aria-labelledby="registration-stats-title">
           <div className="achievements-head">

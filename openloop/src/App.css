@@ -86,7 +86,7 @@ body {
 }
 
 .app-root.is-main {
-  height: 1200vh; /* Mandatory scroll height for range mapping */
+  height: 2000vh; /* Mandatory scroll height for range mapping */
 }
 
 .canvas-container {
@@ -776,7 +776,7 @@ nav a:hover {
 .hud-subtitle {
   font-family: 'Share Tech Mono', monospace;
   color: white;
-  fontSize: 14px;
+  font-size: 14px;
   margin-top: 5px;
   opacity: 0.8;
   letter-spacing: 3px;

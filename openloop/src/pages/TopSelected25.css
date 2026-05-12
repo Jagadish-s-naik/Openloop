@@ -88,9 +88,13 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 12px;
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  transform: perspective(1000px) rotateX(var(--rotateX, 0deg)) rotateY(var(--rotateY, 0deg));
 }
 
+/* Grid overlay */
 .team-card-item::before {
   content: '';
   position: absolute;
@@ -103,12 +107,77 @@
   pointer-events: none;
 }
 
-.team-card-item:hover {
-  border-color: #c6ff00;
-  transform: translateY(-5px);
-  box-shadow: 0 12px 26px rgba(198, 255, 0, 0.15);
+/* 🔥 Animated glow border */
+.team-card-item::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 14px;
+  background: linear-gradient(120deg, transparent, transparent, #d9e4af4d, transparent, transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+  filter: blur(8px);
+  z-index: 0;
 }
 
+.team-card-item:hover::after {
+  opacity: 1;
+}
+
+/* ✨ Cursor light reflection */
+.team-card-item .light {
+  position: absolute;
+  inset: 0;
+  background:
+  radial-gradient(
+    circle at var(--x, 50%) var(--y, 50%),
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(198, 255, 0, 0.15) 20%,
+    transparent 60%
+  ),
+  radial-gradient(
+    circle at var(--x, 50%) var(--y, 50%),
+    rgba(219, 234, 165, 0.25),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.team-card-item:hover .light {
+  opacity: 1;
+}
+
+/* Hover main effect */
+.team-card-item:hover {
+  border-color: #c6ff00;
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 14px 30px rgba(198, 255, 0, 0.18);
+}
+
+/* Optional holographic shimmer */
+.team-card-item:hover {
+  background-image: linear-gradient(
+    135deg,
+    rgba(198, 255, 0, 0.05) 0%,
+    rgba(198, 255, 0, 0.1) 25%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(198, 255, 0, 0.1) 75%,
+    rgba(198, 255, 0, 0.05) 100%
+  );
+  background-size: 200% 200%;
+  animation: holo 3s linear infinite;
+}
+
+@keyframes holo {
+  0% { border:2px solid #89d61a; }
+  50%{
+    border:2px solid #c8ff00;
+  }
+  100% { border: 2px solid #c6ff00; }
+  
+}
 .team-card-meta {
   display: flex;
   justify-content: space-between;
@@ -126,7 +195,7 @@
 }
 
 .team-field-label {
-  font-size: 9px;
+  font-size: 14px;
   line-height: 1;
   letter-spacing: 0.18em;
   color: rgba(255, 255, 255, 0.58);
@@ -145,21 +214,20 @@
   justify-content: center;
   border-radius: 999px;
   padding: 4px 10px;
-  font-size: 15px;
+  font-size: 20px;
   line-height: 1;
   letter-spacing: 0.09em;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  
 }
 
 .team-id-pill {
   color: #c6ff00;
-  background: rgba(198, 255, 0, 0.1);
-  border-color: rgba(198, 255, 0, 0.35);
+  background: #c6ff0013;
 }
 
 .team-rank-pill {
   color: rgba(255, 255, 255, 0.76);
-  background: rgba(255, 255, 255, 0.05);
+  
 }
 
 .team-name-text {
@@ -424,5 +492,201 @@
 @media (max-width: 360px) {
   .teams-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Team Modal Styles */
+.team-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.team-modal-content {
+  background: #090c08;
+  border: 1px solid rgba(198, 255, 0, 0.3);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(198, 255, 0, 0.15);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(198, 255, 0, 0.2);
+  color: #c6ff00;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: #c6ff00;
+  color: #000;
+  transform: rotate(90deg);
+}
+
+.modal-photo-box {
+  width: 100%;
+  aspect-ratio: 16/9;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(198, 255, 0, 0.2);
+}
+
+.modal-large-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.2) contrast(1.1);
+}
+
+.modal-photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(9, 12, 8, 1));
+}
+
+.modal-id-badge {
+  position: absolute;
+  bottom: 20px;
+  left: 24px;
+  background: #c6ff00;
+  color: #000;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(198, 255, 0, 0.3);
+}
+
+.modal-info-box {
+  padding: 30px 24px;
+  background: linear-gradient(to bottom, #0d120a, #090c08);
+}
+
+.modal-label {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: rgba(198, 255, 0, 0.7);
+  margin-bottom: 8px;
+}
+
+.modal-team-name {
+  font-size: clamp(28px, 5vw, 42px);
+  margin: 0;
+  color: #fff;
+  line-height: 1.1;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.modal-rank {
+  margin-top: 12px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.1em;
+}
+
+.modal-footer {
+  padding: 20px 24px 30px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.modal-status-pill {
+  font-size: 10px;
+  padding: 6px 16px;
+  border: 1px solid rgba(198, 255, 0, 0.2);
+  color: rgba(198, 255, 0, 0.8);
+  border-radius: 999px;
+  letter-spacing: 0.15em;
+  background: rgba(198, 255, 0, 0.05);
+}
+.team-card-photo{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+  padding: 20px;
+  background: rgba(198, 255, 0, 0.03);
+  border: 1px dashed rgba(198, 255, 0, 0.2);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.team-card-item:hover .team-card-photo {
+  background: rgba(198, 255, 0, 0.08);
+  border-color: rgba(198, 255, 0, 0.5);
+  transform: translateZ(20px);
+}
+
+.photo-placeholder {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(198, 255, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c6ff00;
+  box-shadow: 0 0 15px rgba(198, 255, 0, 0.2);
+}
+
+.team-card-photo-para {
+  font-size: 14px;
+  margin: 0;
+  color: #c6ff00;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.team-card-name-mini {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin-top: auto;
+  letter-spacing: 0.02em;
+  opacity: 0.8;
+}
+
+.team-card-item:hover .team-card-name-mini {
+  opacity: 1;
+  transform: translateZ(30px);
+}
+
+@media (max-width: 640px) {
+  .team-modal-content {
+    border-radius: 16px;
+  }
+  
+  .modal-info-box {
+    padding: 20px;
+  }
+
+  .modal-photo-box {
+    aspect-ratio: 4/3;
   }
 }

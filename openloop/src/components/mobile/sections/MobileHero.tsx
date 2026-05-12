@@ -1,18 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useTimer } from '../../../utils/timerClient';
 
 export const MobileHero: React.FC = () => {
-  const { remaining: eventTimeLeft, isChallenge } = useTimer();
-
-  const formatEventTime = (seconds: number): string => {
-    const clamped = Math.max(0, seconds);
-    const days = Math.floor(clamped / 86400);
-    const hours = Math.floor((clamped % 86400) / 3600);
-    const minutes = Math.floor((clamped % 3600) / 60);
-    const secs = clamped % 60;
-    return `${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-  };
+  const [hoveredBadge, setHoveredBadge] = useState(false);
 
   return (
     <section
@@ -133,11 +123,55 @@ export const MobileHero: React.FC = () => {
           </div>
         </div>
 
-        <div className="mobile-hero-timer-wrap" style={{ margin: '4px 0' }}>
-          <p className="mobile-hero-timer-label" style={{ fontSize: 'clamp(8px, 1.2vh, 10px)' }}>
-            {isChallenge ? 'CHALLENGE TIMER LIVE' : 'TIME SHOWN FOR 25TH APRIL'}
-          </p>
-          <p className="mobile-hero-timer-value" style={{ fontSize: 'clamp(24px, 4.5vh, 32px)' }}>{formatEventTime(eventTimeLeft)}</p>
+        {/* MOBILE MISSION SUCCESSFUL BANNER */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          margin: '12px 0',
+          width: '100%'
+        }}>
+          <div style={{
+            fontFamily: 'Share Tech Mono, monospace',
+            fontSize: '10px',
+            letterSpacing: '0.3em',
+            color: '#C6FF00',
+            marginBottom: '8px',
+            opacity: 0.8
+          }}>
+            // STATUS: CONCLUDED
+          </div>
+          
+          <div style={{
+            padding: '16px 20px',
+            background: 'rgba(198, 255, 0, 0.05)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(198, 255, 0, 0.3)',
+            borderRadius: '4px',
+            width: '90%',
+            position: 'relative'
+          }}>
+            <div style={{
+              fontFamily: 'Share Tech Mono, monospace',
+              fontSize: 'clamp(18px, 4vw, 24px)',
+              color: '#fff',
+              fontWeight: 800,
+              letterSpacing: '0.15em',
+              textAlign: 'center'
+            }}>
+              MISSION <span style={{ color: '#C6FF00' }}>SUCCESSFUL</span>
+            </div>
+            <div style={{
+              marginTop: '4px',
+              fontFamily: 'Share Tech Mono, monospace',
+              fontSize: '10px',
+              color: 'rgba(255,255,255,0.6)',
+              letterSpacing: '0.1em',
+              textAlign: 'center'
+            }}>
+              25 - 26 APRIL 2026
+            </div>
+          </div>
         </div>
 
         <Link 

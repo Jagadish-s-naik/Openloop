@@ -22,9 +22,8 @@ const SPONSORS: Sponsor[] = [
 export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
   const p = scrollProgress;
   
-  // Cinematic Entry Transform (Independent of opacity management)
-  // Maps 0.76 -> 0.78 for the slide-up effect
-  const entryP = clamp((p - 0.76) / 0.02, 0, 1);
+  // Cinematic Entry Transform: maps 0.89 -> 0.91 for slide-up effect
+  const entryP = clamp((p - 0.89) / 0.02, 0, 1);
   const translateY = lerp(40, 0, entryP);
 
   return (
@@ -34,7 +33,7 @@ export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollPr
       style={{
         opacity: 0, // Default hidden
         transform: `translateY(${translateY}px)`,
-        pointerEvents: p > 0.76 && p < 0.88 ? 'auto' : 'none',
+        pointerEvents: p > 0.89 && p < 0.93 ? 'auto' : 'none',
         transition: 'none'
       }}
     >
@@ -43,7 +42,7 @@ export const SponsorsSection: React.FC<{ scrollProgress: number }> = ({ scrollPr
         <h2 className="section-heading">SPONSORS</h2>
         <p className="body-text-safe" style={{ marginBottom: '2rem' }}>
           <Typewriter 
-            active={p > 0.77} 
+            active={p > 0.90} 
             delay={10}
             text="Our partners fueling the 2026 Open Loop." 
           />
